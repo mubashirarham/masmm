@@ -1,0 +1,14 @@
+{
+  "name": "masmmpanel",
+  "version": "1.0.0",
+  "description": "Custom SMM Panel",
+  "scripts": {
+    "build": "echo 'Static site, no frontend build required.'"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.11.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,12 +1,29 @@
 [build]
-  # Assuming your HTML files are in the root directory. 
-  # If they are in a folder like "public" or "dist", change this to that folder name.
-  publish = "." 
+  # The directory where your main index.html is located
+  publish = "."
+  # The directory where your serverless functions are located
   functions = "netlify/functions"
+  # The command Netlify runs to install backend dependencies
+  command = "npm install"
 
-# This rewrite rule maps the clean API url to your serverless function behind the scenes
+[functions]
+  # Set the Node.js version for your serverless functions
+  node_bundler = "esbuild"
+
+# Clean URL Redirects for your APIs
+# This allows users to hit /api/v2 instead of /.netlify/functions/userapi
+
 [[redirects]]
   from = "/api/v2"
   to = "/.netlify/functions/userapi"
   status = 200
-  force = true
+
+[[redirects]]
+  from = "/api/catalog"
+  to = "/.netlify/functions/get-catalog"
+  status = 200
+
+[[redirects]]
+  from = "/api/sync"
+  to = "/.netlify/functions/sync-provider"
+  status = 200
