@@ -1,0 +1,12 @@
+[build]
+  # Assuming your HTML files are in the root directory. 
+  # If they are in a folder like "public" or "dist", change this to that folder name.
+  publish = "." 
+  functions = "netlify/functions"
+
+# This rewrite rule maps the clean API url to your serverless function behind the scenes
+[[redirects]]
+  from = "/api/v2"
+  to = "/.netlify/functions/userapi"
+  status = 200
+  force = true

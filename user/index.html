@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | MAsmmpanel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Color Palette Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+        
+        /* Custom Scrollbar for Sidebar & Main Content */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Mobile Sidebar Overlay Transition */
+        #sidebar-overlay { transition: opacity 0.3s ease-in-out; }
+        #sidebar { transition: transform 0.3s ease-in-out; }
+        
+        /* Hide view sections by default */
+        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased overflow-hidden flex h-screen">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden opacity-0 pointer-events-none"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="bg-white w-64 border-r border-gray-200 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none">
+        
+        <!-- Sidebar Header (Logo) -->
+        <div class="h-20 flex items-center px-6 border-b border-gray-100 bg-brand-50/50">
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    M
+                </div>
+                <span class="font-bold text-xl text-brand-900 tracking-tight">MAsmmpanel</span>
+            </a>
+            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-500 hover:text-red-500">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Links -->
+        <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Menu</p>
+            
+            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-700 bg-brand-50 font-medium transition-colors" data-target="dashboard">
+                <i class="fa-solid fa-cart-plus w-5 text-center"></i> New Order
+            </a>
+            <a href="#myorders" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="myorders">
+                <i class="fa-solid fa-box-open w-5 text-center"></i> My Orders
+            </a>
+            <a href="#orders" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="orders">
+                <i class="fa-solid fa-list-check w-5 text-center"></i> Order History
+            </a>
+            <a href="#addfunds" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="addfunds">
+                <i class="fa-solid fa-wallet w-5 text-center"></i> Add Funds
+            </a>
+            <a href="#services" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="services">
+                <i class="fa-solid fa-tags w-5 text-center"></i> Services
+            </a>
+            <a href="#transactions" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="transactions">
+                <i class="fa-solid fa-money-bill-transfer w-5 text-center"></i> Transactions
+            </a>
+            <a href="#api" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="api">
+                <i class="fa-solid fa-code w-5 text-center"></i> API Docs
+            </a>
+            
+            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Account</p>
+            
+            <a href="#profile" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="profile">
+                <i class="fa-solid fa-user-gear w-5 text-center"></i> Profile Settings
+            </a>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-100">
+            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 font-medium transition-colors">
+                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        
+        <!-- Loading Overlay -->
+        <div id="page-loader" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
+            <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
+            <p class="text-gray-500 font-medium">Loading Dashboard...</p>
+        </div>
+
+        <!-- Top Header -->
+        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0">
+            <!-- Mobile Menu Toggle -->
+            <div class="flex items-center">
+                <button id="open-sidebar-btn" class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none p-2 mr-3">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+                <h1 id="page-title" class="text-xl font-bold text-gray-800">New Order</h1>
+            </div>
+
+            <!-- Header Right Section -->
+            <div class="flex items-center gap-4 sm:gap-6">
+                <!-- Notifications -->
+                <button class="text-gray-400 hover:text-brand-500 transition-colors relative">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                </button>
+
+                <!-- User Dropdown (Simulated) -->
+                <div class="flex items-center gap-3 border-l border-gray-200 pl-4 sm:pl-6">
+                    <div class="w-10 h-10 rounded-full bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 font-bold overflow-hidden">
+                        <i class="fa-solid fa-user text-lg"></i>
+                    </div>
+                    <div class="hidden md:block text-left">
+                        <p id="header-user-email" class="text-sm font-semibold text-gray-700 truncate max-w-[120px]">Loading...</p>
+                        <p class="text-xs text-gray-500">User Panel</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dynamic Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50 relative">
+            
+            <!-- Toast Notification Container -->
+            <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+
+            <!-- Floating WhatsApp Widget -->
+            <a href="#" class="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-3xl shadow-lg hover:scale-110 transition-transform z-50">
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: DASHBOARD (New Order Integrated) -->
+            <!-- ========================================== -->
+            <div id="view-dashboard" class="view-section active">
+                <!-- Top Statistics Panel (Matching Screenshot) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- Stat Card 1 -->
+                    <div class="bg-[#7ac143] p-6 rounded shadow-sm text-white flex flex-col justify-between">
+                        <p class="text-lg mb-2">Username</p>
+                        <h3 id="stat-username" class="text-2xl font-semibold text-right truncate">Loading...</h3>
+                    </div>
+                    <!-- Stat Card 2 -->
+                    <div class="bg-[#7ac143] p-6 rounded shadow-sm text-white flex flex-col justify-between">
+                        <p class="text-lg mb-2">Total Spent</p>
+                        <h3 id="stat-spent" class="text-2xl font-semibold text-right truncate">Rs 0.00</h3>
+                    </div>
+                    <!-- Stat Card 3 -->
+                    <div class="bg-[#7ac143] p-6 rounded shadow-sm text-white flex flex-col justify-between">
+                        <p class="text-lg mb-2">Total Orders</p>
+                        <h3 id="stat-orders" class="text-2xl font-semibold text-right truncate">0</h3>
+                    </div>
+                    <!-- Stat Card 4 -->
+                    <div class="bg-[#7ac143] p-6 rounded shadow-sm text-white flex flex-col justify-between">
+                        <p class="text-lg mb-2">Total Balance</p>
+                        <h3 id="stat-balance" class="text-2xl font-semibold text-right truncate">Rs 0.00</h3>
+                    </div>
+                </div>
+
+                <!-- New Order Form (Integrated into Dashboard) -->
+                <div class="bg-white rounded shadow-sm border border-gray-100 p-6 sm:p-8 max-w-full mx-auto">
+                    <form id="new-order-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Category</label>
+                            <select id="category-select" class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#7ac143] outline-none bg-white transition-all">
+                                <option value="">Loading categories...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Service</label>
+                            <select id="service-select" class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#7ac143] outline-none bg-white transition-all" disabled>
+                                <option value="">Select a category first...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Link</label>
+                            <input type="url" id="order-link" placeholder="https://..." required class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#7ac143] outline-none transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Average Time <i class="fa-solid fa-circle-info text-gray-400"></i></label>
+                            <input type="text" id="average-time" readonly value="Not enough data" class="w-full px-4 py-3 rounded border border-gray-200 bg-gray-50 text-gray-800 font-semibold cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Quantity</label>
+                            <input type="number" id="order-quantity" placeholder="0" required class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#7ac143] outline-none transition-all">
+                            <p id="service-limits" class="text-xs text-gray-500 mt-1">Min: 0 - Max: 0</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2">Charge</label>
+                            <input type="text" id="order-charge" readonly value="Rs 0.00" class="w-full px-4 py-3 rounded border border-gray-200 bg-gray-50 text-gray-800 font-semibold cursor-not-allowed">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" id="submit-order-btn" class="w-full sm:w-auto px-10 bg-[#25D366] hover:bg-[#1ebd57] text-white font-bold py-3 rounded transition-all mt-4 shadow-md">
+                                Place Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: MY ORDERS (Recent Orders) -->
+            <!-- ========================================== -->
+            <div id="view-myorders" class="view-section">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h2 class="text-xl font-bold text-gray-800">My Orders</h2>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <input type="text" id="search-myorders-input" placeholder="Search orders..." class="w-full sm:w-64 px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#7ac143] outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap min-w-[1000px]">
+                            <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold w-16">ID</th>
+                                    <th class="px-6 py-4 font-semibold w-32">Date</th>
+                                    <th class="px-6 py-4 font-semibold max-w-[200px]">Link</th>
+                                    <th class="px-6 py-4 font-semibold w-24">Charge</th>
+                                    <th class="px-6 py-4 font-semibold w-24 text-center">Start Count</th>
+                                    <th class="px-6 py-4 font-semibold w-24 text-center">Quantity</th>
+                                    <th class="px-6 py-4 font-semibold">Service</th>
+                                    <th class="px-6 py-4 font-semibold w-32">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myorders-table-body">
+                                <!-- Loading State populated by myorders.js -->
+                                <tr>
+                                    <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-[#7ac143]"></i>
+                                        <p>Loading recent orders...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: SERVICES LIST -->
+            <!-- ========================================== -->
+            <div id="view-services" class="view-section">
+                <!-- Search Bar -->
+                <div class="mb-6 bg-white p-3 rounded shadow-sm border border-gray-100">
+                    <input type="text" id="search-services-input" placeholder="Search Services" class="w-full px-4 py-3 rounded border border-gray-200 focus:ring-2 focus:ring-[#7ac143] outline-none bg-gray-50 transition-all text-sm font-medium">
+                </div>
+
+                <!-- Services Table -->
+                <div class="bg-white rounded shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-700 whitespace-nowrap min-w-[900px]">
+                            <thead class="bg-[#7ac143] text-white">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold w-24">Services ID</th>
+                                    <th class="px-6 py-4 font-semibold">Service</th>
+                                    <th class="px-6 py-4 font-semibold text-center w-32">Rate per 1000</th>
+                                    <th class="px-6 py-4 font-semibold text-center w-24">Min</th>
+                                    <th class="px-6 py-4 font-semibold text-center w-24">Max</th>
+                                    <th class="px-6 py-4 font-semibold text-center w-40">Average Time <i class="fa-solid fa-circle-info cursor-help" title="Based on latest orders"></i></th>
+                                    <th class="px-6 py-4 font-semibold text-center w-32">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="services-table-body">
+                                <!-- Loading State -->
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-[#7ac143]"></i>
+                                        <p class="font-medium">Loading services...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Details Modal for Services -->
+            <div id="service-details-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+                <div class="bg-white rounded shadow-xl max-w-lg w-full p-6 mx-4 transform transition-transform scale-95" id="modal-content-box">
+                    <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                        <h3 class="text-lg font-bold text-gray-800" id="modal-service-name">Service Details</h3>
+                        <button id="close-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-600 text-sm whitespace-pre-wrap leading-relaxed max-h-[60vh] overflow-y-auto pr-2" id="modal-service-description">
+                        Loading description...
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 text-right">
+                        <button id="modal-close-action-btn" class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded font-semibold transition-colors">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: ORDER HISTORY -->
+            <!-- ========================================== -->
+            <div id="view-orders" class="view-section">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h2 class="text-xl font-bold text-gray-800">Order History</h2>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <input type="text" placeholder="Search orders..." class="w-full sm:w-64 px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                            <button class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-gray-600 transition-colors">
+                                <i class="fa-solid fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">ID</th>
+                                    <th class="px-6 py-4 font-semibold">Date</th>
+                                    <th class="px-6 py-4 font-semibold">Service</th>
+                                    <th class="px-6 py-4 font-semibold">Link</th>
+                                    <th class="px-6 py-4 font-semibold">Charge</th>
+                                    <th class="px-6 py-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Empty State populated by orders.js -->
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4 text-2xl text-gray-400">
+                                            <i class="fa-solid fa-box-open"></i>
+                                        </div>
+                                        <p>No orders found yet.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: ADD FUNDS -->
+            <!-- ========================================== -->
+            <div id="view-addfunds" class="view-section">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Deposit Form -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Deposit Funds</h2>
+                        
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
+                                <select class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                                    <option>EasyPaisa (Auto)</option>
+                                    <option>JazzCash (Auto)</option>
+                                    <option>Bank Transfer (Manual)</option>
+                                    <option>PerfectMoney (USD)</option>
+                                    <option>Binance / Crypto</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2 text-sm text-gray-700">
+                                <p><strong>Instructions:</strong> Please send funds to the following EasyPaisa account and enter the Transaction ID (TID) below.</p>
+                                <p>Account Title: <strong>Mubashir Arham</strong></p>
+                                <p>Account Number: <strong class="text-brand-600 text-lg tracking-wider">0300-1234567</strong></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (PKR)</label>
+                                <input type="number" placeholder="Enter amount sent" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Transaction ID (TID)</label>
+                                <input type="text" placeholder="e.g. 12345678901" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <button type="button" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all">
+                                Verify Payment
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Payment Info -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl shadow-sm border border-brand-200 border-t-4 border-t-brand-500 p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2"><i class="fa-solid fa-circle-info text-brand-500 mr-2"></i> Important Information</h3>
+                            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-600 mt-4">
+                                <li>Minimum deposit amount is Rs 100.</li>
+                                <li>Auto payments (EasyPaisa/JazzCash) verify within 5 seconds.</li>
+                                <li>If you face any issues with adding funds, please open a support ticket immediately.</li>
+                                <li>Do not send funds to outdated numbers. Always check this page before transferring.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: TRANSACTIONS -->
+            <!-- ========================================== -->
+            <div id="view-transactions" class="view-section">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-xl font-bold text-gray-800">Payment History</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">Transaction ID</th>
+                                    <th class="px-6 py-4 font-semibold">Date</th>
+                                    <th class="px-6 py-4 font-semibold">Method</th>
+                                    <th class="px-6 py-4 font-semibold">Amount</th>
+                                    <th class="px-6 py-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Empty State populated by transactions.js -->
+                                <tr>
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4 text-2xl text-gray-400">
+                                            <i class="fa-solid fa-receipt"></i>
+                                        </div>
+                                        <p>No transactions found.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: API DOCS -->
+            <!-- ========================================== -->
+            <div id="view-api" class="view-section">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">API Documentation</h2>
+                        <button class="bg-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-200 transition-colors">
+                            Generate New Key
+                        </button>
+                    </div>
+
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Your API Key</label>
+                        <div class="flex">
+                            <input type="text" readonly value="****************************************" class="w-full px-4 py-3 rounded-l-xl border border-gray-200 bg-gray-50 text-gray-500 font-mono text-sm outline-none">
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 font-semibold rounded-r-xl transition-colors">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                            <h4 class="font-bold text-gray-800 mb-2">API URL</h4>
+                            <code class="text-brand-600 bg-white px-2 py-1 rounded border border-gray-200">https://masmmpanel.com/api/v2</code>
+                        </div>
+
+                        <h3 class="text-lg font-bold mt-6 mb-2">Request Parameters</h3>
+                        <table class="w-full text-left text-sm text-gray-600 border border-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 border-b border-gray-200">Parameter</th>
+                                    <th class="px-4 py-2 border-b border-gray-200">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 border-b border-gray-200 font-mono">key</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">Your API Key</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 border-b border-gray-200 font-mono">action</td>
+                                    <td class="px-4 py-2 border-b border-gray-200">add, status, services, balance</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MODULE VIEW: PROFILE -->
+            <!-- ========================================== -->
+            <div id="view-profile" class="view-section">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Account Profile</h2>
+                        
+                        <div class="flex items-center gap-6 mb-8 border-b border-gray-100 pb-8">
+                            <div class="w-20 h-20 rounded-full bg-brand-100 border-2 border-brand-200 flex items-center justify-center text-brand-700 font-bold text-3xl">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div>
+                                <p id="profile-email-display" class="text-lg font-bold text-gray-900">Loading...</p>
+                                <span class="inline-block mt-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Active Account</span>
+                            </div>
+                        </div>
+
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                                    <input type="text" placeholder="John" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                                    <input type="text" placeholder="Doe" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Timezone</label>
+                                <select class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                                    <option>Asia/Karachi (PKT)</option>
+                                    <option>UTC (GMT 0)</option>
+                                </select>
+                            </div>
+
+                            <div class="pt-4">
+                                <button type="button" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-xl transition-all">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 sm:p-8">
+                        <h2 class="text-xl font-bold text-red-600 mb-2">Security</h2>
+                        <p class="text-sm text-gray-600 mb-6">Manage your password and security preferences.</p>
+                        <button type="button" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase Configuration & Integrated Logic (Auth + Router) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            authDomain: "masmmpanel-7af8c.firebaseapp.com",
+            projectId: "masmmpanel-7af8c",
+            storageBucket: "masmmpanel-7af8c.firebasestorage.app",
+            messagingSenderId: "954223775870",
+            appId: "1:954223775870:web:faf21552d7478a53ff082f",
+            measurementId: "G-WYKEH349PW"
+        };
+
+        // Initialize Firebase globally
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.firebaseApp = app;
+
+        // ==========================================
+        // MODULE: AUTHENTICATION GUARD
+        // ==========================================
+        const pageLoader = document.getElementById('page-loader');
+        const headerEmail = document.getElementById('header-user-email');
+        const profileEmailDisplay = document.getElementById('profile-email-display');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Security Check: Redirect Admin to admin panel
+                if(user.email === 'mubashirarham12@gmail.com') {
+                    window.location.href = '../admin/index.html';
+                    return;
+                }
+                
+                // Set UI for logged-in user
+                headerEmail.innerText = user.email || "User";
+                if(profileEmailDisplay) profileEmailDisplay.innerText = user.email || "User";
+                pageLoader.classList.add('hidden'); // Hide loader
+            } else {
+                // Not logged in -> Redirect to login page
+                window.location.href = '../login.html';
+            }
+        });
+
+        // Logout Event
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Logout Failed", error);
+            }
+        });
+
+        // ==========================================
+        // MODULE: ROUTER & SIDEBAR MANAGER
+        // ==========================================
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const openSidebarBtn = document.getElementById('open-sidebar-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        
+        const navLinks = document.querySelectorAll('.nav-link');
+        const viewSections = document.querySelectorAll('.view-section');
+        const pageTitle = document.getElementById('page-title');
+
+        const viewTitles = {
+            'dashboard': 'New Order',
+            'myorders': 'My Orders',
+            'services': 'Services',
+            'orders': 'Order History',
+            'addfunds': 'Add Funds',
+            'transactions': 'Payment History',
+            'api': 'API Documentation',
+            'profile': 'Profile Settings'
+        };
+
+        // Mobile Sidebar Controls
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                sidebarOverlay.classList.remove('opacity-0');
+                sidebarOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            }, 10);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            sidebarOverlay.classList.add('opacity-0');
+            setTimeout(() => {
+                sidebarOverlay.classList.add('hidden');
+            }, 300);
+        }
+
+        openSidebarBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Single Page Router Logic
+        function switchView(targetViewId) {
+            // Hide all views & reset nav links
+            viewSections.forEach(section => section.classList.remove('active'));
+            navLinks.forEach(link => {
+                link.classList.remove('text-brand-700', 'bg-brand-50');
+                link.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-brand-600');
+            });
+
+            // Show target view
+            const targetSection = document.getElementById(`view-${targetViewId}`);
+            if (targetSection) targetSection.classList.add('active');
+
+            // Highlight active nav link
+            const activeLink = document.querySelector(`.nav-link[data-target="${targetViewId}"]`);
+            if (activeLink) {
+                activeLink.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-brand-600');
+                activeLink.classList.add('text-brand-700', 'bg-brand-50');
+            }
+
+            // Update Page Title
+            if (viewTitles[targetViewId]) {
+                pageTitle.innerText = viewTitles[targetViewId];
+            }
+
+            // Close sidebar on mobile
+            if (window.innerWidth < 1024) closeSidebar();
+        }
+
+        // Attach clicks to sidebar links
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                switchView(target);
+                history.pushState(null, null, `#${target}`); 
+            });
+        });
+
+        // Handle initial load based on URL hash
+        function handleInitialRoute() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && viewTitles[hash]) {
+                switchView(hash);
+            } else {
+                switchView('dashboard'); // Default
+            }
+        }
+
+        handleInitialRoute();
+
+    </script>
+
+    <!-- External JS Modules (Feature specific logic) -->
+    <!-- These files handle the Firestore connections for the UI components -->
+    <script type="module" src="../assets/js/user/dashboard.js"></script>
+    <script type="module" src="../assets/js/user/myorders.js"></script>
+    <script type="module" src="../assets/js/user/services.js"></script>
+    <script type="module" src="../assets/js/user/orders.js"></script>
+    <script type="module" src="../assets/js/user/addfunds.js"></script>
+    <script type="module" src="../assets/js/user/transactions.js"></script>
+    <script type="module" src="../assets/js/user/api.js"></script>
+    <script type="module" src="../assets/js/user/profile.js"></script>
+
+</body>
+</html>
