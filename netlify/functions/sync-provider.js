@@ -43,13 +43,31 @@ exports.handler = async (event) => {
             params.append('key', apiKey);
             params.append('action', 'services');
 
-            const apiResponse = await fetch(apiUrl, {
-                method: 'POST',
-                body: params,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
+            let apiResponse;
+            try {
+                // We add a User-Agent to prevent Cloudflare/Security from blocking the automated request
+                apiResponse = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: params,
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                    }
+                });
+            } catch (fetchErr) {
+                throw new Error(`Failed to reach provider server. Check the API URL. Details: ${fetchErr.message}`);
+            }
 
-            const upstreamServices = await apiResponse.json();
+            // Read as text first to prevent JSON parse crashes on HTML error pages
+            const rawText = await apiResponse.text();
+            let upstreamServices;
+
+            try {
+                upstreamServices = JSON.parse(rawText);
+            } catch (err) {
+                console.error("Non-JSON API Response:", rawText);
+                throw new Error(`Provider did not return JSON (Status: ${apiResponse.status}). It may be blocking the request. Response snippet: ${rawText.substring(0, 150)}...`);
+            }
 
             if (upstreamServices.error) {
                 throw new Error(`Upstream API Error: ${upstreamServices.error}`);
