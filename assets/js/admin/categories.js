@@ -3,6 +3,7 @@ import {
     collection, 
     onSnapshot,
     addDoc,
+    updateDoc,
     deleteDoc,
     doc,
     serverTimestamp,
@@ -14,6 +15,7 @@ const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allCategories = [];
+let currentManagingCategoryId = null; // Track edit state
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -68,24 +70,24 @@ function renderCategoriesUI() {
             </div>
         </div>
 
-        <!-- Add Category Modal -->
-        <div id="add-category-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform transition-transform scale-95" id="add-category-content">
+        <!-- Add/Edit Category Modal -->
+        <div id="manage-category-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform transition-transform scale-95" id="manage-category-content">
                 <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                    <h3 class="text-lg font-bold text-gray-800">Add New Category</h3>
+                    <h3 class="text-lg font-bold text-gray-800" id="modal-category-title">Add New Category</h3>
                     <button id="close-category-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
                 
-                <form id="add-category-form" class="space-y-4">
+                <form id="manage-category-form" class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Category Name</label>
-                        <input type="text" id="new-category-name" required placeholder="e.g., TikTok Views - Cheapest" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <input type="text" id="manage-category-name" required placeholder="e.g., TikTok Views - Cheapest" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Sort Order (Number)</label>
-                        <input type="number" id="new-category-sort" value="1" min="1" required class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <input type="number" id="manage-category-sort" value="1" min="1" required class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                         <p class="text-xs text-gray-500 mt-1">Lower numbers appear first in the dropdown.</p>
                     </div>
                     <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
@@ -106,40 +108,46 @@ function renderCategoriesUI() {
     }
 
     // Modal Logic
-    const modal = document.getElementById('add-category-modal');
-    const content = document.getElementById('add-category-content');
-    const openBtn = document.getElementById('open-add-category-modal');
-    const closeBtn = document.getElementById('close-category-modal-btn');
-    const cancelBtn = document.getElementById('cancel-category-btn');
-    const form = document.getElementById('add-category-form');
+    const modal = document.getElementById('manage-category-modal');
+    const content = document.getElementById('manage-category-content');
+    const form = document.getElementById('manage-category-form');
 
-    const openModal = () => {
+    const openModal = (category = null) => {
         form.reset();
-        document.getElementById('new-category-sort').value = allCategories.length > 0 ? allCategories.length + 1 : 1;
+        if (category) {
+            // Editing existing category
+            currentManagingCategoryId = category.id;
+            document.getElementById('modal-category-title').innerText = 'Edit Category';
+            document.getElementById('manage-category-name').value = category.name || '';
+            document.getElementById('manage-category-sort').value = category.sort || 1;
+        } else {
+            // Adding new category
+            currentManagingCategoryId = null;
+            document.getElementById('modal-category-title').innerText = 'Add New Category';
+            document.getElementById('manage-category-sort').value = allCategories.length > 0 ? allCategories.length + 1 : 1;
+        }
+        
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        }, 10);
+        setTimeout(() => content.classList.remove('scale-95'), 10);
     };
 
     const closeModal = () => {
-        content.classList.remove('scale-100');
         content.classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 150);
+        currentManagingCategoryId = null;
     };
 
-    openBtn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
+    document.getElementById('open-add-category-modal').addEventListener('click', () => openModal(null));
+    document.getElementById('close-category-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('cancel-category-btn').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
     // Handle Form Submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const name = document.getElementById('new-category-name').value.trim();
-        const sort = parseInt(document.getElementById('new-category-sort').value) || 1;
+        const name = document.getElementById('manage-category-name').value.trim();
+        const sort = parseInt(document.getElementById('manage-category-sort').value) || 1;
         const submitBtn = document.getElementById('submit-category-btn');
 
         if (!name) return;
@@ -148,28 +156,33 @@ function renderCategoriesUI() {
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
         try {
-            const categoriesRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
-            await addDoc(categoriesRef, {
-                name: name,
-                sort: sort,
-                status: 'Active',
-                createdAt: serverTimestamp()
-            });
-            
+            if (currentManagingCategoryId) {
+                // Update Existing Document
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', currentManagingCategoryId);
+                await updateDoc(docRef, { name: name, sort: sort, updatedAt: serverTimestamp() });
+            } else {
+                // Add New Document
+                const categoriesRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+                await addDoc(categoriesRef, { name: name, sort: sort, status: 'Active', createdAt: serverTimestamp() });
+            }
             closeModal();
-            // Optional: Use a toast notification here if you add a global toast function
         } catch (error) {
-            console.error("Error adding category: ", error);
-            alert("Failed to add category.");
+            console.error("Error saving category: ", error);
+            alert("Failed to save category.");
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<span>Save Category</span>';
         }
     });
 
-    // Make delete function globally accessible for the inline onclick handlers
+    // Make functions globally accessible for inline onclick handlers
+    window.editCategory = (id) => {
+        const cat = allCategories.find(c => c.id === id);
+        if (cat) openModal(cat);
+    };
+
     window.deleteCategory = async (categoryId, categoryName) => {
-        if(!confirm(`Are you sure you want to delete the category "${categoryName}"? This cannot be undone.`)) return;
+        if(!confirm(`Are you sure you want to delete "${categoryName}"? This cannot be undone.`)) return;
 
         try {
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', categoryId));
@@ -232,8 +245,11 @@ function renderCategoriesTable() {
                 <td class="px-6 py-4 text-center font-semibold text-gray-500">${sort}</td>
                 <td class="px-6 py-4 font-bold text-gray-800">${name}</td>
                 <td class="px-6 py-4 text-center">${statusBadge}</td>
-                <td class="px-6 py-4 text-right">
-                    <button onclick="window.deleteCategory('${category.id}', '${name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors">
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="window.editCategory('${category.id}')" class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="window.deleteCategory('${category.id}', '${name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </td>

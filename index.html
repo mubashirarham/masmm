@@ -162,7 +162,7 @@
                                 </div>
                                 <h3 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h3>
                                 <p id="user-email-display" class="text-gray-600 mb-6 font-medium">user@example.com</p>
-                                <a href="services.html" class="w-full block bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-brand-500/30 mb-3">
+                                <a href="#" id="dashboard-link" class="w-full block bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-brand-500/30 mb-3">
                                     Go to Dashboard
                                 </a>
                                 <button id="logout-btn" class="text-gray-500 hover:text-red-500 text-sm font-medium transition-colors">
@@ -174,7 +174,7 @@
                             <div id="auth-form-view">
                                 <div class="flex border-b border-gray-100">
                                     <button id="tab-login" class="flex-1 py-4 text-center font-semibold text-brand-600 border-b-2 border-brand-500 bg-brand-50 transition-colors">Login</button>
-                                    <button id="tab-signup" class="flex-1 py-4 text-center font-semibold text-gray-500 hover:text-brand-600 hover:bg-gray-50 transition-colors">Sign Up</button>
+                                    <button id="tab-signup" class="flex-1 py-4 text-center font-semibold text-gray-500 hover:text-brand-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">Sign Up</button>
                                 </div>
                                 
                                 <div class="p-6 sm:p-8">
@@ -215,7 +215,7 @@
                                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                                         </svg>
-                                        Sign up with Google
+                                        Sign in with Google
                                     </button>
                                 </div>
                             </div>
@@ -501,6 +501,12 @@
             onAuthStateChanged,
             signOut
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // User Provided Firebase Configuration
         const firebaseConfig = {
@@ -516,7 +522,11 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+        
+        // Correct App ID for Firestore Document Paths
+        const panelAppId = "masmmpanel-default";
 
         // UI Elements
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -536,6 +546,7 @@
         const loggedInView = document.getElementById('logged-in-view');
         const userEmailDisplay = document.getElementById('user-email-display');
         const logoutBtn = document.getElementById('logout-btn');
+        const dashboardLink = document.getElementById('dashboard-link');
 
         // State
         let isLoginMode = true;
@@ -586,32 +597,48 @@
             authMessage.classList.add('hidden');
         }
 
-        // --- Core Routing Logic ---
-        function routeUser(user) {
-            if (user.email === 'mubashirarham12@gmail.com') {
-                window.location.href = 'admin/index.html';
-            } else {
-                window.location.href = 'user/index.html';
+        // --- Core Routing & Save Logic ---
+        async function saveUserAndRoute(user) {
+            const isAdmin = user.email === 'mubashirarham12@gmail.com';
+            const role = isAdmin ? 'admin' : 'user';
+
+            // Explicitly save to Firestore so the user shows up in the Admin Panel
+            try {
+                const userRef = doc(db, 'artifacts', panelAppId, 'users', user.uid);
+                await setDoc(userRef, {
+                    email: user.email,
+                    role: role,
+                    lastLogin: serverTimestamp()
+                }, { merge: true });
+            } catch (err) {
+                console.error("Failed to save user to Firestore:", err);
             }
+
+            // Redirect user to correct dashboard
+            window.location.href = isAdmin ? 'admin/index.html' : 'user/index.html';
         }
 
         // --- Firebase Auth Logic ---
 
-        // Listen to Auth State changes
-        onAuthStateChanged(auth, (user) => {
+        // Listen to Auth State changes (Fires on load and login/logout)
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User is signed in
+                // User is signed in, show the "Welcome Back" screen
                 authFormView.classList.add('hidden');
                 loggedInView.classList.remove('hidden');
                 userEmailDisplay.innerText = user.email || "Anonymous User";
                 
-                // Update the "Go to Dashboard" link dynamically based on role
-                const dashboardBtn = loggedInView.querySelector('a');
-                if (dashboardBtn) {
-                    dashboardBtn.href = user.email === 'mubashirarham12@gmail.com' ? 'admin/index.html' : 'user/index.html';
-                }
+                const isAdmin = user.email === 'mubashirarham12@gmail.com';
+                dashboardLink.href = isAdmin ? 'admin/index.html' : 'user/index.html';
+                
+                // Silently update their last login in Firestore
+                try {
+                    const userRef = doc(db, 'artifacts', panelAppId, 'users', user.uid);
+                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                } catch(e){}
+
             } else {
-                // User is signed out
+                // User is signed out, show the auth form
                 authFormView.classList.remove('hidden');
                 loggedInView.classList.add('hidden');
             }
@@ -636,11 +663,11 @@
                 emailInput.value = '';
                 passwordInput.value = '';
                 
-                // Route user immediately after successful login or signup
-                routeUser(userCredential.user);
+                // Save and Route immediately after successful login or signup
+                await saveUserAndRoute(userCredential.user);
+
             } catch (error) {
                 let errorMsg = error.message;
-                // Prettify common error messages
                 if(error.code === 'auth/invalid-credential') errorMsg = "Invalid email or password.";
                 if(error.code === 'auth/email-already-in-use') errorMsg = "Email is already registered.";
                 if(error.code === 'auth/weak-password') errorMsg = "Password should be at least 6 characters.";
@@ -655,10 +682,9 @@
         googleAuthBtn.addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, provider);
-                // Route user immediately after Google auth
-                routeUser(result.user);
+                // Save and Route immediately after Google auth
+                await saveUserAndRoute(result.user);
             } catch (error) {
-                // If it fails (e.g., popup blocked), show a nice inline message
                 showMessage("Google sign-in failed. Please try again or use Email.", "error");
                 console.error("Google Auth Error:", error);
             }

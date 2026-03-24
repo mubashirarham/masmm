@@ -18,6 +18,25 @@ let currentManagingProviderId = null;
 let remoteServicesCache = [];
 let localCategoriesCache = [];
 
+// Helper function to auto-detect Social Logos
+function getPlatformLogo(serviceName) {
+    const name = (serviceName || '').toLowerCase();
+    if (name.includes('tiktok')) return { icon: 'fa-brands fa-tiktok', color: '#000000' };
+    if (name.includes('instagram') || name.includes('ig')) return { icon: 'fa-brands fa-instagram', color: '#E1306C' };
+    if (name.includes('youtube') || name.includes('yt')) return { icon: 'fa-brands fa-youtube', color: '#FF0000' };
+    if (name.includes('facebook') || name.includes('fb')) return { icon: 'fa-brands fa-facebook', color: '#1877F2' };
+    if (name.includes('twitter') || name.includes('x')) return { icon: 'fa-brands fa-x-twitter', color: '#000000' };
+    if (name.includes('telegram')) return { icon: 'fa-brands fa-telegram', color: '#0088cc' };
+    if (name.includes('spotify')) return { icon: 'fa-brands fa-spotify', color: '#1DB954' };
+    if (name.includes('linkedin')) return { icon: 'fa-brands fa-linkedin', color: '#0077b5' };
+    if (name.includes('twitch')) return { icon: 'fa-brands fa-twitch', color: '#9146FF' };
+    if (name.includes('discord')) return { icon: 'fa-brands fa-discord', color: '#5865F2' };
+    if (name.includes('snapchat')) return { icon: 'fa-brands fa-snapchat', color: '#FFFC00' };
+    if (name.includes('pinterest')) return { icon: 'fa-brands fa-pinterest', color: '#E60023' };
+    if (name.includes('reddit')) return { icon: 'fa-brands fa-reddit', color: '#FF4500' };
+    return { icon: 'fa-solid fa-layer-group', color: '#6B7280' };
+}
+
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
     if (e.detail.section !== 'api') return;
@@ -122,7 +141,7 @@ function renderApiUI() {
 
         <!-- Advanced Import Services Modal -->
         <div id="import-services-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[70] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 flex flex-col max-h-[90vh]" id="import-services-content">
+            <div class="bg-white rounded-xl shadow-xl max-w-6xl w-full mx-4 flex flex-col max-h-[90vh]" id="import-services-content">
                 
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center p-6 border-b border-gray-100 shrink-0">
@@ -136,40 +155,46 @@ function renderApiUI() {
                 </div>
                 
                 <!-- Import Controls -->
-                <div class="p-6 bg-gray-50 border-b border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+                <div class="p-6 bg-gray-50 border-b border-gray-100 grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Target Category <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1" title="Select a category from the provider to import its services">1. Filter Remote Category</label>
+                        <select id="filter-remote-category" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm truncate">
+                            <option value="">-- All Remote Categories --</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">2. Target Local Category <span class="text-red-500">*</span></label>
                         <select id="import-target-category" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
                             <option value="">-- Select Local Category --</option>
                             <!-- Populated dynamically -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Profit Markup (%)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">3. Profit Markup (%)</label>
                         <div class="relative">
                             <input type="number" id="import-markup" value="150" min="100" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm pl-8">
                             <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">%</span>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">150% = 50% Profit</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Search Remote Services</label>
-                        <input type="text" id="import-search" placeholder="Search by name or ID..." class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Search</label>
+                        <input type="text" id="import-search" placeholder="Search service name or ID..." class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
                     </div>
                 </div>
 
                 <!-- Remote Services List -->
                 <div class="flex-1 overflow-y-auto p-0">
-                    <table class="w-full text-left text-sm text-gray-600">
+                    <table class="w-full text-left text-sm text-gray-600 relative">
                         <thead class="bg-gray-100 text-gray-700 sticky top-0 shadow-sm z-10">
                             <tr>
-                                <th class="px-4 py-3 w-12 text-center">
+                                <th class="px-4 py-3 w-12 text-center" title="Select All in current view">
                                     <input type="checkbox" id="select-all-services" class="rounded border-gray-300 text-brand-500 focus:ring-brand-500 cursor-pointer">
                                 </th>
                                 <th class="px-4 py-3 font-semibold w-24">Remote ID</th>
                                 <th class="px-4 py-3 font-semibold">Service Name</th>
-                                <th class="px-4 py-3 font-semibold text-right w-24">Original Rate</th>
-                                <th class="px-4 py-3 font-semibold text-right w-24 text-brand-600">Your Rate</th>
+                                <th class="px-4 py-3 font-semibold text-right w-32">Original Rate</th>
+                                <th class="px-4 py-3 font-semibold text-right w-32 text-brand-600">Your Rate</th>
                             </tr>
                         </thead>
                         <tbody id="remote-services-tbody">
@@ -274,22 +299,24 @@ function renderApiUI() {
     document.getElementById('cancel-import-btn').addEventListener('click', closeImportModal);
     document.getElementById('import-search').addEventListener('input', renderRemoteServices);
     document.getElementById('import-markup').addEventListener('input', renderRemoteServices);
+    document.getElementById('filter-remote-category').addEventListener('change', renderRemoteServices);
+    
+    // Select All logic (only selects currently visible/filtered rows)
     document.getElementById('select-all-services').addEventListener('change', (e) => {
         const checkboxes = document.querySelectorAll('.import-checkbox');
         checkboxes.forEach(cb => {
-            if(!cb.closest('tr').classList.contains('hidden')) {
-                cb.checked = e.target.checked;
-            }
+            cb.checked = e.target.checked;
         });
         updateSelectedCount();
     });
+    
     document.getElementById('execute-import-btn').addEventListener('click', executeImport);
 }
 
 // --- Data Fetching ---
 
 function fetchProviders() {
-    const providersRef = collection(db, 'artifacts', appId, 'api_providers'); // Fixed path!
+    const providersRef = collection(db, 'artifacts', appId, 'api_providers');
     
     onSnapshot(providersRef, (snapshot) => {
         allProviders = [];
@@ -371,17 +398,29 @@ async function fetchRemoteServices(provider, btnElement) {
             body: JSON.stringify({ providerId: provider.id, action: 'fetch_remote' })
         });
 
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}. The backend function is missing or failing.`);
+        }
+
         const result = await response.json();
 
         if (result.success && result.services) {
             remoteServicesCache = result.services;
             currentManagingProviderId = provider.id;
             
-            // Setup Categories Dropdown
-            const catSelect = document.getElementById('import-target-category');
-            catSelect.innerHTML = '<option value="">-- Select Local Category --</option>';
+            // Setup Local Categories Dropdown
+            const targetCatSelect = document.getElementById('import-target-category');
+            targetCatSelect.innerHTML = '<option value="">-- Select Local Category --</option>';
             localCategoriesCache.forEach(cat => {
-                catSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                targetCatSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            });
+
+            // Extract unique Remote Categories to populate filter dropdown
+            const uniqueRemoteCats = [...new Set(remoteServicesCache.map(s => s.category).filter(Boolean))];
+            const filterRemoteCatSelect = document.getElementById('filter-remote-category');
+            filterRemoteCatSelect.innerHTML = '<option value="">-- All Remote Categories --</option>';
+            uniqueRemoteCats.forEach(cat => {
+                filterRemoteCatSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
             });
 
             document.getElementById('import-modal-subtitle').innerText = `Select services from ${provider.name} to import`;
@@ -410,6 +449,10 @@ function renderRemoteServices() {
     const searchTerm = document.getElementById('import-search').value.toLowerCase().trim();
     const markupVal = parseFloat(document.getElementById('import-markup').value) || 100;
     const markupMultiplier = markupVal / 100;
+    const selectedRemoteCategory = document.getElementById('filter-remote-category').value;
+
+    // Reset select all checkbox to prevent accidental bulk selection across filters
+    document.getElementById('select-all-services').checked = false;
 
     tbody.innerHTML = '';
     
@@ -418,13 +461,23 @@ function renderRemoteServices() {
         return;
     }
 
+    let visibleCount = 0;
+
     remoteServicesCache.forEach((service, index) => {
+        // Filter by Remote Category Dropdown
+        if (selectedRemoteCategory && service.category !== selectedRemoteCategory) return;
+
         const sName = (service.name || '').toLowerCase();
         const sId = (service.service || '').toString().toLowerCase();
         
+        // Filter by Search Bar
         if (sName.includes(searchTerm) || sId.includes(searchTerm)) {
+            visibleCount++;
             const originalRate = parseFloat(service.rate || 0);
             const myRate = (originalRate * markupMultiplier).toFixed(4);
+            
+            // Get Social Logo
+            const logo = getPlatformLogo(service.name);
 
             const row = document.createElement('tr');
             row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
@@ -434,13 +487,23 @@ function renderRemoteServices() {
                     <input type="checkbox" value="${index}" class="import-checkbox rounded border-gray-300 text-brand-500 focus:ring-brand-500 cursor-pointer">
                 </td>
                 <td class="px-4 py-3 font-mono text-xs text-gray-500">${service.service}</td>
-                <td class="px-4 py-3 text-sm text-gray-800 max-w-[300px] truncate" title="${service.name}">${service.name}</td>
+                <td class="px-4 py-3 text-sm text-gray-800">
+                    <div class="flex items-center gap-3">
+                        <i class="${logo.icon} text-lg w-5 text-center" style="color: ${logo.color}"></i>
+                        <span class="max-w-[400px] truncate block font-medium" title="${service.name}">${service.name}</span>
+                    </div>
+                    <div class="text-[10px] text-gray-400 mt-0.5 ml-8">${service.category}</div>
+                </td>
                 <td class="px-4 py-3 text-right text-gray-500 text-sm">${originalRate.toFixed(4)}</td>
                 <td class="px-4 py-3 text-right text-brand-600 font-bold text-sm">${myRate}</td>
             `;
             tbody.appendChild(row);
         }
     });
+
+    if (visibleCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No services match your filters.</td></tr>`;
+    }
 
     // Rebind checkbox listener for counts
     document.querySelectorAll('.import-checkbox').forEach(cb => {
@@ -465,7 +528,7 @@ async function executeImport() {
     const markupPercentage = parseFloat(document.getElementById('import-markup').value) || 150;
     
     if (!targetCategoryId) {
-        alert("Please select a Target Local Category.");
+        alert("Please select a Target Local Category to save the services into.");
         return;
     }
 
@@ -520,7 +583,6 @@ async function executeImport() {
 async function handleSaveProvider(e) {
     e.preventDefault();
     const btn = document.getElementById('save-provider-btn');
-    const notif = document.getElementById('provider-modal-notification');
 
     const providerData = {
         name: document.getElementById('provider-name').value.trim(),
@@ -537,12 +599,12 @@ async function handleSaveProvider(e) {
 
     try {
         if (currentManagingProviderId) {
-            const docRef = doc(db, 'artifacts', appId, 'api_providers', currentManagingProviderId); // Fixed path
+            const docRef = doc(db, 'artifacts', appId, 'api_providers', currentManagingProviderId);
             await updateDoc(docRef, providerData);
             showNotification("Provider updated successfully!", "success");
         } else {
             providerData.createdAt = serverTimestamp();
-            const colRef = collection(db, 'artifacts', appId, 'api_providers'); // Fixed path
+            const colRef = collection(db, 'artifacts', appId, 'api_providers');
             await addDoc(colRef, providerData);
             showNotification("New provider created successfully!", "success");
         }

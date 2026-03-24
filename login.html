@@ -236,6 +236,14 @@
             sendPasswordResetEmail,
             onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // Import Firestore to explicitly save the user document
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Config
         const firebaseConfig = {
@@ -250,7 +258,11 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+        
+        // Match the App ID used in your other JS files (defaults to masmmpanel-default)
+        const panelAppId = "masmmpanel-default"; 
 
         // UI Elements
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -280,24 +292,38 @@
             }
         }
 
-        // --- Core Routing Logic ---
-        // Redirect based on user email role
-        function routeUser(user) {
+        // --- Core Routing & User Save Logic ---
+        async function routeUser(user) {
             loadingOverlay.classList.remove('hidden'); // Show loading while redirecting
-            if (user.email === 'mubashirarham12@gmail.com') {
+            
+            const isAdmin = user.email === 'mubashirarham12@gmail.com';
+            const role = isAdmin ? 'admin' : 'user';
+
+            // SAVE USER TO FIRESTORE SO ADMIN PANEL CAN SEE THEM
+            try {
+                const userRef = doc(db, 'artifacts', panelAppId, 'users', user.uid);
+                await setDoc(userRef, {
+                    email: user.email,
+                    role: role,
+                    lastLogin: serverTimestamp()
+                }, { merge: true });
+            } catch (err) {
+                console.error("Failed to save user doc:", err);
+            }
+
+            // Redirect based on role
+            if (isAdmin) {
                 window.location.href = 'admin/index.html';
             } else {
                 window.location.href = 'user/index.html';
             }
         }
 
-        // Listen to Auth State globally to handle users who are already logged in
+        // Listen to Auth State globally
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is already signed in, redirect them
                 routeUser(user);
             } else {
-                // Not logged in, hide loading overlay and show form
                 loadingOverlay.classList.add('hidden');
             }
         });
@@ -315,7 +341,6 @@
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged will handle the redirect, but we can also trigger it manually just in case
                 routeUser(userCredential.user);
             } catch (error) {
                 let errorMsg = "Login failed. Please try again.";

@@ -5,9 +5,7 @@ import {
     addDoc,
     deleteDoc,
     doc,
-    serverTimestamp,
-    query,
-    orderBy
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const db = getFirestore(window.firebaseApp);
@@ -235,13 +233,21 @@ function fetchCategories() {
 
 function fetchServices() {
     const servicesRef = collection(db, 'artifacts', appId, 'public', 'data', 'services');
-    const q = query(servicesRef, orderBy('createdAt', 'desc'));
     
-    onSnapshot(q, (snapshot) => {
+    // We removed orderBy() so Firestore doesn't hide imported services missing the createdAt field
+    onSnapshot(servicesRef, (snapshot) => {
         allServices = [];
         snapshot.forEach(doc => {
             allServices.push({ id: doc.id, ...doc.data() });
         });
+        
+        // Sort in memory (Newest first). Fallback to updatedAt if createdAt is missing.
+        allServices.sort((a, b) => {
+            const timeA = a.createdAt ? a.createdAt.toMillis() : (a.updatedAt ? a.updatedAt.toMillis() : 0);
+            const timeB = b.createdAt ? b.createdAt.toMillis() : (b.updatedAt ? b.updatedAt.toMillis() : 0);
+            return timeB - timeA;
+        });
+        
         renderServicesTable();
     });
 }

@@ -31,7 +31,7 @@ function renderPaymentsUI() {
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Payment Gateways</h2>
-                <p class="text-sm text-gray-500">Manage account details and instructions for user deposits.</p>
+                <p class="text-sm text-gray-500">Manage account details, logos, and instructions for user deposits.</p>
             </div>
             <div class="w-full sm:w-auto flex gap-2">
                 <div class="relative flex-1 sm:w-64">
@@ -50,7 +50,7 @@ function renderPaymentsUI() {
                 <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
                     <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-4 font-semibold">Gateway Name</th>
+                            <th class="px-6 py-4 font-semibold">Gateway</th>
                             <th class="px-6 py-4 font-semibold">Account Title</th>
                             <th class="px-6 py-4 font-semibold">Account Number</th>
                             <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
@@ -74,12 +74,25 @@ function renderPaymentsUI() {
             <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 mx-4 transform transition-transform scale-95 overflow-y-auto max-h-[90vh]" id="manage-gateway-content">
                 <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
                     <h3 class="text-lg font-bold text-gray-800" id="modal-gateway-title">Add New Gateway</h3>
-                    <button id="close-gateway-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <button type="button" id="close-gateway-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
                 
                 <form id="manage-gateway-form" class="space-y-4">
+                    <!-- Cloudinary Logo Upload Area -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gateway Logo (Optional)</label>
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0 shadow-sm">
+                                <img id="gateway-logo-preview" class="w-full h-full object-cover hidden">
+                                <i id="gateway-logo-icon" class="fa-solid fa-image text-gray-400 text-2xl"></i>
+                            </div>
+                            <input type="file" id="gateway-logo-input" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-all cursor-pointer">
+                        </div>
+                        <input type="hidden" id="gateway-existing-logo">
+                    </div>
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Gateway Name</label>
                         <input type="text" id="gateway-name" required placeholder="e.g., EasyPaisa (Auto)" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
@@ -103,7 +116,7 @@ function renderPaymentsUI() {
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                        <select id="gateway-status" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <select id="gateway-status" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all bg-white">
                             <option value="Active">Active</option>
                             <option value="Disabled">Disabled</option>
                         </select>
@@ -129,6 +142,20 @@ function renderPaymentsUI() {
         searchInput.addEventListener('input', renderGatewaysTable);
     }
 
+    // Handle Local Image Preview
+    const logoInput = document.getElementById('gateway-logo-input');
+    const logoPreview = document.getElementById('gateway-logo-preview');
+    const logoIcon = document.getElementById('gateway-logo-icon');
+
+    logoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            logoPreview.src = URL.createObjectURL(file);
+            logoPreview.classList.remove('hidden');
+            logoIcon.classList.add('hidden');
+        }
+    });
+
     // Modal Logic
     const modal = document.getElementById('manage-gateway-modal');
     const content = document.getElementById('manage-gateway-content');
@@ -141,6 +168,10 @@ function renderPaymentsUI() {
         form.reset();
         document.getElementById('gateway-modal-notification').classList.add('hidden');
         
+        // Reset Image Input and Preview
+        logoInput.value = '';
+        const existingLogoInput = document.getElementById('gateway-existing-logo');
+        
         if (gateway) {
             currentManagingGatewayId = gateway.id;
             document.getElementById('modal-gateway-title').innerText = 'Edit Gateway';
@@ -149,20 +180,30 @@ function renderPaymentsUI() {
             document.getElementById('gateway-account-number').value = gateway.accountNumber || '';
             document.getElementById('gateway-instructions').value = gateway.instructions || '';
             document.getElementById('gateway-status').value = gateway.status || 'Active';
+            
+            // Set existing logo
+            existingLogoInput.value = gateway.logoUrl || '';
+            if (gateway.logoUrl) {
+                logoPreview.src = gateway.logoUrl;
+                logoPreview.classList.remove('hidden');
+                logoIcon.classList.add('hidden');
+            } else {
+                logoPreview.classList.add('hidden');
+                logoIcon.classList.remove('hidden');
+            }
         } else {
             currentManagingGatewayId = null;
             document.getElementById('modal-gateway-title').innerText = 'Add New Gateway';
+            existingLogoInput.value = '';
+            logoPreview.classList.add('hidden');
+            logoIcon.classList.remove('hidden');
         }
 
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        }, 10);
+        setTimeout(() => content.classList.remove('scale-95'), 10);
     };
 
     const closeModal = () => {
-        content.classList.remove('scale-100');
         content.classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 150);
         currentManagingGatewayId = null;
@@ -237,6 +278,7 @@ function renderGatewaysTable() {
         const title = gateway.accountTitle || 'N/A';
         const number = gateway.accountNumber || 'N/A';
         const status = gateway.status || 'Active';
+        const logoUrl = gateway.logoUrl || null;
 
         if (name.toLowerCase().includes(searchTerm) || number.toLowerCase().includes(searchTerm)) {
             visibleCount++;
@@ -245,11 +287,21 @@ function renderGatewaysTable() {
                 ? `<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">Active</span>`
                 : `<span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase tracking-wider">Disabled</span>`;
 
+            // HTML for the logo or a placeholder icon
+            const logoHtml = logoUrl 
+                ? `<img src="${logoUrl}" class="w-10 h-10 object-contain rounded-lg border border-gray-200 bg-white">`
+                : `<div class="w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-400"><i class="fa-solid fa-building-columns"></i></div>`;
+
             const row = document.createElement('tr');
             row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
             
             row.innerHTML = `
-                <td class="px-6 py-4 font-bold text-gray-800">${name}</td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        ${logoHtml}
+                        <span class="font-bold text-gray-800">${name}</span>
+                    </div>
+                </td>
                 <td class="px-6 py-4 text-gray-600">${title}</td>
                 <td class="px-6 py-4 font-mono text-brand-600 font-semibold">${number}</td>
                 <td class="px-6 py-4 text-center">${statusBadge}</td>
@@ -272,25 +324,66 @@ function renderGatewaysTable() {
     }
 }
 
+// Function to upload the image directly from browser to Cloudinary
+async function uploadLogoToCloudinary(file) {
+    const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dis1ptaip/image/upload';
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'mubashir'); 
+    
+    const response = await fetch(cloudinaryUrl, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error('Cloudinary upload failed');
+    }
+
+    const data = await response.json();
+    return data.secure_url; // The HTTPS URL of the uploaded image
+}
+
 async function handleSaveGateway(e) {
     e.preventDefault();
     
     const btn = document.getElementById('save-gateway-btn');
-    const notif = document.getElementById('gateway-modal-notification');
+    const nameInput = document.getElementById('gateway-name').value.trim();
+    
+    if (!nameInput) return;
+
+    btn.disabled = true;
+    
+    // --- Step 1: Handle Logo Upload if a new file is selected ---
+    const fileInput = document.getElementById('gateway-logo-input');
+    let finalLogoUrl = document.getElementById('gateway-existing-logo').value;
+
+    if (fileInput.files.length > 0) {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Logo...';
+        try {
+            finalLogoUrl = await uploadLogoToCloudinary(fileInput.files[0]);
+        } catch (uploadError) {
+            console.error("Upload error:", uploadError);
+            showNotification("Failed to upload logo to Cloudinary. Please try again.", "error");
+            btn.disabled = false;
+            btn.innerHTML = '<span>Save Gateway</span>';
+            return;
+        }
+    }
+
+    // --- Step 2: Save to Firestore ---
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving Gateway...';
 
     const gatewayData = {
-        name: document.getElementById('gateway-name').value.trim(),
+        name: nameInput,
         accountTitle: document.getElementById('gateway-account-title').value.trim(),
         accountNumber: document.getElementById('gateway-account-number').value.trim(),
         instructions: document.getElementById('gateway-instructions').value.trim(),
         status: document.getElementById('gateway-status').value,
+        logoUrl: finalLogoUrl, // Added Logo URL
         updatedAt: serverTimestamp()
     };
-
-    if (!gatewayData.name) return;
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
     try {
         if (currentManagingGatewayId) {
@@ -322,7 +415,7 @@ async function handleSaveGateway(e) {
 function showNotification(message, type) {
     const notif = document.getElementById('gateway-modal-notification');
     notif.innerText = message;
-    notif.className = "text-sm px-3 py-2 rounded-lg text-center font-semibold mt-2 block"; // Reset base classes
+    notif.className = "text-sm px-3 py-2 rounded-lg text-center font-semibold mt-2 block";
     
     if (type === 'success') {
         notif.classList.add('bg-green-100', 'text-green-700');
