@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Custom Color Palette Configuration (Matching User Panel) -->
+    <!-- Custom Color Palette Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -43,31 +43,147 @@
         /* Custom Scrollbar for Sidebar & Main Content */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
 
         /* Mobile Sidebar Overlay Transition */
         #sidebar-overlay { transition: opacity 0.3s ease-in-out; }
         #sidebar { transition: transform 0.3s ease-in-out; }
-    </style>
 
-    <!-- Firebase Imports & Core Admin Logic -->
+        /* Sidebar Nav Active State */
+        .nav-link.active {
+            background-color: #1f2937;
+            color: #ffffff;
+            border-left: 4px solid #22c55e;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased overflow-hidden flex h-screen">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden opacity-0 pointer-events-none"></div>
+
+    <!-- Sidebar Navigation (Dark Theme) -->
+    <aside id="sidebar" class="bg-gray-900 w-64 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none transition-transform duration-300">
+        
+        <!-- Sidebar Header (Logo) -->
+        <div class="h-20 flex items-center px-6 border-b border-gray-800 bg-gray-900 shrink-0">
+            <a href="../index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    M
+                </div>
+                <span class="font-bold text-xl text-white tracking-tight">Admin Panel</span>
+            </a>
+            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Links -->
+        <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
+            
+            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="dashboard">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i> Dashboard
+            </a>
+            
+            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Operations</p>
+
+            <a href="#orders" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="orders">
+                <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Orders
+            </a>
+            <a href="#refills" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="refills">
+                <i class="fa-solid fa-rotate w-5 text-center"></i> Refills
+            </a>
+            <a href="#deposits" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="deposits">
+                <i class="fa-solid fa-money-bill-wave w-5 text-center"></i> Deposits
+            </a>
+            <a href="#support" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="support">
+                <i class="fa-solid fa-headset w-5 text-center"></i> Support Tickets
+            </a>
+
+            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Management</p>
+
+            <a href="#users" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="users">
+                <i class="fa-solid fa-users w-5 text-center"></i> Users
+            </a>
+            <a href="#categories" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="categories">
+                <i class="fa-solid fa-layer-group w-5 text-center"></i> Categories
+            </a>
+            <a href="#services" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="services">
+                <i class="fa-solid fa-tags w-5 text-center"></i> Services
+            </a>
+
+            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">System</p>
+
+            <a href="#api" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="api">
+                <i class="fa-solid fa-network-wired w-5 text-center"></i> API Providers
+            </a>
+            <a href="#payments" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="payments">
+                <i class="fa-solid fa-building-columns w-5 text-center"></i> Payment Gateways
+            </a>
+            <a href="#automation" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="automation">
+                <i class="fa-solid fa-robot w-5 text-center"></i> System Automation
+            </a>
+            <a href="#settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="settings">
+                <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+            </a>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-800 bg-gray-900 shrink-0">
+            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-red-400 font-medium transition-colors">
+                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        
+        <!-- Loading Overlay -->
+        <div id="page-loader" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
+            <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
+            <p class="text-gray-500 font-medium">Verifying Admin Access...</p>
+        </div>
+
+        <!-- Top Header -->
+        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 z-10">
+            <div class="flex items-center">
+                <button id="open-sidebar-btn" class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none p-2 mr-3">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+                <h1 id="page-title" class="text-xl font-bold text-gray-800">Dashboard</h1>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="flex items-center gap-3 pl-4 sm:pl-6 border-l border-gray-200">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-bold text-gray-800">Administrator</p>
+                        <p class="text-xs text-brand-600 font-semibold" id="header-admin-email">Loading...</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shadow-md">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <main class="flex-1 flex flex-col relative overflow-hidden bg-gray-50">
+            <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+            
+            <div id="admin-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+                <!-- Content injected by JS Modules -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc,
-            getDoc,
-            setDoc,
-            enableIndexedDbPersistence 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Configuration (MAsmmpanel)
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
             authDomain: "masmmpanel-7af8c.firebaseapp.com",
@@ -80,251 +196,148 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        // Expose globally for modules
-        window.firebaseApp = app; 
-        window.__app_id = 'masmmpanel-default';
+        window.firebaseApp = app;
+        window.__app_id = "masmmpanel-default"; 
 
-        // ENABLE OFFLINE PERSISTENCE
-        enableIndexedDbPersistence(db).catch((err) => {
-            if (err.code == 'failed-precondition') {
-                console.warn("Persistence failed: Multiple tabs open.");
-            } else if (err.code == 'unimplemented') {
-                console.warn("Persistence failed: Browser not supported.");
-            }
-        });
+        // ==========================================
+        // AUTHENTICATION GUARD & RELOAD FIX
+        // ==========================================
+        const pageLoader = document.getElementById('page-loader');
+        const headerEmail = document.getElementById('header-admin-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        let initialLoadDone = false;
 
-        const ADMIN_EMAIL = "mubashirarham12@gmail.com";
-
-        // Security Guard: Role-Based Access with Offline Failsafe
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = '../login.html'; 
-            } else {
-                console.log("Auth verified for:", user.email);
-
-                // Check for primary admin email
-                if (user.email === ADMIN_EMAIL) {
-                    console.log("Primary Admin recognized. Provisioning session...");
-                    provisionAdminRecord(user);
-                    handleAccessGranted(user.email);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Strict Admin Email Check
+                if(user.email !== 'mubashirarham12@gmail.com') {
+                    window.location.replace('../user/index.html');
                     return;
                 }
+                
+                headerEmail.innerText = user.email;
+                pageLoader.classList.add('hidden');
 
-                // If not the primary admin email, deny access and send to user panel
-                alert("Access Denied: Admin privileges required.");
-                window.location.href = '../user/index.html';
+                // Prevent the initial routing from looping every time auth state is poked
+                if (!initialLoadDone) {
+                    initialLoadDone = true;
+                    handleInitialRoute();
+                }
+            } else {
+                // If not logged in, go to login. Use replace to avoid back-button loops.
+                window.location.replace('../login.html');
             }
         });
 
-        // Background task to ensure the admin document exists so modules don't crash
-        async function provisionAdminRecord(user) {
+        logoutBtn.addEventListener('click', async () => {
             try {
-                const userDocRef = doc(db, 'artifacts', window.__app_id, "users", user.uid);
-                await setDoc(userDocRef, {
-                    email: user.email,
-                    role: 'admin',
-                    displayName: 'Mubashir Arham',
-                    isVerified: true,
-                    lastActive: new Date()
-                }, { merge: true });
-            } catch (e) {
-                console.warn("Background provisioning delayed by permissions.");
+                await signOut(auth);
+            } catch (error) {
+                console.error("Logout Failed", error);
             }
-        }
+        });
 
-        function handleAccessGranted(email) {
-            document.getElementById('header-user-email').innerText = email;
-            document.getElementById('page-loader').classList.add('hidden');
-            loadSection('dashboard');
-        }
+        // ==========================================
+        // ROUTER & UI MANAGER
+        // ==========================================
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const openSidebarBtn = document.getElementById('open-sidebar-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageTitle = document.getElementById('page-title');
 
-        window.handleSignOut = () => {
-            signOut(auth).then(() => { window.location.href = '../login.html'; });
+        const viewTitles = {
+            'dashboard': 'Dashboard Overview',
+            'orders': 'Order Management',
+            'refills': 'Refill Management',
+            'deposits': 'Deposit Management',
+            'support': 'Support Tickets',
+            'users': 'User Management',
+            'categories': 'Categories',
+            'services': 'Services',
+            'api': 'API Providers',
+            'payments': 'Payment Gateways',
+            'automation': 'System Automation',
+            'settings': 'General Settings'
         };
 
-        // Event-driven modular router with Light Theme classes
-        window.loadSection = (sectionName) => {
-            document.querySelectorAll('.nav-link').forEach(el => {
-                el.classList.remove('text-brand-700', 'bg-brand-50');
-                el.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-brand-600');
-            });
-            const activeLink = document.getElementById(`nav-${sectionName}`);
-            if(activeLink) {
-                activeLink.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-brand-600');
-                activeLink.classList.add('text-brand-700', 'bg-brand-50');
-            }
-
-            // Format Title (e.g., 'addfunds' -> 'Addfunds')
-            document.getElementById('page-title').innerText = sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace('-', ' ');
-            
-            // Dispatch event for external modules to listen to and render their UI
-            const event = new CustomEvent('admin-section-load', { detail: { section: sectionName } });
-            window.dispatchEvent(event);
-
-            // Close mobile sidebar if open
-            if (window.innerWidth < 1024) closeSidebar();
-        };
-
-        // Mobile Sidebar Controls
-        window.openSidebar = () => {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
+        function openSidebar() {
             sidebar.classList.remove('-translate-x-full');
             sidebarOverlay.classList.remove('hidden');
             setTimeout(() => {
-                sidebarOverlay.classList.remove('opacity-0');
                 sidebarOverlay.classList.add('opacity-100', 'pointer-events-auto');
             }, 10);
-        };
+        }
 
-        window.closeSidebar = () => {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
+        function closeSidebar() {
             sidebar.classList.add('-translate-x-full');
             sidebarOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-            sidebarOverlay.classList.add('opacity-0');
             setTimeout(() => {
                 sidebarOverlay.classList.add('hidden');
             }, 300);
-        };
+        }
+
+        openSidebarBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        function switchView(targetViewId) {
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            const activeLink = document.querySelector(`.nav-link[data-target="${targetViewId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            if (viewTitles[targetViewId]) {
+                pageTitle.innerText = viewTitles[targetViewId];
+            }
+
+            if (window.innerWidth < 1024) closeSidebar();
+
+            window.dispatchEvent(new CustomEvent('admin-section-load', { 
+                detail: { section: targetViewId } 
+            }));
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                switchView(target);
+                // Update URL without reloading
+                history.pushState(null, null, `#${target}`); 
+            });
+        });
+
+        function handleInitialRoute() {
+            const hash = window.location.hash.replace('#', '');
+            
+            // Wait 100ms so the module JS files have time to attach their event listeners
+            // before we dispatch the 'admin-section-load' event.
+            if (hash && viewTitles[hash]) {
+                setTimeout(() => switchView(hash), 100);
+            } else {
+                setTimeout(() => switchView('dashboard'), 100);
+            }
+        }
+
+        // Listen for back/forward buttons
+        window.addEventListener('popstate', handleInitialRoute);
+
     </script>
-</head>
-<body class="text-gray-800 antialiased overflow-hidden flex h-screen">
 
-    <!-- Loading Overlay -->
-    <div id="page-loader" class="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center">
-        <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
-        <p class="text-gray-500 font-medium tracking-wide">Authenticating Admin...</p>
-    </div>
-
-    <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" onclick="closeSidebar()" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden opacity-0 pointer-events-none"></div>
-
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="bg-white w-64 border-r border-gray-200 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none transition-transform duration-300">
-        
-        <!-- Sidebar Header (Logo) -->
-        <div class="h-20 flex items-center px-6 border-b border-gray-100 bg-brand-50/50">
-            <a href="#" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                    M
-                </div>
-                <span class="font-bold text-xl text-brand-900 tracking-tight">MAsmmpanel</span>
-            </a>
-            <button onclick="closeSidebar()" class="ml-auto lg:hidden text-gray-500 hover:text-red-500">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-
-        <!-- Sidebar Links -->
-        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <div id="nav-dashboard" onclick="loadSection('dashboard')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-700 bg-brand-50 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
-            </div>
-            
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Management</p>
-            <div id="nav-users" onclick="loadSection('users')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-users w-5 text-center"></i> Users
-            </div>
-            <div id="nav-categories" onclick="loadSection('categories')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-layer-group w-5 text-center"></i> Categories
-            </div>
-            <div id="nav-services" onclick="loadSection('services')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-cubes w-5 text-center"></i> Services
-            </div>
-
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Operations</p>
-            <div id="nav-orders" onclick="loadSection('orders')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Orders
-            </div>
-            <div id="nav-support" onclick="loadSection('support')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-headset w-5 text-center"></i> Tickets
-            </div>
-
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Finance</p>
-            <div id="nav-deposits" onclick="loadSection('deposits')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-money-bill-transfer w-5 text-center"></i> Add Funds Logs
-            </div>
-            <div id="nav-payments" onclick="loadSection('payments')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-wallet w-5 text-center"></i> Gateways
-            </div>
-
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">System</p>
-            <div id="nav-api" onclick="loadSection('api')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-code w-5 text-center"></i> API Settings
-            </div>
-            <div id="nav-settings" onclick="loadSection('settings')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors cursor-pointer">
-                <i class="fa-solid fa-sliders w-5 text-center"></i> General Settings
-            </div>
-        </nav>
-
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-gray-100">
-            <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 font-medium transition-colors">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Sign Out
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        
-        <!-- Top Header -->
-        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0">
-            <!-- Mobile Menu Toggle -->
-            <div class="flex items-center">
-                <button onclick="openSidebar()" class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none p-2 mr-3">
-                    <i class="fa-solid fa-bars text-2xl"></i>
-                </button>
-                <h1 id="page-title" class="text-xl font-bold text-gray-800">Dashboard</h1>
-            </div>
-
-            <!-- Header Right Section -->
-            <div class="flex items-center gap-4 sm:gap-6">
-                <!-- Notifications -->
-                <button class="text-gray-400 hover:text-brand-500 transition-colors relative">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                </button>
-
-                <!-- User Dropdown -->
-                <div class="flex items-center gap-3 border-l border-gray-200 pl-4 sm:pl-6">
-                    <div class="w-10 h-10 rounded-full bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 font-bold overflow-hidden">
-                        <i class="fa-solid fa-user-shield text-lg"></i>
-                    </div>
-                    <div class="hidden md:block text-left">
-                        <p id="header-user-email" class="text-sm font-semibold text-gray-700 truncate max-w-[150px]">Loading...</p>
-                        <p class="text-xs text-brand-600 font-semibold">Administrator</p>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Dynamic Content Area (Modules Inject Here) -->
-        <main id="admin-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50 relative">
-            
-            <!-- Default Placeholder before module loads -->
-            <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                <i class="fa-solid fa-database text-5xl mb-4 text-gray-200"></i>
-                <p>Initializing Module View...</p>
-            </div>
-
-        </main>
-    </div>
-
-    <!-- All Admin Script Modules -->
-    <!-- These modules will listen to the 'admin-section-load' event and inject their UI into #admin-content -->
+    <!-- Modules -->
     <script type="module" src="../assets/js/admin/dashboard.js"></script>
+    <script type="module" src="../assets/js/admin/orders.js"></script>
+    <script type="module" src="../assets/js/admin/refills.js"></script>
+    <script type="module" src="../assets/js/admin/deposits.js"></script>
     <script type="module" src="../assets/js/admin/users.js"></script>
     <script type="module" src="../assets/js/admin/categories.js"></script>
     <script type="module" src="../assets/js/admin/services.js"></script>
-    <script type="module" src="../assets/js/admin/orders.js"></script>
-    <script type="module" src="../assets/js/admin/support.js"></script>
-    <script type="module" src="../assets/js/admin/deposits.js"></script>
-    <script type="module" src="../assets/js/admin/payments.js"></script>
     <script type="module" src="../assets/js/admin/api.js"></script>
+    <script type="module" src="../assets/js/admin/payments.js"></script>
+    <script type="module" src="../assets/js/admin/automation.js"></script>
+    <script type="module" src="../assets/js/admin/support.js"></script>
     <script type="module" src="../assets/js/admin/settings.js"></script>
 
 </body>
