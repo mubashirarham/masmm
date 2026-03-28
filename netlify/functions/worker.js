@@ -20,6 +20,7 @@ exports.handler = async (event, context) => {
     try {
         await processPendingOrders();
         await syncActiveStatuses();
+        await autoSyncCatalogIfNeeded(); // Daily Catalog Cleanup
         
         return { statusCode: 200, body: "Worker Processed Successfully" };
     } catch (error) {
@@ -112,10 +113,21 @@ async function syncActiveStatuses() {
             const result = await response.json();
 
             if (result.status) {
-                // Map external status to internal status
-                let internalStatus = result.status;
                 if (internalStatus === 'Completed' || internalStatus === 'Done') internalStatus = 'Completed';
                 if (internalStatus === 'Canceled' || internalStatus === 'Cancelled') internalStatus = 'Canceled';
+
+                const pathSegments = doc.ref.path.split('/');
+                const userId = pathSegments[3];
+
+                if (doc.data().status !== internalStatus) {
+                    const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
+                    await notifRef.set({
+                        title: `Order ${internalStatus}`,
+                        message: `Your order for ${doc.data().serviceName || 'service'} is now ${internalStatus}.`,
+                        isRead: false,
+                        createdAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                }
 
                 await doc.ref.update({
                     status: internalStatus,
@@ -124,10 +136,9 @@ async function syncActiveStatuses() {
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
                 
+                
                 // --- Refund Logic if Canceled ---
-                if (internalStatus === 'Canceled') {
-                    const pathSegments = doc.ref.path.split('/');
-                    const userId = pathSegments[3];
+                if (internalStatus === 'Canceled' && doc.data().status !== 'Canceled') {
                     const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
                     
                     await statsRef.update({
@@ -139,4 +150,134 @@ async function syncActiveStatuses() {
             console.error(`Sync Status Error:`, e);
         }
     }
+}
+
+// --- Task 3: Auto-Sync Provider Catalog (Runs daily) ---
+async function autoSyncCatalogIfNeeded() {
+    // 1. Check if 24 hours have passed since last sync
+    const systemRef = db.collection('artifacts').doc(APP_ID).collection('system').doc('cron');
+    const systemSnap = await systemRef.get();
+    
+    let lastSync = 0;
+    if (systemSnap.exists) {
+        lastSync = systemSnap.data().lastCatalogSync || 0;
+    }
+    
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    
+    // Only run once a day to avoid rate limits
+    if (now - lastSync < ONE_DAY_MS) return;
+
+    console.log("Running Daily Provider Catalog Auto-Sync...");
+
+    const providersSnap = await db.collection('artifacts').doc(APP_ID).collection('api_providers').where('status', '==', 'Active').get();
+    
+    for (const pDoc of providersSnap.docs) {
+        const provider = pDoc.data();
+        
+        try {
+            // Fetch upstream services
+            const response = await fetch(provider.url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ key: provider.apiKey, action: 'services' })
+            });
+            const upstreamServices = await response.json();
+            
+            if (!Array.isArray(upstreamServices) || upstreamServices.error) continue;
+            
+            // --- Determine Provider Currency & Exchange Rate (Copied from sync-provider) ---
+            let providerCurrency = 'USD';
+            let exchangeRateToPKR = 1;
+            try {
+                const balRes = await fetch(provider.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ key: provider.apiKey, action: 'balance' })
+                });
+                const balData = await balRes.json();
+                if (balData && balData.currency) providerCurrency = balData.currency.toUpperCase();
+                
+                if (providerCurrency !== 'PKR') {
+                    const xrRes = await fetch(`https://economia.awesomeapi.com.br/json/last/${providerCurrency}-PKR`);
+                    if (xrRes.ok) {
+                        const xrData = await xrRes.json();
+                        const pairKey = `${providerCurrency}PKR`;
+                        if (xrData && xrData[pairKey] && xrData[pairKey].bid) {
+                            exchangeRateToPKR = parseFloat(xrData[pairKey].bid);
+                        }
+                    } else {
+                        const fbRes = await fetch(`https://open.er-api.com/v6/latest/${providerCurrency}`);
+                        const fbData = await fbRes.json();
+                        if (fbData && fbData.rates && fbData.rates.PKR) exchangeRateToPKR = fbData.rates.PKR;
+                    }
+                }
+            } catch (e) {
+                console.warn(`Worker Exchange Rate fallback for ${providerCurrency}`);
+                if (providerCurrency === 'USD') exchangeRateToPKR = 278.0;
+                if (providerCurrency === 'EUR') exchangeRateToPKR = 300.0;
+                if (providerCurrency === 'INR') exchangeRateToPKR = 3.3;
+            }
+            
+            // Map upstream service IDs to full service objects for price checking
+            const upstreamMap = new Map();
+            upstreamServices.forEach(s => upstreamMap.set(String(s.service), s));
+
+            // Fetch local active services tied to this provider
+            const localServicesSnap = await db.collection('artifacts').doc(APP_ID)
+                .collection('public').doc('data').collection('services')
+                .where('providerId', '==', pDoc.id)
+                .where('status', '==', 'Active')
+                .get();
+
+            const batch = db.batch();
+            let disabledCount = 0;
+            let updatedPriceCount = 0;
+
+            for (const sDoc of localServicesSnap.docs) {
+                const localService = sDoc.data();
+                const sid = String(localService.serviceId);
+                
+                if (localService.serviceId && !upstreamMap.has(sid)) {
+                    // Service completely removed upstream -> Disable it
+                    batch.update(sDoc.ref, { 
+                        status: 'Disabled', 
+                        disabledReason: 'Auto-sync: Removed by upstream provider',
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                    disabledCount++;
+                } else if (localService.serviceId && upstreamMap.has(sid)) {
+                    // Service exists. Check if price changed.
+                    const upService = upstreamMap.get(sid);
+                    const rawUpstreamRate = parseFloat(upService.rate) || 0;
+                    const upstreamRateInPkr = rawUpstreamRate * exchangeRateToPKR;
+                    
+                    // Retrieve stored markup or fallback to 1.2x (20% margin) for old services
+                    const markup = parseFloat(localService.metadata_markup) || 1.2;
+                    const expectedLocalRateFormatted = (upstreamRateInPkr * markup).toFixed(4);
+                    
+                    // If the current local rate deviates, update it
+                    if (localService.rate !== expectedLocalRateFormatted) {
+                        batch.update(sDoc.ref, {
+                            rate: expectedLocalRateFormatted,
+                            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+                        updatedPriceCount++;
+                    }
+                }
+            }
+
+            if (disabledCount > 0 || updatedPriceCount > 0) {
+                await batch.commit();
+                console.log(`Auto-Sync Result for ${pDoc.id}: Disabled ${disabledCount}, Updated Prices for ${updatedPriceCount}`);
+            }
+
+        } catch (e) {
+            console.error(`Catalog Sync Error for ${pDoc.id}:`, e);
+        }
+    }
+
+    // Update the last sync timestamp
+    await systemRef.set({ lastCatalogSync: now }, { merge: true });
 }

@@ -42,6 +42,17 @@
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Dynamic SEO and Theme Bootloader -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initDynamicTheme } from "./assets/js/theme-loader.js";
+        const themeApp = initializeApp({
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            projectId: "masmmpanel-7af8c"
+        }, "ThemeLoader");
+        initDynamicTheme(themeApp);
+    </script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -111,7 +122,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
                     
                     <!-- Left: SEO Text & Value Proposition -->
-                    <div class="text-center lg:text-left">
+                    <div class="text-center lg:text-left order-2 lg:order-1">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-800 font-semibold text-sm mb-6">
                             <span class="relative flex h-3 w-3">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
@@ -152,7 +163,7 @@
                     </div>
 
                     <!-- Right: Authentication Form -->
-                    <div class="w-full max-w-md mx-auto lg:ml-auto" id="hero-login">
+                    <div class="w-full max-w-md mx-auto lg:ml-auto order-1 lg:order-2" id="hero-login">
                         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
                             
                             <!-- Auth State: Logged In (Hidden by default) -->
@@ -361,6 +372,19 @@
             </div>
         </section>
 
+        <!-- Platform Updates & Blogs -->
+        <section class="py-16 bg-white border-t border-brand-50" id="platform-blogs-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 brand-heading">Latest Platform Updates</h2>
+                    <p class="text-gray-600">Stay informed on the newest features, tutorials, and system enhancements.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="landing-blogs-grid">
+                    <!-- Blogs dynamically injected here -->
+                </div>
+            </div>
+        </section>
+
         <!-- FAQs Section -->
         <section class="py-16 bg-brand-50 border-t border-brand-100">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -505,7 +529,12 @@
             getFirestore, 
             doc, 
             setDoc, 
-            serverTimestamp 
+            serverTimestamp,
+            collection,
+            getDocs,
+            query,
+            orderBy,
+            limit
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // User Provided Firebase Configuration
@@ -526,7 +555,52 @@
         const provider = new GoogleAuthProvider();
         
         // Correct App ID for Firestore Document Paths
-        const panelAppId = "masmmpanel-default";
+        let __currentHost = window.location.hostname;
+        let panelAppId = "masmmpanel-default";
+        if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app')) {
+            panelAppId = __currentHost.replace(/\./g, '-');
+        }
+
+        // --- Fetch Landing Blogs ---
+        async function fetchLandingBlogs() {
+            const grid = document.getElementById('landing-blogs-grid');
+            if(!grid) return;
+            try {
+                const blogsRef = collection(db, 'artifacts', panelAppId, 'public', 'data', 'blogs');
+                const q = query(blogsRef, orderBy('createdAt', 'desc'), limit(3));
+                const snap = await getDocs(q);
+
+                if(snap.empty) {
+                    document.getElementById('platform-blogs-section').style.display = 'none';
+                    return;
+                }
+
+                let html = '';
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'New';
+                    const img = data.image ? `<img src="${data.image}" class="w-full h-48 object-cover rounded-t-2xl" alt="Blog">` : `<div class="w-full h-48 bg-gradient-to-br from-brand-400 to-brand-600 rounded-t-2xl flex items-center justify-center text-white"><i class="fa-solid fa-newspaper text-5xl opacity-50"></i></div>`;
+                    html += `
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all group overflow-hidden flex flex-col cursor-pointer">
+                            ${img}
+                            <div class="p-6 flex-1 flex flex-col">
+                                <span class="text-xs font-bold text-brand-600 uppercase tracking-wider mb-2 block">${date}</span>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-brand-600 transition-colors title-font line-clamp-2">${data.title}</h3>
+                                <p class="text-gray-600 text-sm line-clamp-3 mb-4">${data.content}</p>
+                                <div class="mt-auto">
+                                    <span class="text-sm font-bold text-brand-500 group-hover:text-brand-700">Read Update &rarr;</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                grid.innerHTML = html;
+            } catch(e) {
+                console.error("Blogs error:", e);
+                document.getElementById('platform-blogs-section').style.display = 'none';
+            }
+        }
+        fetchLandingBlogs();
 
         // UI Elements
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');

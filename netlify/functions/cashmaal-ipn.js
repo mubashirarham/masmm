@@ -70,6 +70,14 @@ exports.handler = async (event, context) => {
                 t.set(statsRef, {
                     balance: admin.firestore.FieldValue.increment(parseFloat(amount))
                 }, { merge: true });
+
+                const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
+                t.set(notifRef, {
+                    title: 'Deposit Successful',
+                    message: `Rs ${amount} has been added to your balance via CashMaal.`,
+                    isRead: false,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp()
+                });
             });
 
             // IMPORTANT: You MUST return **OK** so CashMaal stops sending retries

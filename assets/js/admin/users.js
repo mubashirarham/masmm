@@ -4,10 +4,9 @@ import {
     onSnapshot,
     doc,
     getDoc,
-    updateDoc,
-    increment,
     setDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
@@ -192,9 +191,12 @@ function renderUsersTable() {
                 <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
                 <td class="px-6 py-4 text-center">${roleBadge}</td>
                 <td class="px-6 py-4 text-center">${statusBadge}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn">
+                <td class="px-6 py-4 flex justify-center gap-2">
+                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
                         Manage
+                    </button>
+                    <button class="text-orange-600 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded transition-colors text-xs font-bold shadow-sm flex items-center gap-1" onclick="window.impersonateUser('${user.id}')">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
                     </button>
                 </td>
             `;
@@ -274,20 +276,37 @@ async function handleBalanceAdjustment() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
     try {
-        const statsRef = doc(db, 'artifacts', appId, 'users', currentManagingUserId, 'account', 'stats');
-        
-        await updateDoc(statsRef, {
-            balance: increment(amount)
+        const auth = getAuth(window.firebaseApp);
+        const token = await auth.currentUser.getIdToken();
+
+        const response = await fetch('/.netlify/functions/adminapi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                action: 'adjust_balance',
+                userId: currentManagingUserId,
+                amount: amount
+            })
         });
 
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Failed to update balance');
+        }
+
         // Refresh the modal view stats
+        const statsRef = doc(db, 'artifacts', appId, 'users', currentManagingUserId, 'account', 'stats');
         const freshSnap = await getDoc(statsRef);
         if (freshSnap.exists()) {
             document.getElementById('modal-user-balance').innerText = `Rs ${Number(freshSnap.data().balance || 0).toFixed(4)}`;
         }
 
         amountInput.value = '';
-        alert("Balance updated successfully!");
+        alert("Balance updated successfully via secure backend!");
 
     } catch (error) {
         console.error("Failed to update balance:", error);
@@ -297,3 +316,24 @@ async function handleBalanceAdjustment() {
         btn.innerHTML = 'Apply';
     }
 }
+
+// Impersonation feature attached globally to dispatch token request
+window.impersonateUser = async (userId) => {
+    if(!confirm("Launch a new tab logged in securely as this user WITHOUT their password?")) return;
+    try {
+        const auth = getAuth(window.firebaseApp);
+        const token = await auth.currentUser.getIdToken();
+        const response = await fetch('/.netlify/functions/adminapi', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ action: 'impersonate_user', userId })
+        });
+        const result = await response.json();
+        if(!response.ok || !result.success) throw new Error(result.error);
+        
+        // Spawns the authenticating tab
+        window.open(`../user/index.html?impersonate_token=${result.token}`, '_blank');
+    } catch (e) {
+        alert("Impersonation failed: " + e.message);
+    }
+};

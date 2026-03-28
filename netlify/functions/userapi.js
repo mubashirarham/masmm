@@ -8,7 +8,6 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 
 exports.handler = async (event, context) => {
     const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
@@ -17,7 +16,13 @@ exports.handler = async (event, context) => {
         return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
     }
 
-    // Standard SMM API parameters usually come as form-data or JSON
+    // Dynamic Tenant Resolution
+    const currentHost = event.headers.host || event.headers.origin || '';
+    let dynamicAppId = process.env.APP_ID || 'masmmpanel-default';
+    if (currentHost && !currentHost.includes('netlify.app') && !currentHost.includes('localhost') && !currentHost.includes('127.0.0.1')) {
+        dynamicAppId = currentHost.replace(/https?:\/\//, '').split(':')[0].replace(/\./g, '-');
+    }
+
     let params = {};
     try {
         if (event.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
@@ -34,24 +39,23 @@ exports.handler = async (event, context) => {
     if (!key) return { statusCode: 401, body: JSON.stringify({ error: 'API Key is required' }) };
 
     try {
-        // 1. Authenticate User by API Key
-        // Note: In production, you'd ideally index this, but for simplicity we fetch by UID if key matches
-        // For a true provider API, we search for the document where key == key.
         const apiQuery = await db.collectionGroup('api').where('key', '==', key).limit(1).get();
-        
         if (apiQuery.empty) {
             return { statusCode: 401, body: JSON.stringify({ error: 'Invalid API Key' }) };
         }
 
         const apiDoc = apiQuery.docs[0];
         const pathSegments = apiDoc.ref.path.split('/');
-        const userId = pathSegments[3]; // artifacts/{appId}/users/{userId}/...
+        // Make sure the API key actually belongs to the domain making the query
+        if (pathSegments[1] !== dynamicAppId) {
+            return { statusCode: 401, body: JSON.stringify({ error: 'API Key domain mismatch' }) };
+        }
         
-        const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
+        const userId = pathSegments[3]; 
+        const statsRef = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('account').doc('stats');
         const statsSnap = await statsRef.get();
         const userData = statsSnap.exists ? statsSnap.data() : { balance: 0 };
 
-        // 2. Handle Actions
         switch (action) {
             case 'balance':
                 return { 
@@ -61,7 +65,7 @@ exports.handler = async (event, context) => {
                 };
 
             case 'services':
-                const servicesSnap = await db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services').where('status', '==', 'Active').get();
+                const servicesSnap = await db.collection('artifacts').doc(dynamicAppId).collection('public').doc('data').collection('services').where('status', '==', 'Active').get();
                 const services = servicesSnap.docs.map(d => {
                     const s = d.data();
                     return {
@@ -77,10 +81,11 @@ exports.handler = async (event, context) => {
 
             case 'add':
                 const { service, link, quantity } = params;
-                const srvRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services').doc(service);
-                const srvSnap = await srvRef.get();
+                if (!service || !link || !quantity) return { statusCode: 400, body: JSON.stringify({ error: 'Missing parameters' }) };
 
-                if (!srvSnap.exists) return { statusCode: 400, body: JSON.stringify({ error: 'Service not found' }) };
+                const srvRef = db.collection('artifacts').doc(dynamicAppId).collection('public').doc('data').collection('services').doc(service.toString());
+                const srvSnap = await srvRef.get();
+                if (!srvSnap.exists) return { statusCode: 400, body: JSON.stringify({ error: 'Service not found in catalog' }) };
                 
                 const srvData = srvSnap.data();
                 const charge = (parseFloat(srvData.rate) / 1000) * parseInt(quantity);
@@ -89,8 +94,38 @@ exports.handler = async (event, context) => {
                     return { statusCode: 400, body: JSON.stringify({ error: 'Insufficient balance' }) };
                 }
 
+                // Child Panel Order Routing & Wholesale Deduction Hook
+                let wholesaleCost = 0;
+                let childPanelOwnerRef = null;
+                
+                if (dynamicAppId !== 'masmmpanel-default') {
+                    // Check if the service exists upstream in main panel
+                    const masterSrvRef = db.collection('artifacts').doc('masmmpanel-default').collection('public').doc('data').collection('services').doc(service.toString());
+                    const masterSrvSnap = await masterSrvRef.get();
+                    if(!masterSrvSnap.exists) {
+                       return { statusCode: 400, body: JSON.stringify({ error: 'Wholesale Partner Error: Service Unavailable.' }) };
+                    }
+                    wholesaleCost = (parseFloat(masterSrvSnap.data().rate) / 1000) * parseInt(quantity);
+                    
+                    // Retrieve Child Panel Owner Account
+                    const formattedDomain = dynamicAppId.replace(/-/g, '.');
+                    const cpLookup = await db.collection('artifacts').doc('masmmpanel-default').collection('child_panels').doc(formattedDomain).get();
+                    
+                    if(!cpLookup.exists || cpLookup.data().status !== 'Active') {
+                        return { statusCode: 400, body: JSON.stringify({ error: 'Wholesale Partner Error: Panel Suspended' }) };
+                    }
+                    
+                    const ownerUid = cpLookup.data().ownerUid;
+                    childPanelOwnerRef = db.collection('artifacts').doc('masmmpanel-default').collection('users').doc(ownerUid).collection('account').doc('stats');
+                    
+                    const ownerStats = await childPanelOwnerRef.get();
+                    if (!ownerStats.exists || (ownerStats.data().balance || 0) < wholesaleCost) {
+                        return { statusCode: 400, body: JSON.stringify({ error: 'Wholesale Partner Error: Insufficient Wholesale Funds' }) };
+                    }
+                }
+
                 // Create Order
-                const orderRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('orders').doc();
+                const orderRef = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('orders').doc();
                 await db.runTransaction(async (t) => {
                     t.set(orderRef, {
                         serviceId: service,
@@ -109,13 +144,20 @@ exports.handler = async (event, context) => {
                         totalSpent: admin.firestore.FieldValue.increment(charge),
                         totalOrders: admin.firestore.FieldValue.increment(1)
                     });
+                    
+                    if (childPanelOwnerRef && wholesaleCost > 0) {
+                        t.update(childPanelOwnerRef, {
+                            balance: admin.firestore.FieldValue.increment(-wholesaleCost),
+                            totalSpent: admin.firestore.FieldValue.increment(wholesaleCost)
+                        });
+                    }
                 });
 
                 return { statusCode: 200, headers, body: JSON.stringify({ order: orderRef.id }) };
 
             case 'status':
-                const { order } = params;
-                const orderRefCheck = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('orders').doc(order);
+                const orderCheckId = params.order;
+                const orderRefCheck = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('orders').doc(orderCheckId.toString());
                 const orderSnap = await orderRefCheck.get();
 
                 if (!orderSnap.exists) return { statusCode: 400, body: JSON.stringify({ error: 'Order not found' }) };

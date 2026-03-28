@@ -37,6 +37,17 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Dynamic SEO and Theme Bootloader -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initDynamicTheme } from "../assets/js/theme-loader.js";
+        const themeApp = initializeApp({
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            projectId: "masmmpanel-7af8c"
+        }, "ThemeLoader");
+        initDynamicTheme(themeApp);
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
         
@@ -102,6 +113,10 @@
                 <i class="fa-solid fa-code w-5 text-center"></i> API Docs
             </a>
             
+            <a href="#childpanel" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="childpanel">
+                <i class="fa-solid fa-server w-5 text-center"></i> Child Panels
+            </a>
+            
             <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Account</p>
             
             <a href="#profile" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="profile">
@@ -138,16 +153,42 @@
 
             <!-- Header Right Section -->
             <div class="flex items-center gap-4 sm:gap-6">
+                <!-- Currency Dropdown -->
+                <div class="relative hidden sm:block">
+                    <button id="currency-dropdown-btn" class="flex items-center gap-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg border border-gray-200 transition-colors">
+                        <span id="current-currency-label">loading...</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="currency-dropdown-menu" class="hidden absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-lg z-[100] overflow-hidden">
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-brand-700 hover:bg-brand-50 font-bold border-b border-gray-50" onclick="window.changeCurrency('PKR')">Rs PKR</button>
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-600 font-semibold border-b border-gray-50" onclick="window.changeCurrency('USD')">$ USD</button>
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-600 font-semibold" onclick="window.changeCurrency('EUR')">€ EUR</button>
+                    </div>
+                </div>
+
                 <!-- Notifications -->
-                <button class="text-gray-400 hover:text-brand-500 transition-colors relative">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                </button>
+                <div class="relative flex items-center h-full">
+                    <button id="header-bell-btn" class="text-gray-400 hover:text-brand-500 transition-colors relative mx-2">
+                        <i class="fa-regular fa-bell text-xl"></i>
+                        <span id="header-bell-badge" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 pointer-events-none"></span>
+                    </button>
+                    <!-- Notifications Dropdown Menu -->
+                    <div id="notifications-dropdown-menu" class="hidden absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white border border-gray-100 rounded-xl shadow-2xl z-[100] overflow-hidden flex-col max-h-[28rem]">
+                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <span class="font-bold text-gray-800 text-sm uppercase tracking-wide">Notifications</span>
+                            <button id="mark-all-read-btn" class="text-xs text-brand-600 hover:text-brand-800 font-bold transition-colors">Mark as read</button>
+                        </div>
+                        <div id="notifications-list" class="flex-1 overflow-y-auto w-full max-h-96 min-h-[4rem] text-left">
+                            <div class="p-6 text-center text-sm text-gray-500 font-medium"><i class="fa-solid fa-spinner fa-spin mb-2 text-xl text-brand-500"></i><br>Loading...</div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- User Dropdown (Simulated) -->
                 <div class="flex items-center gap-3 border-l border-gray-200 pl-4 sm:pl-6">
-                    <div class="w-10 h-10 rounded-full bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 font-bold overflow-hidden">
-                        <i class="fa-solid fa-user text-lg"></i>
+                    <div id="header-avatar-container" class="w-10 h-10 rounded-full bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 font-bold overflow-hidden">
+                        <i id="header-avatar-icon" class="fa-solid fa-user text-lg"></i>
+                        <img id="header-avatar-img" class="hidden w-full h-full object-cover">
                     </div>
                     <div class="hidden md:block text-left">
                         <p id="header-user-email" class="text-sm font-semibold text-gray-700 truncate max-w-[120px]">Loading...</p>
@@ -179,7 +220,26 @@
     <!-- Firebase Configuration & Integrated Logic (Auth + Router) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import * as currencyUtils from '../assets/js/currency.js';
+        
+        window.formatMoney = currencyUtils.formatMoney;
+        window.changeCurrency = currencyUtils.setCurrency;
+        
+        // Currency Dropdown Logic
+        const currBtn = document.getElementById('currency-dropdown-btn');
+        const currMenu = document.getElementById('currency-dropdown-menu');
+        if (currBtn && currMenu) {
+            currBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currMenu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!currMenu.contains(e.target) && !currBtn.contains(e.target)) {
+                    currMenu.classList.add('hidden');
+                }
+            });
+        }
         
         const firebaseConfig = {
             apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
@@ -196,8 +256,13 @@
         const auth = getAuth(app);
         window.firebaseApp = app;
 
-        // Ensure App ID is set globally for modules
-        window.__app_id = "masmmpanel-default"; 
+        // Dynamic Tenant Routing
+        let __currentHost = window.location.hostname;
+        let dynamicAppId = "masmmpanel-default";
+        if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app')) {
+            dynamicAppId = __currentHost.replace(/\./g, '-');
+        }
+        window.__app_id = dynamicAppId; 
 
         // ==========================================
         // MODULE: AUTHENTICATION GUARD
@@ -205,6 +270,17 @@
         const pageLoader = document.getElementById('page-loader');
         const headerEmail = document.getElementById('header-user-email');
         const logoutBtn = document.getElementById('logout-btn');
+
+        // Impersonation Interceptor
+        const urlParams = new URLSearchParams(window.location.search);
+        const impersonateToken = urlParams.get('impersonate_token');
+
+        if (impersonateToken) {
+            signInWithCustomToken(auth, impersonateToken).then(() => {
+                // Remove token from URL for security
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }).catch(console.error);
+        }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -216,6 +292,15 @@
                 
                 // Set UI for logged-in user
                 headerEmail.innerText = user.email || "User";
+                if (user.photoURL) {
+                    const icon = document.getElementById('header-avatar-icon');
+                    const img = document.getElementById('header-avatar-img');
+                    if (icon && img) {
+                        icon.classList.add('hidden');
+                        img.src = user.photoURL;
+                        img.classList.remove('hidden');
+                    }
+                }
                 pageLoader.classList.add('hidden'); // Hide loader
             } else {
                 // Not logged in -> Redirect to login page
@@ -253,6 +338,7 @@
             'addfunds': 'Add Funds',
             'transactions': 'Payment History',
             'api': 'API Documentation',
+            'childpanel': 'Manage Child Panels',
             'profile': 'Profile Settings'
         };
 
@@ -329,6 +415,11 @@
             }
         }
 
+        window.addEventListener('currency-changed', () => {
+             const hash = window.location.hash.replace('#', '') || 'dashboard';
+             switchView(hash);
+        });
+
         handleInitialRoute();
     </script>
 
@@ -343,6 +434,8 @@
     <script type="module" src="../assets/js/user/transactions.js"></script>
     <script type="module" src="../assets/js/user/api.js"></script>
     <script type="module" src="../assets/js/user/profile.js"></script>
+    <script type="module" src="../assets/js/user/notifications.js"></script>
+    <script type="module" src="../assets/js/user/childpanel.js"></script>
 
 </body>
 </html>

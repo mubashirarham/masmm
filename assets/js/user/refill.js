@@ -1,361 +1,91 @@
 import { 
-    getFirestore, 
-    collectionGroup, 
-    onSnapshot,
-    doc,
-    updateDoc,
-    serverTimestamp
+    getFirestore, collection, query, orderBy, onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const db = getFirestore(window.firebaseApp);
+const auth = getAuth(window.firebaseApp);
 const appId = window.__app_id;
 
-let allRefills = [];
-let currentManagingRefill = null;
-
-// Listen for the custom routing event from admin/index.html
-window.addEventListener('admin-section-load', (e) => {
-    if (e.detail.section !== 'refills') return;
-
-    renderRefillsUI();
-    fetchAllRefills();
+window.addEventListener('user-section-load', (e) => {
+    if (e.detail.section !== 'refill') return;
+    renderUserRefillsUI();
+    fetchUserRefills();
 });
 
-function renderRefillsUI() {
-    const contentArea = document.getElementById('admin-content');
-    
-    // Inject the HTML for the Refills View
+function renderUserRefillsUI() {
+    const contentArea = document.getElementById('main-content');
     contentArea.innerHTML = `
-        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800">Refill Management</h2>
-                <p class="text-sm text-gray-500">Review and process order refill requests from users.</p>
-            </div>
-            <div class="w-full sm:w-auto">
-                <div class="relative">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="admin-search-refills" placeholder="Search by Order ID, Refill ID, or User ID..." class="w-full sm:w-80 pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
-                </div>
-            </div>
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Refill History</h1>
+            <p class="text-gray-500 text-sm">Track your guarantee refills and replacements in real-time.</p>
         </div>
 
-        <!-- Refills Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
-                    <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
-                        <tr>
-                            <th class="px-6 py-4 font-semibold w-24">Refill ID</th>
-                            <th class="px-6 py-4 font-semibold w-24">User ID</th>
-                            <th class="px-6 py-4 font-semibold w-24">Order ID</th>
-                            <th class="px-6 py-4 font-semibold max-w-[200px]">Service & Link</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Date</th>
-                            <th class="px-6 py-4 font-semibold text-center w-24">Actions</th>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
+                            <th class="p-4 font-semibold">Refill ID</th>
+                            <th class="p-4 font-semibold">Order ID</th>
+                            <th class="p-4 font-semibold">Service</th>
+                            <th class="p-4 font-semibold text-center">Date Requested</th>
+                            <th class="p-4 font-semibold text-right">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="admin-refills-table-body">
+                    <tbody id="user-refills-table" class="divide-y divide-gray-50">
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
-                                <p>Loading refill requests...</p>
+                            <td colspan="5" class="p-8 text-center text-gray-400">
+                                <i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading tracking logs...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <!-- Manage Refill Modal -->
-        <div id="manage-refill-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform transition-transform scale-95" id="manage-refill-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                    <h3 class="text-lg font-bold text-gray-800">Update Refill Status</h3>
-                    <button id="close-refill-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                
-                <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Refill ID:</span>
-                        <span id="modal-refill-id" class="font-mono text-gray-800 font-bold">---</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">User ID:</span>
-                        <span id="modal-refill-userid" class="font-mono text-gray-800 font-semibold">---</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Original Order ID:</span>
-                        <span id="modal-refill-orderid" class="font-mono text-brand-600 font-bold">---</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">API Provider ID:</span>
-                        <span id="modal-refill-upstreamid" class="font-mono text-gray-800 font-semibold">---</span>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">New Status</label>
-                        <select id="modal-refill-status" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                            <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Inline Notification Area -->
-                    <div id="modal-notification" class="hidden text-sm px-3 py-2 rounded-lg text-center font-semibold mb-2"></div>
-
-                    <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                        <button type="button" id="cancel-refill-btn" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Cancel</button>
-                        <button type="button" id="save-refill-btn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 shadow-sm">
-                            <span>Save Status</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     `;
-
-    // Attach Search Listener
-    const searchInput = document.getElementById('admin-search-refills');
-    if (searchInput) {
-        searchInput.addEventListener('input', renderRefillsTable);
-    }
-
-    // Attach Modal Close Listeners
-    const modal = document.getElementById('manage-refill-modal');
-    const closeBtn = document.getElementById('close-refill-modal-btn');
-    const content = document.getElementById('manage-refill-content');
-    const cancelBtn = document.getElementById('cancel-refill-btn');
-    const saveBtn = document.getElementById('save-refill-btn');
-
-    const closeModal = () => {
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.getElementById('modal-notification').classList.add('hidden');
-        }, 150);
-        currentManagingRefill = null;
-    };
-
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-    // Attach Save Listener
-    saveBtn.addEventListener('click', handleStatusUpdate);
 }
 
-function fetchAllRefills() {
-    // collectionGroup query to get all refill requests across ALL users
-    const refillsQuery = collectionGroup(db, 'refills');
+function fetchUserRefills() {
+    if(!auth.currentUser) return;
+    const uid = auth.currentUser.uid;
     
-    onSnapshot(refillsQuery, (snapshot) => {
-        allRefills = [];
+    const refillsRef = collection(db, 'artifacts', appId, 'users', uid, 'refills');
+    const q = query(refillsRef, orderBy("createdAt", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+        const table = document.getElementById('user-refills-table');
+        if(!table) return;
+
+        if (snapshot.empty) {
+            table.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-sm text-gray-500 font-medium">You have no active or completed refill requests.</td></tr>`;
+            return;
+        }
+
+        let html = '';
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
+            const dateStr = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'Pending';
+            const displayId = docSnap.id.substring(0,8).toUpperCase();
+            const displayOrderId = (data.orderId || '').substring(0,8).toUpperCase();
             
-            // Extract the userId from the document reference path
-            // Path structure: artifacts/{appId}/users/{userId}/refills/{refillId}
-            const pathSegments = docSnap.ref.path.split('/');
-            const userId = pathSegments.length >= 4 ? pathSegments[3] : 'Unknown';
+            let statusBadge = '';
+            const s = (data.status || 'Pending').toLowerCase();
+            if(s === 'completed') statusBadge = '<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Completed</span>';
+            else if(s === 'in progress') statusBadge = '<span class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-bold">In Progress</span>';
+            else if(s === 'rejected') statusBadge = '<span class="px-2.5 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">Rejected</span>';
+            else statusBadge = '<span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-md text-xs font-bold">Pending</span>';
 
-            allRefills.push({
-                id: docSnap.id,
-                userId: userId,
-                ...data
-            });
-        });
-
-        // Sort by date descending in memory (Newest first)
-        allRefills.sort((a, b) => {
-            const dateA = a.createdAt ? a.createdAt.toMillis() : 0;
-            const dateB = b.createdAt ? b.createdAt.toMillis() : 0;
-            return dateB - dateA; // Descending
-        });
-
-        renderRefillsTable();
-    }, (error) => {
-        console.error("Error fetching global refills: ", error);
-        const tableBody = document.getElementById('admin-refills-table-body');
-        if (tableBody) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Failed to load refills database.</td></tr>`;
-        }
-    });
-}
-
-function renderRefillsTable() {
-    const tableBody = document.getElementById('admin-refills-table-body');
-    const searchInput = document.getElementById('admin-search-refills');
-    if (!tableBody) return;
-
-    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    tableBody.innerHTML = '';
-
-    if (allRefills.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No refill requests found across the platform.</td></tr>`;
-        return;
-    }
-
-    let visibleCount = 0;
-
-    allRefills.forEach(refill => {
-        const displayRefillId = refill.id.substring(0, 8).toUpperCase();
-        const displayOrderId = (refill.orderId || 'Unknown').substring(0, 8).toUpperCase();
-        const displayUserId = refill.userId.substring(0, 8);
-        const serviceName = refill.serviceName || 'Unknown Service';
-        const link = refill.link || 'N/A';
-        const status = refill.status || 'Pending';
-        
-        // Search Filter Logic
-        const matchesSearch = serviceName.toLowerCase().includes(searchTerm) || 
-                              link.toLowerCase().includes(searchTerm) || 
-                              refill.id.toLowerCase().includes(searchTerm) ||
-                              (refill.orderId || '').toLowerCase().includes(searchTerm) ||
-                              refill.userId.toLowerCase().includes(searchTerm);
-
-        if (matchesSearch) {
-            visibleCount++;
-            
-            // Format Date safely
-            let dateStr = 'N/A';
-            if (refill.createdAt) {
-                dateStr = refill.createdAt.toDate().toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayRefillId}</td>
-                <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${refill.userId}">${displayUserId}...</td>
-                <td class="px-6 py-4 font-mono text-xs font-bold text-gray-700" title="${refill.orderId}">${displayOrderId}</td>
-                <td class="px-6 py-4 whitespace-normal min-w-[200px]">
-                    <p class="font-semibold text-gray-800 text-sm leading-tight mb-1">${serviceName}</p>
-                    <a href="${link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate block max-w-[200px]" title="${link}">${link}</a>
-                </td>
-                <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
-                <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        Manage
-                    </button>
-                </td>
+            html += `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 text-xs font-mono text-gray-500">${displayId}</td>
+                    <td class="p-4 text-xs font-mono font-bold text-gray-800">${displayOrderId}</td>
+                    <td class="p-4 text-sm text-gray-700 max-w-[200px] truncate">${data.serviceName || 'Unknown Service'}</td>
+                    <td class="p-4 text-xs font-semibold text-gray-500 text-center uppercase tracking-wide">${dateStr}</td>
+                    <td class="p-4 text-right">${statusBadge}</td>
+                </tr>
             `;
-
-            row.querySelector('.manage-btn').addEventListener('click', () => openRefillModal(refill));
-            tableBody.appendChild(row);
-        }
-    });
-
-    if (visibleCount === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No matching refills found.</td></tr>`;
-    }
-}
-
-function getStatusBadge(status) {
-    const s = (status || 'Pending').toLowerCase();
-    if (s === 'completed' || s === 'done') return `<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold tracking-wider">Completed</span>`;
-    if (s === 'processing' || s === 'in progress') return `<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold tracking-wider">In Progress</span>`;
-    if (s === 'rejected' || s === 'failed') return `<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold tracking-wider">Rejected</span>`;
-    
-    // Default fallback to pending
-    return `<span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold tracking-wider">Pending</span>`;
-}
-
-function openRefillModal(refill) {
-    currentManagingRefill = refill;
-    
-    // Set static UI elements
-    document.getElementById('modal-refill-id').innerText = refill.id.substring(0, 12) + '...';
-    document.getElementById('modal-refill-userid').innerText = refill.userId;
-    document.getElementById('modal-refill-orderid').innerText = refill.orderId || 'Unknown';
-    document.getElementById('modal-refill-upstreamid').innerText = refill.upstreamServiceId || 'N/A';
-
-    // Set Select Value
-    const statusSelect = document.getElementById('modal-refill-status');
-    const validStatuses = Array.from(statusSelect.options).map(o => o.value);
-    statusSelect.value = validStatuses.includes(refill.status) ? refill.status : 'Pending';
-    
-    // Hide notifications
-    document.getElementById('modal-notification').classList.add('hidden');
-
-    // Open Modal visually
-    const modal = document.getElementById('manage-refill-modal');
-    const content = document.getElementById('manage-refill-content');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }, 10);
-}
-
-async function handleStatusUpdate() {
-    if (!currentManagingRefill) return;
-
-    const newStatus = document.getElementById('modal-refill-status').value;
-    const btn = document.getElementById('save-refill-btn');
-
-    // Prevent unnecessary writes
-    if (newStatus === currentManagingRefill.status) {
-        showNotification("No changes detected.", "warning");
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
-    try {
-        // Construct the specific document path based on the user ID
-        const refillRef = doc(db, 'artifacts', appId, 'users', currentManagingRefill.userId, 'refills', currentManagingRefill.id);
-        
-        await updateDoc(refillRef, {
-            status: newStatus,
-            updatedAt: serverTimestamp()
         });
-
-        // If rejected, we might also want to reset the order's 'refillRequested' status 
-        // so the user can try again, but for now we just handle the Refill doc.
-        if (newStatus === 'Rejected' || newStatus === 'Completed') {
-            const orderRef = doc(db, 'artifacts', appId, 'users', currentManagingRefill.userId, 'orders', currentManagingRefill.orderId);
-            // Re-enable the refill button for the user if it was rejected, or keep it disabled if completed.
-            // Normally panels just let them request again if rejected.
-            await updateDoc(orderRef, { refillRequested: false }).catch(()=>console.log("Could not reset order refill status"));
-        }
-
-        showNotification("Refill status updated successfully!", "success");
-        
-        // Auto close after 1 second on success
-        setTimeout(() => {
-            document.getElementById('close-refill-modal-btn').click();
-        }, 1000);
-
-    } catch (error) {
-        console.error("Failed to update refill status:", error);
-        showNotification("Failed to update status. Check permissions.", "error");
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span>Save Status</span>';
-    }
-}
-
-function showNotification(message, type) {
-    const notif = document.getElementById('modal-notification');
-    notif.innerText = message;
-    notif.className = "text-sm px-3 py-2 rounded-lg text-center font-semibold mb-4 block"; 
-    
-    if (type === 'success') {
-        notif.classList.add('bg-green-100', 'text-green-700');
-    } else if (type === 'error') {
-        notif.classList.add('bg-red-100', 'text-red-700');
-    } else {
-        notif.classList.add('bg-yellow-100', 'text-yellow-700');
-    }
+        table.innerHTML = html;
+    });
 }

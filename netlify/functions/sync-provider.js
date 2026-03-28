@@ -191,6 +191,7 @@ exports.handler = async (event) => {
                     description: service.desc || 'Imported Service',
                     providerId: providerId,
                     status: 'Active',
+                    metadata_markup: markupMultiplier, // Saved for auto-price sync
                     refill: !!service.refill || service.refill === '1' || service.refill === true, // Added refill flag
                     cancel: !!service.cancel || service.cancel === '1' || service.cancel === true, // Added cancel flag
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()

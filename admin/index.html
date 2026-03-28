@@ -37,6 +37,17 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Dynamic SEO and Theme Bootloader -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initDynamicTheme } from "../assets/js/theme-loader.js";
+        const themeApp = initializeApp({
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            projectId: "masmmpanel-7af8c"
+        }, "ThemeLoader");
+        initDynamicTheme(themeApp);
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
         
@@ -112,6 +123,12 @@
             </a>
             <a href="#services" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="services">
                 <i class="fa-solid fa-tags w-5 text-center"></i> Services
+            </a>
+            <a href="#childpanels" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="childpanels">
+                <i class="fa-solid fa-server w-5 text-center"></i> SaaS Tenants
+            </a>
+             <a href="#blogs" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="blogs">
+                <i class="fa-regular fa-newspaper w-5 text-center"></i> Feature Blogs
             </a>
 
             <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">System</p>
@@ -259,7 +276,9 @@
             'api': 'API Providers',
             'payments': 'Payment Gateways',
             'automation': 'System Automation',
-            'settings': 'General Settings'
+            'childpanels': 'Manage SaaS Tenants',
+            'blogs': 'Platform Blog & Features',
+            'settings': 'General & Governance Settings'
         };
 
         function openSidebar() {
@@ -339,6 +358,14 @@
     <script type="module" src="../assets/js/admin/automation.js"></script>
     <script type="module" src="../assets/js/admin/support.js"></script>
     <script type="module" src="../assets/js/admin/settings.js"></script>
-
+    <script type="module" src="../assets/js/admin/childpanels.js"></script>
+    <script type="module">
+        import { renderBlogsUI } from "../assets/js/admin/blogs.js";
+        window.addEventListener('admin-section-load', (e) => {
+            if (e.detail.section === 'blogs') {
+                renderBlogsUI(document.getElementById('admin-content'));
+            }
+        });
+    </script>
 </body>
 </html>

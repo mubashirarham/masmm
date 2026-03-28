@@ -1,7 +1,7 @@
 import { 
     getFirestore, doc, getDoc, setDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, sendPasswordResetEmail, updateProfile, multiFactor, PhoneAuthProvider, PhoneMultiFactorGenerator, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const db = getFirestore(window.firebaseApp);
 const auth = getAuth(window.firebaseApp);
@@ -36,12 +36,18 @@ function renderProfileUI() {
             <!-- Personal Information Form -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
                 <div class="flex items-center gap-6 mb-8 border-b border-gray-100 pb-8">
-                    <div class="w-20 h-20 rounded-full bg-brand-100 border-2 border-brand-200 flex items-center justify-center text-brand-700 font-bold text-3xl shadow-sm">
-                        <i class="fa-solid fa-user"></i>
+                    <div class="w-20 h-20 rounded-full bg-brand-100 border-2 border-brand-200 flex items-center justify-center text-brand-700 font-bold text-3xl shadow-sm relative overflow-hidden group">
+                        <i class="fa-solid fa-user" id="profile-avatar-icon"></i>
+                        <img id="profile-avatar-img" class="hidden w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center cursor-pointer transition-all" onclick="document.getElementById('pfp-upload-input').click()">
+                            <i class="fa-camera fa-solid text-white text-xl"></i>
+                        </div>
                     </div>
                     <div>
                         <p id="profile-email-display" class="text-lg font-bold text-gray-900">Loading...</p>
                         <span class="inline-block mt-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full uppercase tracking-wider">Active Account</span>
+                        <input type="file" id="pfp-upload-input" accept="image/*" class="hidden">
+                        <p id="pfp-upload-status" class="text-xs text-brand-500 font-semibold mt-2 hidden"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</p>
                     </div>
                 </div>
 
@@ -88,11 +94,20 @@ function renderProfileUI() {
                     <i class="fa-solid fa-key"></i> Send Password Reset Email
                 </button>
             </div>
+
+            <!-- 2FA Security Section -->
+            <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 sm:p-8 mt-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-lock text-indigo-600"></i> Two-Factor Auth (2FA)</h2>
+                <div id="mfa-section" class="text-sm text-gray-600 mt-4">
+                     <p><i class="fa-solid fa-spinner fa-spin"></i> Checking 2FA Status...</p>
+                </div>
+            </div>
         </div>
     `;
 
     document.getElementById('profile-form').addEventListener('submit', handleSaveProfile);
     document.getElementById('reset-password-btn').addEventListener('click', handlePasswordReset);
+    document.getElementById('pfp-upload-input').addEventListener('change', handlePFPUpload);
 }
 
 async function fetchProfile() {
@@ -101,6 +116,15 @@ async function fetchProfile() {
     // Set email display
     const emailDisplay = document.getElementById('profile-email-display');
     if (emailDisplay) emailDisplay.innerText = currentUser.email;
+
+    if (currentUser.photoURL) {
+        document.getElementById('profile-avatar-icon').classList.add('hidden');
+        document.getElementById('profile-avatar-img').src = currentUser.photoURL;
+        document.getElementById('profile-avatar-img').classList.remove('hidden');
+    }
+    
+    // Render 2FA Status
+    renderMfaStatus();
 
     try {
         const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'account', 'profile');
@@ -174,6 +198,206 @@ async function handlePasswordReset() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-key"></i> Send Password Reset Email';
+    }
+}
+
+async function handlePFPUpload(e) {
+    const file = e.target.files[0];
+    if (!file || !currentUser) return;
+    
+    const statusEl = document.getElementById('pfp-upload-status');
+    statusEl.classList.remove('hidden');
+    statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'mubashir');
+    
+    try {
+        const response = await fetch('https://api.cloudinary.com/v1_1/dis1ptaip/image/upload', {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) throw new Error('Cloudinary upload failed');
+        const data = await response.json();
+        const url = data.secure_url;
+        
+        await updateProfile(currentUser, { photoURL: url });
+        
+        // Update local UI
+        document.getElementById('profile-avatar-icon').classList.add('hidden');
+        document.getElementById('profile-avatar-img').src = url;
+        document.getElementById('profile-avatar-img').classList.remove('hidden');
+        
+        // Update Global Header UI
+        const headerIcon = document.getElementById('header-avatar-icon');
+        const headerImg = document.getElementById('header-avatar-img');
+        if (headerIcon && headerImg) {
+            headerIcon.classList.add('hidden');
+            headerImg.src = url;
+            headerImg.classList.remove('hidden');
+        }
+        
+        statusEl.innerHTML = '<i class="fa-solid fa-check text-green-500"></i> Uploaded!';
+    } catch (err) {
+        console.error("PFP Upload error:", err);
+        statusEl.innerHTML = '<i class="fa-solid fa-xmark text-red-500"></i> Upload failed.';
+    } finally {
+        setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+}
+
+function renderMfaStatus() {
+    const mfaContainer = document.getElementById('mfa-section');
+    if (!mfaContainer || !currentUser) return;
+    
+    try {
+        const mfa = multiFactor(currentUser);
+        if (mfa.enrolledFactors && mfa.enrolledFactors.length > 0) {
+            mfaContainer.innerHTML = `
+                <div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl mb-4">
+                    <p class="font-bold flex items-center gap-2"><i class="fa-solid fa-mobile-screen"></i> SMS Phone 2FA Enabled</p>
+                    <p class="text-xs mt-1">Your account is secured via SMS verification.</p>
+                </div>
+                <button type="button" id="disable-mfa-btn" class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm">
+                    Disable Phone 2FA
+                </button>
+            `;
+            document.getElementById('disable-mfa-btn').addEventListener('click', handleDisableMFA);
+        } else {
+            mfaContainer.innerHTML = `
+                <div class="bg-gray-50 border border-gray-200 text-gray-700 p-4 rounded-xl mb-4">
+                    <p class="font-bold">Phone 2FA is Not Enabled</p>
+                    <p class="text-xs mt-1">Protect your account with a personal mobile number via SMS verification.</p>
+                </div>
+                <button type="button" id="start-mfa-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm">
+                    Enable Phone Verification
+                </button>
+            `;
+            document.getElementById('start-mfa-btn').addEventListener('click', handleStartMFA);
+        }
+    } catch(err) {
+        mfaContainer.innerHTML = `<p class="text-red-500 text-xs">MFA is not supported in the current environment or session.</p>`;
+    }
+}
+
+let pendingVerificationId = null;
+
+async function handleStartMFA() {
+    const mfaContainer = document.getElementById('mfa-section');
+    
+    mfaContainer.innerHTML = `
+        <div class="bg-white p-5 rounded-xl border border-gray-200">
+            <h3 class="font-bold text-gray-800 mb-2">Step 1: Enter Phone Number</h3>
+            <p class="text-xs text-gray-500 mb-4">Enter your number with country code (e.g., +1234567890).</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="tel" id="mfa-phone-input" placeholder="+1234567890" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg outline-none focus:border-brand-500 text-sm font-semibold">
+                <button id="send-sms-btn" class="bg-brand-500 text-white px-5 py-2 rounded-lg font-bold hover:bg-brand-600 transition-colors">Send SMS</button>
+            </div>
+            <div id="recaptcha-enroll-container" class="mt-3"></div>
+            <p id="mfa-error" class="text-red-500 text-xs mt-3 hidden"></p>
+            
+            <div id="sms-verify-section" class="hidden mt-6 pt-4 border-t border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-2">Step 2: Enter SMS Code</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="mfa-verification-code" placeholder="000000" maxlength="6" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-center font-mono text-lg font-bold outline-none focus:border-brand-500">
+                    <button id="verify-mfa-btn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-600 transition-colors">Verify</button>
+                </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-gray-100">
+                <button id="cancel-mfa-btn" class="text-xs text-gray-500 hover:text-gray-800 underline font-bold">Cancel</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('send-sms-btn').addEventListener('click', handleSendSMS);
+    document.getElementById('verify-mfa-btn').addEventListener('click', handleVerifyMFA);
+    document.getElementById('cancel-mfa-btn').addEventListener('click', renderMfaStatus);
+    
+    // Initialize Recaptcha
+    if (!window.recaptchaVerifierEnroll) {
+        window.recaptchaVerifierEnroll = new RecaptchaVerifier(auth, 'recaptcha-enroll-container', {
+            'size': 'invisible'
+        });
+    }
+}
+
+async function handleSendSMS() {
+    const rawNum = document.getElementById('mfa-phone-input').value.trim();
+    if (!rawNum) return;
+    
+    const phoneNumber = rawNum.startsWith('+') ? rawNum : '+' + rawNum;
+    const btn = document.getElementById('send-sms-btn');
+    const errEl = document.getElementById('mfa-error');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    errEl.classList.add('hidden');
+
+    try {
+        const mfa = multiFactor(currentUser);
+        const session = await mfa.getSession();
+        
+        const phoneProvider = new PhoneAuthProvider(auth);
+        
+        // Ensure verifier is built
+        if(!window.recaptchaVerifierEnroll) throw new Error("Recaptcha Not Initialized");
+        
+        pendingVerificationId = await phoneProvider.verifyPhoneNumber(
+            { phoneNumber, session },
+            window.recaptchaVerifierEnroll
+        );
+        
+        document.getElementById('mfa-phone-input').disabled = true;
+        btn.innerText = 'Sent ✔';
+        document.getElementById('sms-verify-section').classList.remove('hidden');
+        
+    } catch(err) {
+        console.error("SMS Error", err);
+        btn.disabled = false;
+        btn.innerText = 'Send SMS';
+        errEl.innerText = err.message || "Failed to send SMS. Ensure your Identity Platform settings have Phone Auth enabled.";
+        errEl.classList.remove('hidden');
+    }
+}
+
+async function handleVerifyMFA() {
+    const code = document.getElementById('mfa-verification-code').value.trim();
+    if(code.length !== 6 || !pendingVerificationId) return;
+    
+    const btn = document.getElementById('verify-mfa-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const errEl = document.getElementById('mfa-error');
+    
+    try {
+        const cred = PhoneAuthProvider.credential(pendingVerificationId, code);
+        const assertion = PhoneMultiFactorGenerator.assertion(cred);
+        const mfa = multiFactor(currentUser);
+        await mfa.enroll(assertion, "Primary Mobile");
+        
+        showProfileNotification("Phone verification securely enabled!", "success");
+        renderMfaStatus();
+    } catch(err) {
+        console.error("Enrollment Error", err);
+        btn.disabled = false;
+        btn.innerHTML = 'Verify';
+        errEl.innerText = "Invalid SMS code. Please try again.";
+        errEl.classList.remove('hidden');
+    }
+}
+
+async function handleDisableMFA() {
+    try {
+        const mfa = multiFactor(currentUser);
+        const factorId = mfa.enrolledFactors[0].uid;
+        await mfa.unenroll(factorId);
+        showProfileNotification("Phone Verification disabled.", "success");
+        renderMfaStatus();
+    } catch(e) {
+        console.error(e);
+        showProfileNotification("Failed to disable 2FA.", "error");
     }
 }
 

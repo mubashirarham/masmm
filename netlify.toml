@@ -27,3 +27,7 @@
   from = "/api/sync"
   to = "/.netlify/functions/sync-provider"
   status = 200
+
+# Activate the 100% Automated Background Worker (Runs Every 5 Minutes)
+[functions."worker"]
+  schedule = "*/5 * * * *"

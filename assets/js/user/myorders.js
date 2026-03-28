@@ -179,7 +179,7 @@ function renderMyOrdersTable() {
                     <td class="px-6 py-4 whitespace-normal min-w-[250px] text-sm font-semibold text-gray-700 leading-tight">
                         ${serviceName}
                     </td>
-                    <td class="px-6 py-4 text-center font-semibold text-brand-600">Rs ${Number(order.charge || 0).toFixed(4)}</td>
+                    <td class="px-6 py-4 text-center font-semibold text-brand-600">${window.formatMoney(order.charge)}</td>
                     <td class="px-6 py-4 text-center">${getStatusBadge(order.status)}</td>
                     <td class="px-6 py-4 text-center align-middle">
                         <div class="flex flex-col items-center justify-center w-full max-w-[100px] mx-auto">

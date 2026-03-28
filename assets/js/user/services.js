@@ -155,7 +155,7 @@ function renderServicesTable() {
                 <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                     <td class="px-6 py-4 font-mono text-gray-500">${displayId}</td>
                     <td class="px-6 py-4 font-semibold text-gray-800 whitespace-normal min-w-[250px]">${service.name}</td>
-                    <td class="px-6 py-4 text-center font-bold text-brand-600">Rs ${Number(service.rate).toFixed(4)}</td>
+                    <td class="px-6 py-4 text-center font-bold text-brand-600">${window.formatMoney(service.rate)}</td>
                     <td class="px-6 py-4 text-center text-gray-500">${service.min}</td>
                     <td class="px-6 py-4 text-center text-gray-500">${service.max}</td>
                     <td class="px-6 py-4 text-center">
