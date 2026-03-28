@@ -3,7 +3,9 @@ import {
     collectionGroup, 
     onSnapshot,
     doc,
-    updateDoc
+    updateDoc,
+    runTransaction,
+    increment
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const db = getFirestore(window.firebaseApp);
@@ -309,7 +311,6 @@ async function handleStatusUpdate() {
 
     const newStatus = document.getElementById('modal-order-status').value;
     const btn = document.getElementById('save-order-btn');
-    const notif = document.getElementById('modal-notification');
 
     // Prevent unnecessary writes
     if (newStatus === currentManagingOrder.status) {
@@ -317,30 +318,47 @@ async function handleStatusUpdate() {
         return;
     }
 
+    if(newStatus === 'Canceled' && !confirm("WARNING: Changing status to 'Canceled' will intercept this order and AUTOMATICALLY REFUND the exact charge amount to the user's balance. Proceed?")) return;
+
     btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Ledger...';
 
     try {
-        // Construct the specific document path based on the user ID
         const orderRef = doc(db, 'artifacts', appId, 'users', currentManagingOrder.userId, 'orders', currentManagingOrder.id);
         
-        await updateDoc(orderRef, {
-            status: newStatus
-        });
+        if (newStatus === 'Canceled' && currentManagingOrder.status !== 'Canceled') {
+            // Force Cancel & Native Ledger Refund Setup
+            await runTransaction(db, async (t) => {
+                const orderSnap = await t.get(orderRef);
+                if (orderSnap.exists() && orderSnap.data().status === 'Canceled') {
+                    throw new Error("Order was already refunded and canceled recently.");
+                }
+                
+                const statsRef = doc(db, 'artifacts', appId, 'users', currentManagingOrder.userId, 'account', 'stats');
+                const cost = Number(currentManagingOrder.charge || 0);
 
-        // Update local memory explicitly to avoid slight UI flash before snapshot triggers
+                t.update(orderRef, { status: 'Canceled' });
+                if (cost > 0) {
+                    t.update(statsRef, { balance: increment(cost) });
+                }
+            });
+            showNotification(`Intercepted & Refunded Rs ${Number(currentManagingOrder.charge).toFixed(4)}`, "success");
+        } else {
+            // Standard non-financial status update
+            await updateDoc(orderRef, { status: newStatus });
+            showNotification("Order status updated successfully!", "success");
+        }
+
         currentManagingOrder.status = newStatus;
-
-        showNotification("Order status updated successfully!", "success");
         
-        // Auto close after 1 second on success
+        // Auto close after 1.5 second on success
         setTimeout(() => {
             document.getElementById('close-order-modal-btn').click();
-        }, 1000);
+        }, 1500);
 
     } catch (error) {
-        console.error("Failed to update order status:", error);
-        showNotification("Failed to update status. Check permissions.", "error");
+        console.error("Failed to update status/refund ledger:", error);
+        showNotification(error.message || "Failed to process ledger update.", "error");
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Update Order</span>';

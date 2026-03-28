@@ -33,13 +33,16 @@ function renderServicesUI() {
                 <h2 class="text-2xl font-bold text-gray-800">Service Management</h2>
                 <p class="text-sm text-gray-500">Create and manage SMM services, rates, and descriptions.</p>
             </div>
-            <div class="w-full sm:w-auto flex gap-2">
+            <div class="w-full sm:w-auto flex flex-wrap gap-2">
                 <div class="relative flex-1 sm:w-64">
                     <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="admin-search-services" placeholder="Search services..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
                 </div>
-                <button id="open-add-service-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-plus"></i> Add New Service
+                <button id="open-bulk-pricing-modal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                    <i class="fa-solid fa-percent"></i> Global Markup
+                </button>
+                <button id="open-add-service-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                    <i class="fa-solid fa-plus"></i> Add Service
                 </button>
             </div>
         </div>
@@ -127,6 +130,30 @@ function renderServicesUI() {
                 </form>
             </div>
         </div>
+
+        <!-- Bulk Pricing Modal -->
+        <div id="bulk-pricing-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden justify-center items-center backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform overflow-y-auto" id="bulk-pricing-content">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                    <h3 class="text-lg font-bold text-gray-800">Global Markup Engine</h3>
+                    <button id="close-bulk-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div class="mb-4 text-sm text-gray-600">
+                    Apply a universal profit margin multiplier across <b class="text-gray-800">ALL</b> active services. Note: this will overwrite individual service markups and recalculate exactly from the upstream base provider cost.
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Target Profit Margin (%)</label>
+                    <div class="relative">
+                        <input type="number" id="global-markup-pct" placeholder="20" value="20" class="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold text-lg text-gray-800">
+                        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold mb-0.5">%</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1 text-blue-500"></i> Example: 20% margin calculates base prices at 1.2x.</p>
+                </div>
+                <button id="execute-bulk-pricing" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-blue-500/20 flex justify-center items-center">
+                    <i class="fa-solid fa-bolt mr-2"></i> Apply Global Markup
+                </button>
+            </div>
+        </div>
     `;
 
     // Search Listener
@@ -162,6 +189,59 @@ function renderServicesUI() {
     closeBtn.addEventListener('click', closeModal);
     cancelBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // Bulk Pricing Logic
+    const bulkModal = document.getElementById('bulk-pricing-modal');
+    const executeBulkBtn = document.getElementById('execute-bulk-pricing');
+    
+    document.getElementById('open-bulk-pricing-modal')?.addEventListener('click', () => {
+        bulkModal.classList.remove('hidden');
+        bulkModal.classList.add('flex');
+    });
+
+    document.getElementById('close-bulk-modal-btn')?.addEventListener('click', () => {
+        bulkModal.classList.add('hidden');
+        bulkModal.classList.remove('flex');
+    });
+
+    executeBulkBtn?.addEventListener('click', async () => {
+        const pctInput = document.getElementById('global-markup-pct').value;
+        const pct = parseFloat(pctInput);
+        if (isNaN(pct) || pct < 0) {
+            alert("Please enter a valid positive percentage.");
+            return;
+        }
+
+        if(!confirm(`WARNING: Are you absolutely sure you want to enforce a ${pct}% standard profit margin across ALL services? This cannot be undone.`)) return;
+
+        executeBulkBtn.disabled = true;
+        executeBulkBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Recalculating...';
+
+        try {
+            const token = await window.getAdminAuthToken();
+            const res = await fetch(`/.netlify/functions/adminapi`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    action: 'bulk_update_pricing',
+                    markupPercentage: pct
+                })
+            });
+
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || 'Failed to bulk update pricing.');
+
+            alert(`Successfully updated ${data.updatedCount} services to ${pct}% profit margin!`);
+            bulkModal.classList.add('hidden');
+            bulkModal.classList.remove('flex');
+        } catch(e) {
+            console.error(e);
+            alert("Bulk Pricing Error: " + e.message);
+        } finally {
+            executeBulkBtn.disabled = false;
+            executeBulkBtn.innerHTML = '<i class="fa-solid fa-bolt mr-2"></i> Apply Global Markup';
+        }
+    });
 
     // Handle Form Submission
     form.addEventListener('submit', async (e) => {

@@ -51,6 +51,11 @@ exports.handler = async (event, context) => {
             return { statusCode: 401, body: JSON.stringify({ error: 'API Key domain mismatch' }) };
         }
         
+        // Wholesale API Firewall Gateway
+        if (apiDoc.data().status === 'Suspended') {
+            return { statusCode: 403, body: JSON.stringify({ error: 'Master Admin Override: Your Wholesale API Access has been Suspended.' }) };
+        }
+        
         const userId = pathSegments[3]; 
         const statsRef = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('account').doc('stats');
         const statsSnap = await statsRef.get();

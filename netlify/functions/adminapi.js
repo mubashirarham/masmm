@@ -76,6 +76,56 @@ exports.handler = async (event) => {
             }
         }
 
+        if (action === 'bulk_update_pricing') {
+            const { markupPercentage } = payload;
+            if (typeof markupPercentage !== 'number' || markupPercentage < 0) {
+                return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid markup percentage' }) };
+            }
+
+            const targetMultiplier = 1 + (markupPercentage / 100); // 20% -> 1.2
+            const servicesRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services');
+            const servicesSnap = await servicesRef.get();
+            
+            let updatedCount = 0;
+            let currentBatch = db.batch();
+            let batchTracker = 0;
+
+            for (const sDoc of servicesSnap.docs) {
+                const sData = sDoc.data();
+                if (!sData.rate || sData.status !== 'Active') continue;
+                
+                // Extrapolate the exact upstream base cost dynamically
+                const oldMarkup = parseFloat(sData.metadata_markup) || 1.2;
+                const baseProviderCost = parseFloat(sData.rate) / oldMarkup;
+                
+                // Apply the new global markup and enforce 4 decimal precision
+                const newMarkupRate = (baseProviderCost * targetMultiplier).toFixed(4);
+
+                currentBatch.update(sDoc.ref, {
+                    rate: newMarkupRate,
+                    metadata_markup: targetMultiplier,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+                
+                updatedCount++;
+                batchTracker++;
+
+                // Firebase caps single batches at 500 operations
+                if (batchTracker >= 450) {
+                    await currentBatch.commit();
+                    currentBatch = db.batch();
+                    batchTracker = 0;
+                }
+            }
+
+            // Commit trailing ops
+            if (batchTracker > 0) {
+                await currentBatch.commit();
+            }
+
+            return { statusCode: 200, headers, body: JSON.stringify({ success: true, updatedCount }) };
+        }
+
         return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
 
     } catch (error) {

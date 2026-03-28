@@ -74,12 +74,20 @@ exports.handler = async (event) => {
         const existingAliases = siteData.domain_aliases || [];
 
         // Escape immediately if domain is perfectly bound
-        if (existingAliases.includes(domain)) {
+        if (siteData.custom_domain === domain || existingAliases.includes(domain)) {
             return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Domain alias already mounted online' }) };
         }
 
-        // --- Step 2: Append & Re-upload Site Configuration to Netlify ---
-        existingAliases.push(domain);
+        // --- Step 2: Dynamically Append & Re-upload Site Configuration to Netlify ---
+        const payload = {};
+        
+        // If Netlify refuses aliases because a primary domain hasn't been set, set this one as primary!
+        if (!siteData.custom_domain) {
+            payload.custom_domain = domain;
+        } else {
+            existingAliases.push(domain);
+            payload.domain_aliases = existingAliases;
+        }
 
         const putRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}`, {
             method: 'PUT',
@@ -87,7 +95,7 @@ exports.handler = async (event) => {
                 'Authorization': `Bearer ${netlifyToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ domain_aliases: existingAliases })
+            body: JSON.stringify(payload)
         });
 
         if (!putRes.ok) {

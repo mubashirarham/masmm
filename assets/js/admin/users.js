@@ -104,6 +104,13 @@ function renderUsersUI() {
                         <p class="text-xs text-gray-500 mt-2">Use positive numbers to add funds, negative numbers to deduct.</p>
                     </div>
                 </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2 justify-end">
+                    <button id="toggle-api-ban-btn" data-action="block" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-bold transition-colors text-sm flex items-center gap-2 shadow-sm mr-auto">
+                        <i class="fa-solid fa-ban"></i> Block API Access
+                    </button>
+                    <button id="close-user-modal-footer" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Close</button>
+                </div>
             </div>
         </div>
     `;
@@ -117,6 +124,7 @@ function renderUsersUI() {
     // Attach Modal Close Listeners
     const modal = document.getElementById('manage-user-modal');
     const closeBtn = document.getElementById('close-user-modal-btn');
+    const closeFooterBtn = document.getElementById('close-user-modal-footer');
     const content = document.getElementById('manage-user-content');
 
     const closeModal = () => {
@@ -127,10 +135,14 @@ function renderUsersUI() {
     };
 
     closeBtn.addEventListener('click', closeModal);
+    closeFooterBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
     // Attach Balance Update Listener
     document.getElementById('apply-balance-btn').addEventListener('click', handleBalanceAdjustment);
+
+    // Attach API Ban Listener
+    document.getElementById('toggle-api-ban-btn').addEventListener('click', handleApiBanToggle);
 }
 
 function fetchUsers() {
@@ -232,10 +244,13 @@ async function openUserModal(user) {
         content.classList.add('scale-100');
     }, 10);
 
-    // Fetch realtime stats for this specific user
+    // Fetch realtime stats & API Firewall State
     try {
         const statsRef = doc(db, 'artifacts', appId, 'users', user.id, 'account', 'stats');
-        const statsSnap = await getDoc(statsRef);
+        const apiRef = doc(db, 'artifacts', appId, 'users', user.id, 'api', 'key');
+        
+        // Parallel queries to minimize load time
+        const [statsSnap, apiSnap] = await Promise.all([getDoc(statsRef), getDoc(apiRef)]);
         
         if (statsSnap.exists()) {
             const data = statsSnap.data();
@@ -244,11 +259,23 @@ async function openUserModal(user) {
         } else {
             document.getElementById('modal-user-balance').innerText = `Rs 0.0000`;
             document.getElementById('modal-user-spent').innerText = `Rs 0.0000`;
-            // Initialize stats doc if it doesn't exist
             await setDoc(statsRef, { balance: 0, totalSpent: 0, totalOrders: 0 }, { merge: true });
         }
+
+        // Setup API Firewall Toggle UI Context
+        const apiBtn = document.getElementById('toggle-api-ban-btn');
+        if (apiSnap.exists() && apiSnap.data().status === 'Suspended') {
+            apiBtn.innerHTML = '<i class="fa-solid fa-lock-open mr-1"></i> Unlock API';
+            apiBtn.className = 'px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-bold transition-colors text-sm flex items-center mr-auto shadow-sm';
+            apiBtn.dataset.action = 'unblock';
+        } else {
+            apiBtn.innerHTML = '<i class="fa-solid fa-ban mr-1"></i> Block API';
+            apiBtn.className = 'px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-bold transition-colors text-sm flex items-center mr-auto shadow-sm';
+            apiBtn.dataset.action = 'block';
+        }
+
     } catch (error) {
-        console.error("Failed to load user stats", error);
+        console.error("Failed to load user dependencies", error);
         document.getElementById('modal-user-balance').innerText = 'Error';
         document.getElementById('modal-user-spent').innerText = 'Error';
     }
@@ -314,6 +341,34 @@ async function handleBalanceAdjustment() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = 'Apply';
+    }
+}
+
+async function handleApiBanToggle(e) {
+    if (!currentManagingUserId) return;
+    const btn = e.currentTarget;
+    const action = btn.dataset.action;
+    const newStatus = action === 'block' ? 'Suspended' : 'Active';
+    
+    if(!confirm(`WARNING: Are you sure you want to ${action.toUpperCase()} Wholesale API access for this specific user?`)) return;
+    
+    btn.disabled = true;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Deploying Firewall...';
+
+    try {
+        const apiRef = doc(db, 'artifacts', appId, 'users', currentManagingUserId, 'api', 'key');
+        await setDoc(apiRef, { status: newStatus }, { merge: true });
+        
+        // Soft refresh the modal
+        const emailLabel = document.getElementById('modal-user-email').innerText;
+        openUserModal({ id: currentManagingUserId, email: emailLabel });
+        
+    } catch(err) {
+        console.error(err);
+        alert("Failed to modify API firewall rules.");
+        btn.disabled = false;
+        btn.innerHTML = oldHtml;
     }
 }
 

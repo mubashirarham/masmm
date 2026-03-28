@@ -28,9 +28,9 @@ export async function renderChildPanelsUI(container) {
                         <thead>
                             <tr class="bg-white border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                                 <th class="p-4 font-semibold">Domain</th>
-                                <th class="p-4 font-semibold">Tenant UUID</th>
+                                <th class="p-4 font-semibold text-center">Renewal Date</th>
                                 <th class="p-4 font-semibold">Owner UID</th>
-                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold text-center">Status</th>
                                 <th class="p-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
@@ -94,12 +94,17 @@ async function fetchAllChildPanels() {
             const data = docSnap.data();
             const bgBadge = data.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
             
+            // Render Subscription Data
+            const createdAt = data.createdAt ? data.createdAt.toDate().getTime() : Date.now();
+            const lastBilledAt = data.lastBilledAt || createdAt;
+            const nextBillDate = new Date(lastBilledAt + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString();
+            
             html += `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-globe mr-1 text-gray-400"></i> ${data.domain}</a></td>
-                    <td class="p-4 text-xs font-mono text-gray-500">${data.tenantAppId || 'N/A'}</td>
+                    <td class="p-4 text-xs font-semibold text-blue-600 text-center">📅 ${nextBillDate}</td>
                     <td class="p-4 text-xs font-mono text-gray-500">${data.ownerUid}</td>
-                    <td class="p-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${bgBadge}">${data.status}</span></td>
+                    <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${bgBadge}">${data.status}</span></td>
                     <td class="p-4 text-right">
                         ${data.status === 'Active' ? 
                             `<button class="text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors" onclick="window.toggleTenantStatus('${docSnap.id}', 'Suspended')">Suspend</button>` :

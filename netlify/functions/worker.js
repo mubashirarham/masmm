@@ -22,6 +22,11 @@ exports.handler = async (event, context) => {
         await syncActiveStatuses();
         await autoSyncCatalogIfNeeded(); // Daily Catalog Cleanup
         
+        // Execute global SaaS tracking
+        if (APP_ID === 'masmmpanel-default') {
+            await processSubscriptions();
+        }
+        
         return { statusCode: 200, body: "Worker Processed Successfully" };
     } catch (error) {
         console.error("Worker Error:", error);
@@ -280,4 +285,67 @@ async function autoSyncCatalogIfNeeded() {
 
     // Update the last sync timestamp
     await systemRef.set({ lastCatalogSync: now }, { merge: true });
+}
+
+// --- Task 4: Process Child Panel Subscriptions (Runs daily) ---
+async function processSubscriptions() {
+    // Only the Master network orchestrates billing
+    if (APP_ID !== 'masmmpanel-default') return;
+
+    // Run this check once every 12 hours
+    const systemRef = db.collection('artifacts').doc(APP_ID).collection('system').doc('cron');
+    const systemSnap = await systemRef.get();
+    let lastSubCheck = 0;
+    if (systemSnap.exists) lastSubCheck = systemSnap.data().lastSubscriptionCheck || 0;
+    
+    const now = Date.now();
+    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+    
+    if (now - lastSubCheck < TWELVE_HOURS) return;
+    
+    console.log("Evaluating Tenant Monthly Subscriptions...");
+    
+    const panelsQuery = await db.collection('artifacts').doc(APP_ID).collection('child_panels').where('status', '==', 'Active').get();
+    
+    for (const doc of panelsQuery.docs) {
+        const tenant = doc.data();
+        if (!tenant.ownerUid) continue; // Bypasses administratively gifted panels
+
+        const createdAt = tenant.createdAt ? tenant.createdAt.toMillis() : Date.now();
+        const lastBilledAt = tenant.lastBilledAt || createdAt;
+        
+        // Has it been 30 days?
+        const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+        if (now - lastBilledAt >= THIRTY_DAYS) {
+            try {
+                const amountDue = 4999; // Standard monthly SaaS fee
+                const ownerRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(tenant.ownerUid).collection('account').doc('stats');
+                
+                await db.runTransaction(async (t) => {
+                    const ownerSnap = await t.get(ownerRef);
+                    const bal = ownerSnap.exists ? (ownerSnap.data().balance || 0) : 0;
+
+                    if (bal >= amountDue) {
+                        t.update(ownerRef, { 
+                            balance: admin.firestore.FieldValue.increment(-amountDue),
+                            totalSpent: admin.firestore.FieldValue.increment(amountDue)
+                        });
+                        t.update(doc.ref, { lastBilledAt: now });
+                        console.log(`Billed 4999 PKR successfully to ${tenant.ownerUid} for tenant ${doc.id}`);
+                    } else {
+                        // Suspend due to insufficient funds
+                        t.update(doc.ref, { 
+                            status: 'Suspended', 
+                            suspendReason: 'Insufficient funds for monthly renewal' 
+                        });
+                        console.log(`Suspended tenant ${doc.id} due to insufficient funds.`);
+                    }
+                });
+            } catch (e) {
+                console.error(`Billing error for tenant ${doc.id}:`, e);
+            }
+        }
+    }
+
+    await systemRef.set({ lastSubscriptionCheck: now }, { merge: true });
 }

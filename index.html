@@ -528,6 +528,7 @@
         import { 
             getFirestore, 
             doc, 
+            getDoc,
             setDoc, 
             serverTimestamp,
             collection,
@@ -673,7 +674,20 @@
 
         // --- Core Routing & Save Logic ---
         async function saveUserAndRoute(user) {
-            const isAdmin = user.email === 'mubashirarham12@gmail.com';
+            let isAdmin = user.email === 'mubashirarham12@gmail.com';
+            
+            // Check if the user is explicitly designated as the Admin of THIS child panel
+            if (!isAdmin && panelAppId !== 'masmmpanel-default') {
+                try {
+                    const tenantSnap = await getDoc(doc(db, 'artifacts', panelAppId));
+                    if (tenantSnap.exists() && tenantSnap.data().adminEmail === user.email) {
+                        isAdmin = true;
+                    }
+                } catch(e) {
+                    console.error("Failed to verify tenant admin status:", e);
+                }
+            }
+
             const role = isAdmin ? 'admin' : 'user';
 
             // Explicitly save to Firestore so the user shows up in the Admin Panel
@@ -743,7 +757,7 @@
             } catch (error) {
                 let errorMsg = error.message;
                 if(error.code === 'auth/invalid-credential') errorMsg = "Invalid email or password.";
-                if(error.code === 'auth/email-already-in-use') errorMsg = "Email is already registered.";
+                if(error.code === 'auth/email-already-in-use') errorMsg = "You are already a member of the global network! Please select the 'Login' tab to sign in.";
                 if(error.code === 'auth/weak-password') errorMsg = "Password should be at least 6 characters.";
                 showMessage(errorMsg, "error");
                 

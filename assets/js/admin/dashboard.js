@@ -35,49 +35,41 @@ function renderDashboardUI() {
         </div>
 
         <!-- Top Statistics Panel -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
             <!-- Stat Card 1 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-500">
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Users</p>
-                    <h3 id="stat-total-users" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-blue-500">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Total Users</p>
+                <h3 id="stat-total-users" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
             </div>
             
             <!-- Stat Card 2 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-orange-500">
-                <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Pending Orders</p>
-                    <h3 id="stat-pending-orders" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-orange-500">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-clock-rotate-left text-orange-500 mr-2"></i>Pending Orders</p>
+                <h3 id="stat-pending-orders" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
             </div>
-            
+
             <!-- Stat Card 3 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-[#22c55e]">
-                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Revenue</p>
-                    <h3 id="stat-total-revenue" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-purple-500">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-money-bill-transfer text-purple-500 mr-2"></i>Deposits</p>
+                <h3 id="stat-pending-deposits" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
             </div>
             
             <!-- Stat Card 4 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-purple-500">
-                <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-money-bill-transfer"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Pending Deposits</p>
-                    <h3 id="stat-pending-deposits" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
-                </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-[#22c55e]">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-sack-dollar text-green-500 mr-2"></i>Total Revenue</p>
+                <h3 id="stat-total-revenue" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            </div>
+            
+            <!-- Stat Card 5 -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-red-500">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-bolt text-red-500 mr-2"></i>API Liability</p>
+                <h3 id="stat-upstream-cost" class="text-lg font-bold text-gray-900 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            </div>
+
+            <!-- Stat Card 6 -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-emerald-600">
+                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-chart-line text-emerald-600 mr-2"></i>Net Profit <span class="text-[10px] text-gray-400 font-normal">(Est)</span></p>
+                <h3 id="stat-net-profit" class="text-xl font-bold text-emerald-600 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-emerald-200"></i></h3>
             </div>
         </div>
 
@@ -181,8 +173,19 @@ async function fetchRealtimeStats() {
                     const data = doc.data();
                     if (data.totalSpent) totalRevenue += Number(data.totalSpent);
                 });
-                const el = document.getElementById('stat-total-revenue');
-                if(el) el.innerText = `Rs ${totalRevenue.toFixed(2)}`;
+                
+                // Master Financial Analytics (Derives exact margins based on Global Markup)
+                const GLOBAL_MARKUP = 1.2; // 20% target margin
+                const upstreamLiability = totalRevenue / GLOBAL_MARKUP;
+                const netProfit = totalRevenue - upstreamLiability;
+
+                const elRev = document.getElementById('stat-total-revenue');
+                const elCost = document.getElementById('stat-upstream-cost');
+                const elProfit = document.getElementById('stat-net-profit');
+                
+                if(elRev) elRev.innerText = `Rs ${totalRevenue.toFixed(0)}`;
+                if(elCost) elCost.innerText = `Rs ${upstreamLiability.toFixed(0)}`;
+                if(elProfit) elProfit.innerText = `+ Rs ${netProfit.toFixed(0)}`;
             });
         } catch(e) {
              const el = document.getElementById('stat-total-revenue');
