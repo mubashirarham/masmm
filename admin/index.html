@@ -80,12 +80,14 @@
         <!-- Sidebar Header (Logo) -->
         <div class="h-20 flex items-center px-6 border-b border-gray-800 bg-gray-900 shrink-0">
             <a href="../index.html" class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                    M
+                <div class="site-logo-container">
+                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-brand-500/20">
+                        M
+                    </div>
                 </div>
-                <span class="font-bold text-xl text-white tracking-tight">Admin Panel</span>
+                <span class="font-bold text-xl text-white tracking-tight site-title-text">MAsmmpanel</span>
             </a>
-            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-400 hover:text-white">
+            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-400 hover:text-red-400">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
@@ -142,8 +144,14 @@
             <a href="#automation" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="automation">
                 <i class="fa-solid fa-robot w-5 text-center"></i> System Automation
             </a>
+            <a href="#mabot" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-400 hover:bg-gray-800 hover:text-blue-300 font-bold transition-colors shadow-[0_0_15px_rgba(59,130,246,0.15)]" data-target="mabot" style="background: linear-gradient(90deg, rgba(30,58,138,0.2) 0%, transparent 100%); border-left: 2px solid #3b82f6;">
+                <i class="fa-solid fa-microchip w-5 text-center text-blue-400"></i> AI Control Hub
+            </a>
             <a href="#settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="settings">
                 <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+            </a>
+            <a href="#branding" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="branding">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center"></i> Appearance
             </a>
         </div>
 
@@ -277,9 +285,11 @@
             'api': 'API Providers',
             'payments': 'Payment Gateways',
             'automation': 'System Automation',
+            'mabot': 'Gemini MA Bot Control Hub',
             'childpanels': 'Manage SaaS Tenants',
             'blogs': 'Platform Blog & Features',
-            'settings': 'General & Governance Settings'
+            'settings': 'General & Governance Settings',
+            'branding': 'Appearance & Branding'
         };
 
         function openSidebar() {
@@ -357,8 +367,10 @@
     <script type="module" src="../assets/js/admin/api.js"></script>
     <script type="module" src="../assets/js/admin/payments.js"></script>
     <script type="module" src="../assets/js/admin/automation.js"></script>
+    <script type="module" src="../assets/js/admin/mabot-control.js"></script>
     <script type="module" src="../assets/js/admin/support.js"></script>
     <script type="module" src="../assets/js/admin/settings.js"></script>
+    <script type="module" src="../assets/js/admin/branding.js"></script>
     <script type="module" src="../assets/js/admin/childpanels.js"></script>
     <script type="module" src="../assets/js/admin/tickets.js"></script>
     <script type="module">

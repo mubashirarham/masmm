@@ -2,6 +2,7 @@ import {
     getFirestore, collection, onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const auth = getAuth(window.firebaseApp);
@@ -9,6 +10,8 @@ const appId = window.__app_id;
 
 let currentUser = null;
 let userTransactions = [];
+let currentPage = 1;
+const rowsPerPage = 15;
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
@@ -54,6 +57,7 @@ function renderTransactionsUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="tx-pagination-container"></div>
         </div>
     `;
 }
@@ -80,6 +84,7 @@ function fetchTransactions() {
 
 function renderTransactionsTable() {
     const tableBody = document.getElementById('user-tx-table-body');
+    const paginationContainer = document.getElementById('tx-pagination-container');
     if (!tableBody) return;
     tableBody.innerHTML = '';
 
@@ -94,7 +99,12 @@ function renderTransactionsTable() {
         return;
     }
 
-    userTransactions.forEach(tx => {
+    const totalPages = Math.ceil(userTransactions.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = userTransactions.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    paginated.forEach(tx => {
         let dateStr = 'N/A';
         if (tx.createdAt) {
             dateStr = tx.createdAt.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -110,6 +120,13 @@ function renderTransactionsTable() {
             </tr>
         `;
     });
+
+    if(paginationContainer) {
+        renderPagination(userTransactions.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderTransactionsTable();
+        }, paginationContainer);
+    }
 }
 
 function getStatusBadge(status) {

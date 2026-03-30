@@ -50,9 +50,9 @@ exports.handler = async (event) => {
         };
 
         // ==========================================
-        // ACTION 1: Fetch Remote Services & Convert (Preview)
+        // ACTION 1: Fetch Remote Services & Convert (Preview / Auto Import)
         // ==========================================
-        if (action === 'fetch_remote') {
+        if (action === 'fetch_remote' || action === 'import_all_categories') {
             
             // --- STEP 1: Detect Provider's Base Currency ---
             let providerCurrency = 'USD'; // Default fallback
@@ -143,15 +143,105 @@ exports.handler = async (event) => {
                 return service;
             });
 
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ 
-                    success: true, 
-                    currency_detected: providerCurrency,
-                    exchange_rate_used: exchangeRateToPKR,
-                    services: convertedServices 
-                })
-            };
+            if (action === 'fetch_remote') {
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({ 
+                        success: true, 
+                        currency_detected: providerCurrency,
+                        exchange_rate_used: exchangeRateToPKR,
+                        services: convertedServices 
+                    })
+                };
+            }
+
+            if (action === 'import_all_categories') {
+                const markupPercentage = parseFloat(payload.markupPercentage) || 150;
+                const markupMultiplier = markupPercentage / 100;
+                
+                // 1. Fetch existing local categories to avoid duplicates
+                const catsRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('categories');
+                const localCatsSnap = await catsRef.get();
+                const categoryNameToId = {};
+                localCatsSnap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.name) categoryNameToId[data.name.toLowerCase().trim()] = doc.id;
+                });
+
+                // 2. Identify Unique Remote Categories and Create Missing Ones
+                const uniqueRemoteCats = [...new Set(convertedServices.map(s => s.category).filter(Boolean))];
+                let createdCatsCount = 0;
+                for (const catName of uniqueRemoteCats) {
+                    const normalized = catName.toLowerCase().trim();
+                    if (!categoryNameToId[normalized]) {
+                        const newCatRef = await catsRef.add({
+                            name: catName,
+                            sort: 99,
+                            status: 'Active',
+                            createdAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+                        categoryNameToId[normalized] = newCatRef.id;
+                        createdCatsCount++;
+                    }
+                }
+
+                // 3. Batch insert all services
+                const servicesRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services');
+                let importedCount = 0;
+                let currentBatch = db.batch();
+                let batchOpsCount = 0;
+                let batchPromises = [];
+
+                for (const service of convertedServices) {
+                    const targetCategoryId = categoryNameToId[(service.category || '').toLowerCase().trim()];
+                    if (!targetCategoryId) continue;
+                    
+                    const docId = `imported_${providerId}_${service.service}`;
+                    const docRef = servicesRef.doc(docId);
+                    
+                    const basePkrRate = parseFloat(service.rate);
+                    const finalSellingRate = (basePkrRate * markupMultiplier).toFixed(4);
+
+                    currentBatch.set(docRef, {
+                        serviceId: service.service,
+                        name: service.name,
+                        categoryId: targetCategoryId,
+                        rate: finalSellingRate,
+                        min: service.min,
+                        max: service.max,
+                        description: service.desc || 'Imported Service',
+                        providerId: providerId,
+                        status: 'Active',
+                        metadata_markup: markupMultiplier,
+                        refill: !!service.refill || service.refill === '1' || service.refill === true,
+                        cancel: !!service.cancel || service.cancel === '1' || service.cancel === true,
+                        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    
+                    batchOpsCount++;
+                    importedCount++;
+                    
+                    if (batchOpsCount >= 400) {
+                        batchPromises.push(currentBatch.commit());
+                        currentBatch = db.batch();
+                        batchOpsCount = 0;
+                    }
+                }
+                
+                if (batchOpsCount > 0) {
+                    batchPromises.push(currentBatch.commit());
+                }
+                
+                await Promise.all(batchPromises);
+
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({ 
+                        success: true, 
+                        message: `Imported ${importedCount} services across ${uniqueRemoteCats.length} categories (${createdCatsCount} new).` 
+                    })
+                };
+            }
         }
 
         // ==========================================

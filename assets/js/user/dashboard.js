@@ -11,6 +11,7 @@ let currentUser = null;
 let allCategories = [];
 let allServices = [];
 let currentBalance = 0;
+let currentDiscount = 0;
 
 // Helper to detect platform for icons - using Real Brand SVGs via SimpleIcons
 function getPlatformLogo(categoryName) {
@@ -175,6 +176,36 @@ function renderDashboardUI() {
                         </div>
                     </div>
 
+                    <!-- Drip Feed Toggle -->
+                    <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm transition-colors mb-2">
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm">Drip-feed Order</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Automate delivery over multiple intervals.</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="drip-feed-checkbox" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+                        </label>
+                    </div>
+
+                    <!-- Drip Feed Options -->
+                    <div id="drip-feed-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-6 bg-blue-50/30 p-4 rounded-xl border border-blue-100 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Runs (Phases)</label>
+                            <input type="number" id="order-runs" value="2" min="2" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Interval (Minutes)</label>
+                            <input type="number" id="order-interval" value="60" min="1" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm bg-white">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <div class="flex justify-between items-center text-sm font-bold bg-white p-3 rounded-lg border border-gray-200">
+                                <span class="text-gray-600">Total Formatted Quantity:</span>
+                                <span id="drip-feed-total-qty" class="text-brand-600 font-mono text-base">0</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="order-notification" class="hidden text-sm px-4 py-3 rounded-xl font-semibold shadow-sm"></div>
 
                     <div class="pt-2">
@@ -231,6 +262,21 @@ function renderDashboardUI() {
         }
     });
 
+    // Drip Feed Handlers
+    const dripCheck = document.getElementById('drip-feed-checkbox');
+    const dripOptions = document.getElementById('drip-feed-options');
+    dripCheck.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            dripOptions.classList.remove('hidden');
+        } else {
+            dripOptions.classList.add('hidden');
+        }
+        calculateCharge();
+    });
+
+    document.getElementById('order-runs').addEventListener('input', calculateCharge);
+    document.getElementById('order-interval').addEventListener('input', calculateCharge);
+    
     document.getElementById('order-quantity').addEventListener('input', calculateCharge);
     document.getElementById('new-order-form').addEventListener('submit', handlePlaceOrder);
 }
@@ -247,6 +293,7 @@ function fetchStats() {
         if (docSnap.exists()) {
             const data = docSnap.data();
             currentBalance = parseFloat(data.balance || 0);
+            currentDiscount = parseFloat(data.discount || 0);
             
             const balEl = document.getElementById('stat-balance');
             const spentEl = document.getElementById('stat-spent');
@@ -348,6 +395,10 @@ function handleCategoryChange(e) {
 
     document.getElementById('order-charge').value = window.formatMoney(0);
     document.getElementById('order-quantity').value = '';
+    document.getElementById('drip-feed-checkbox').checked = false;
+    document.getElementById('drip-feed-options').classList.add('hidden');
+    document.getElementById('order-runs').value = '2';
+    document.getElementById('order-interval').value = '60';
     document.getElementById('service-limits').innerText = 'Min: 0 - Max: 0';
     descBox.classList.add('hidden');
     submitBtn.disabled = true;
@@ -371,6 +422,13 @@ function handleCategoryChange(e) {
 
     srvOptions.innerHTML = '';
     filteredServices.forEach(srv => {
+        const actualRate = srv.rate * (1 - (currentDiscount / 100));
+        let rateDisplay = `${window.formatMoney(actualRate)}/1k`;
+        
+        if (currentDiscount > 0) {
+            rateDisplay = `<span class="line-through text-gray-400 mr-1 opacity-70">${window.formatMoney(srv.rate)}</span> ${window.formatMoney(actualRate)}/1k <i class="fa-solid fa-fire text-orange-500 ml-1" title="${currentDiscount}% VIP Discount Applied"></i>`;
+        }
+
         srvOptions.innerHTML += `
             <div class="srv-option flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-800 transition-colors border border-transparent hover:border-gray-200" data-value="${srv.id}">
                 <div class="w-8 h-8 rounded-lg ${platform.bg} flex items-center justify-center shrink-0 shadow-sm p-1.5" style="color: ${platform.color}">
@@ -380,7 +438,7 @@ function handleCategoryChange(e) {
                     <p class="font-semibold text-sm leading-tight text-gray-900 mb-1">${srv.name}</p>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800 border border-green-200">
-                            ${window.formatMoney(srv.rate)}/1k
+                            ${rateDisplay}
                         </span>
                         <span class="text-xs text-gray-500">Min: ${srv.min} - Max: ${srv.max}</span>
                     </div>
@@ -451,13 +509,20 @@ function calculateCharge() {
     
     if (!srvId || qty <= 0) {
         document.getElementById('order-charge').value = window.formatMoney(0);
+        document.getElementById('drip-feed-total-qty').innerText = "0";
         return;
     }
 
     const service = allServices.find(s => s.id === srvId);
     if (service) {
-        const ratePer1k = parseFloat(service.rate);
-        const charge = (ratePer1k / 1000) * qty;
+        const isDripFeed = document.getElementById('drip-feed-checkbox').checked;
+        const runs = isDripFeed ? (parseInt(document.getElementById('order-runs').value) || 1) : 1;
+        const totalQty = qty * runs;
+        
+        document.getElementById('drip-feed-total-qty').innerText = totalQty.toLocaleString();
+
+        const actualRate = parseFloat(service.rate) * (1 - (currentDiscount / 100));
+        const charge = (actualRate / 1000) * totalQty;
         document.getElementById('order-charge').value = window.formatMoney(charge);
     }
 }
@@ -489,7 +554,20 @@ async function handlePlaceOrder(e) {
         return;
     }
 
-    const charge = (parseFloat(service.rate) / 1000) * qty;
+    const isDripFeed = document.getElementById('drip-feed-checkbox').checked;
+    const runs = isDripFeed ? parseInt(document.getElementById('order-runs').value) : null;
+    const interval = isDripFeed ? parseInt(document.getElementById('order-interval').value) : null;
+
+    if (isDripFeed && (isNaN(runs) || runs < 2 || isNaN(interval) || interval < 1)) {
+        notif.className = "text-sm px-4 py-3 rounded-xl font-semibold bg-red-50 text-red-600 border border-red-100 block mt-4 shadow-sm";
+        notif.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> Invalid drip-feed parameters.`;
+        return;
+    }
+
+    const totalQty = isDripFeed ? (qty * runs) : qty;
+
+    const actualRate = parseFloat(service.rate) * (1 - (currentDiscount / 100));
+    const charge = (actualRate / 1000) * totalQty;
 
     if (currentBalance < charge) {
         notif.className = "text-sm px-4 py-3 rounded-xl font-semibold bg-red-50 text-red-600 border border-red-100 block mt-4 shadow-sm";
@@ -507,10 +585,16 @@ async function handlePlaceOrder(e) {
             serviceName: service.name,
             providerId: service.providerId || null,
             upstreamServiceId: service.serviceId || null,
+            _original_rate: service._original_rate || null,
+            _pkr_exchange_rate: service._pkr_exchange_rate || null,
             link: link,
-            quantity: qty,
+            quantity: totalQty, // final quantity deducted and registered
             charge: charge,
             status: 'Pending',
+            dripFeed: isDripFeed,
+            runs: isDripFeed ? runs : null,
+            interval: isDripFeed ? interval : null,
+            baseQuantity: isDripFeed ? qty : null, // quantity per run
             createdAt: serverTimestamp()
         };
 
@@ -557,6 +641,11 @@ async function handlePlaceOrder(e) {
         document.getElementById('service-description').classList.add('hidden');
         document.getElementById('order-charge').value = window.formatMoney(0);
         document.getElementById('service-limits').innerText = 'Min: 0 - Max: 0';
+
+        document.getElementById('drip-feed-checkbox').checked = false;
+        document.getElementById('drip-feed-options').classList.add('hidden');
+        document.getElementById('order-runs').value = '2';
+        document.getElementById('order-interval').value = '60';
 
         setTimeout(() => { notif.classList.add('hidden'); }, 5000);
 

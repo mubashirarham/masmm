@@ -5,14 +5,16 @@ import {
     addDoc,
     deleteDoc,
     doc,
-    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allServices = [];
 let allCategories = [];
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -72,6 +74,7 @@ function renderServicesUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-services-pagination-container"></div>
         </div>
 
         <!-- Add Service Modal -->
@@ -159,7 +162,10 @@ function renderServicesUI() {
     // Search Listener
     const searchInput = document.getElementById('admin-search-services');
     if (searchInput) {
-        searchInput.addEventListener('input', renderServicesTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderServicesTable();
+        });
     }
 
     // Modal Logic
@@ -335,6 +341,7 @@ function fetchServices() {
 function renderServicesTable() {
     const tableBody = document.getElementById('admin-services-table-body');
     const searchInput = document.getElementById('admin-search-services');
+    const paginationContainer = document.getElementById('admin-services-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -345,36 +352,48 @@ function renderServicesTable() {
         return;
     }
 
+    const filtered = allServices.filter(service => service.name.toLowerCase().includes(searchTerm));
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allServices.forEach(service => {
-        if (service.name.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            const category = allCategories.find(c => c.id === service.categoryId);
-            const catName = category ? category.name : 'Unknown';
-            const displayId = service.serviceId || service.id.substring(0,4);
+    paginated.forEach(service => {
+        visibleCount++;
+        
+        const category = allCategories.find(c => c.id === service.categoryId);
+        const catName = category ? category.name : 'Unknown';
+        const displayId = service.serviceId || service.id.substring(0,4);
 
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors text-xs sm:text-sm";
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono text-gray-500">${displayId}</td>
-                <td class="px-6 py-4 font-bold text-gray-800 whitespace-normal min-w-[200px]">${service.name}</td>
-                <td class="px-6 py-4 text-gray-600">${catName}</td>
-                <td class="px-6 py-4 text-center font-bold text-brand-600">Rs ${Number(service.rate).toFixed(4)}</td>
-                <td class="px-6 py-4 text-center text-gray-500">${service.min}</td>
-                <td class="px-6 py-4 text-center text-gray-500">${service.max}</td>
-                <td class="px-6 py-4 text-right">
-                    <button onclick="window.deleteService('${service.id}', '${service.name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        }
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors text-xs sm:text-sm";
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono text-gray-500">${displayId}</td>
+            <td class="px-6 py-4 font-bold text-gray-800 whitespace-normal min-w-[200px]">${service.name}</td>
+            <td class="px-6 py-4 text-gray-600">${catName}</td>
+            <td class="px-6 py-4 text-center font-bold text-brand-600">Rs ${Number(service.rate).toFixed(4)}</td>
+            <td class="px-6 py-4 text-center text-gray-500">${service.min}</td>
+            <td class="px-6 py-4 text-center text-gray-500">${service.max}</td>
+            <td class="px-6 py-4 text-right">
+                <button onclick="window.deleteService('${service.id}', '${service.name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No matches.</td></tr>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderServicesTable();
+        }, paginationContainer);
     }
 }

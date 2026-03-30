@@ -2,9 +2,13 @@ import {
     getFirestore, collection, getDocs, doc, updateDoc, setDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
+let allPanels = [];
+let currentPage = 1;
+const rowsPerPage = 50;
 
 export async function renderChildPanelsUI(container) {
     container.innerHTML = `
@@ -40,6 +44,7 @@ export async function renderChildPanelsUI(container) {
                     </table>
                 </div>
             </div>
+            <div id="cp-admin-pagination-container"></div>
         </div>
 
         <!-- Assign Tenant Modal -->
@@ -84,42 +89,66 @@ async function fetchAllChildPanels() {
         const panelsRef = collection(db, 'artifacts', 'masmmpanel-default', 'child_panels');
         const snap = await getDocs(panelsRef);
 
-        if(snap.empty) {
-            listBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-sm text-gray-500 font-medium">No child panels have been provisioned yet.</td></tr>`;
-            return;
-        }
-
-        let html = '';
-        snap.forEach(docSnap => {
-            const data = docSnap.data();
-            const bgBadge = data.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
-            
-            // Render Subscription Data
-            const createdAt = data.createdAt ? data.createdAt.toDate().getTime() : Date.now();
-            const lastBilledAt = data.lastBilledAt || createdAt;
-            const nextBillDate = new Date(lastBilledAt + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString();
-            
-            html += `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-globe mr-1 text-gray-400"></i> ${data.domain}</a></td>
-                    <td class="p-4 text-xs font-semibold text-blue-600 text-center">📅 ${nextBillDate}</td>
-                    <td class="p-4 text-xs font-mono text-gray-500">${data.ownerUid}</td>
-                    <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${bgBadge}">${data.status}</span></td>
-                    <td class="p-4 text-right">
-                        ${data.status === 'Active' ? 
-                            `<button class="text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors" onclick="window.toggleTenantStatus('${docSnap.id}', 'Suspended')">Suspend</button>` :
-                            `<button class="text-xs font-bold bg-green-50 text-green-600 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors" onclick="window.toggleTenantStatus('${docSnap.id}', 'Active')">Activate</button>`
-                        }
-                    </td>
-                </tr>
-            `;
-        });
+        allPanels = [];
+        snap.forEach(docSnap => allPanels.push({id: docSnap.id, ...docSnap.data()}));
+        allPanels.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
         
-        listBody.innerHTML = html;
+        renderPanelsTable();
         
     } catch(err) {
         console.error("Admin Panel Data Error", err);
         listBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 text-sm font-semibold">Failed to fetch network metrics.</td></tr>`;
+    }
+}
+
+function renderPanelsTable() {
+    const listBody = document.getElementById('cp-admin-list-body');
+    const paginationContainer = document.getElementById('cp-admin-pagination-container');
+    if(!listBody) return;
+
+    if (allPanels.length === 0) {
+        listBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-sm text-gray-500 font-medium">No child panels have been provisioned yet.</td></tr>`;
+        if(paginationContainer) paginationContainer.innerHTML = '';
+        return;
+    }
+
+    const totalPages = Math.ceil(allPanels.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = allPanels.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    let html = '';
+    paginated.forEach(data => {
+        const bgBadge = data.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+        
+        // Render Subscription Data
+        const createdAt = data.createdAt ? data.createdAt.toDate().getTime() : Date.now();
+        const lastBilledAt = data.lastBilledAt || createdAt;
+        const nextBillDate = new Date(lastBilledAt + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString();
+        
+        html += `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-globe mr-1 text-gray-400"></i> ${data.domain}</a></td>
+                <td class="p-4 text-xs font-semibold text-blue-600 text-center">📅 ${nextBillDate}</td>
+                <td class="p-4 text-xs font-mono text-gray-500">${data.ownerUid}</td>
+                <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${bgBadge}">${data.status}</span></td>
+                <td class="p-4 text-right">
+                    ${data.status === 'Active' ? 
+                        `<button class="text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors" onclick="window.toggleTenantStatus('${data.id}', 'Suspended')">Suspend</button>` :
+                        `<button class="text-xs font-bold bg-green-50 text-green-600 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors" onclick="window.toggleTenantStatus('${data.id}', 'Active')">Activate</button>`
+                    }
+                </td>
+            </tr>
+        `;
+    });
+    
+    listBody.innerHTML = html;
+
+    if(paginationContainer) {
+        renderPagination(allPanels.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderPanelsTable();
+        }, paginationContainer);
     }
 }
 

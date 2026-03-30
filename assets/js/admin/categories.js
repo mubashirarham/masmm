@@ -10,12 +10,15 @@ import {
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allCategories = [];
 let currentManagingCategoryId = null; // Track edit state
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -68,6 +71,7 @@ function renderCategoriesUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-categories-pagination-container"></div>
         </div>
 
         <!-- Add/Edit Category Modal -->
@@ -104,7 +108,10 @@ function renderCategoriesUI() {
     // Attach Search Listener
     const searchInput = document.getElementById('admin-search-categories');
     if (searchInput) {
-        searchInput.addEventListener('input', renderCategoriesTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderCategoriesTable();
+        });
     }
 
     // Modal Logic
@@ -216,6 +223,7 @@ function fetchCategories() {
 function renderCategoriesTable() {
     const tableBody = document.getElementById('admin-categories-table-body');
     const searchInput = document.getElementById('admin-search-categories');
+    const paginationContainer = document.getElementById('admin-categories-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -226,40 +234,54 @@ function renderCategoriesTable() {
         return;
     }
 
+    const filtered = allCategories.filter(category => {
+        const name = category.name || '';
+        return name.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allCategories.forEach(category => {
+    paginated.forEach(category => {
+        visibleCount++;
         const name = category.name || 'Unnamed';
         const sort = category.sort || 0;
         const status = category.status || 'Active';
 
-        if (name.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            const statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">${status}</span>`;
+        const statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">${status}</span>`;
 
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 text-center font-semibold text-gray-500">${sort}</td>
-                <td class="px-6 py-4 font-bold text-gray-800">${name}</td>
-                <td class="px-6 py-4 text-center">${statusBadge}</td>
-                <td class="px-6 py-4 text-right space-x-2">
-                    <button onclick="window.editCategory('${category.id}')" class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button onclick="window.deleteCategory('${category.id}', '${name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </td>
-            `;
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 text-center font-semibold text-gray-500">${sort}</td>
+            <td class="px-6 py-4 font-bold text-gray-800">${name}</td>
+            <td class="px-6 py-4 text-center">${statusBadge}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+                <button onclick="window.editCategory('${category.id}')" class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="window.deleteCategory('${category.id}', '${name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        `;
 
-            tableBody.appendChild(row);
-        }
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">No matching categories found.</td></tr>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderCategoriesTable();
+        }, paginationContainer);
     }
 }

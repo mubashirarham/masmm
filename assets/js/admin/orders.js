@@ -7,12 +7,15 @@ import {
     runTransaction,
     increment
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allOrders = [];
 let currentManagingOrder = null;
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -65,6 +68,7 @@ function renderOrdersUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-orders-pagination-container"></div>
         </div>
 
         <!-- Manage Order Modal -->
@@ -126,7 +130,10 @@ function renderOrdersUI() {
     // Attach Search Listener
     const searchInput = document.getElementById('admin-search-orders');
     if (searchInput) {
-        searchInput.addEventListener('input', renderOrdersTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderOrdersTable();
+        });
     }
 
     // Attach Modal Close Listeners
@@ -196,6 +203,7 @@ function fetchAllOrders() {
 function renderOrdersTable() {
     const tableBody = document.getElementById('admin-orders-table-body');
     const searchInput = document.getElementById('admin-search-orders');
+    const paginationContainer = document.getElementById('admin-orders-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -206,62 +214,74 @@ function renderOrdersTable() {
         return;
     }
 
+    const filtered = allOrders.filter(order => {
+        const serviceName = order.serviceName || '';
+        const link = order.link || '';
+        return serviceName.toLowerCase().includes(searchTerm) || 
+               link.toLowerCase().includes(searchTerm) || 
+               order.id.toLowerCase().includes(searchTerm) ||
+               order.userId.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allOrders.forEach(order => {
+    paginated.forEach(order => {
+        visibleCount++;
         const displayOrderId = order.id.substring(0, 8).toUpperCase();
         const displayUserId = order.userId.substring(0, 8);
         const serviceName = order.serviceName || 'Unknown Service';
         const link = order.link || 'N/A';
         const status = order.status || 'Pending';
         
-        // Search Filter Logic
-        const matchesSearch = serviceName.toLowerCase().includes(searchTerm) || 
-                              link.toLowerCase().includes(searchTerm) || 
-                              order.id.toLowerCase().includes(searchTerm) ||
-                              order.userId.toLowerCase().includes(searchTerm);
-
-        if (matchesSearch) {
-            visibleCount++;
-            
-            // Format Date safely
-            let dateStr = 'N/A';
-            if (order.createdAt) {
-                dateStr = order.createdAt.toDate().toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayOrderId}</td>
-                <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${order.userId}">${displayUserId}...</td>
-                <td class="px-6 py-4 whitespace-normal min-w-[200px]">
-                    <p class="font-semibold text-gray-800 text-sm leading-tight mb-1">${serviceName}</p>
-                    <a href="${link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate block max-w-[200px]" title="${link}">${link}</a>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    <p class="font-bold text-gray-800">${order.quantity || 0}</p>
-                    <p class="text-xs text-gray-500">Rs ${Number(order.charge || 0).toFixed(4)}</p>
-                </td>
-                <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
-                <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        Edit
-                    </button>
-                </td>
-            `;
-
-            row.querySelector('.manage-btn').addEventListener('click', () => openOrderModal(order));
-            tableBody.appendChild(row);
+        // Format Date safely
+        let dateStr = 'N/A';
+        if (order.createdAt) {
+            dateStr = order.createdAt.toDate().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
         }
+
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayOrderId}</td>
+            <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${order.userId}">${displayUserId}...</td>
+            <td class="px-6 py-4 whitespace-normal min-w-[200px]">
+                <p class="font-semibold text-gray-800 text-sm leading-tight mb-1">${serviceName}</p>
+                <a href="${link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate block max-w-[200px]" title="${link}">${link}</a>
+            </td>
+            <td class="px-6 py-4 text-center">
+                <p class="font-bold text-gray-800">${order.quantity || 0}</p>
+                <p class="text-xs text-gray-500">Rs ${Number(order.charge || 0).toFixed(4)}</p>
+            </td>
+            <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
+            <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
+            <td class="px-6 py-4 text-center">
+                <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
+                    Edit
+                </button>
+            </td>
+        `;
+
+        row.querySelector('.manage-btn').addEventListener('click', () => openOrderModal(order));
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No matching orders found.</td></tr>`;
+    }
+
+    if (paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderOrdersTable();
+        }, paginationContainer);
     }
 }
 

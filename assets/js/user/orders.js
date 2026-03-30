@@ -2,6 +2,7 @@ import {
     getFirestore, collection, onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const auth = getAuth(window.firebaseApp);
@@ -9,6 +10,8 @@ const appId = window.__app_id;
 
 let currentUser = null;
 let myOrdersCache = [];
+let currentPage = 1;
+const rowsPerPage = 15;
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
@@ -68,10 +71,14 @@ function renderMyOrdersUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="myorders-pagination-container"></div>
         </div>
     `;
 
-    document.getElementById('search-myorders-input').addEventListener('input', renderMyOrdersTable);
+    document.getElementById('search-myorders-input').addEventListener('input', () => {
+        currentPage = 1;
+        renderMyOrdersTable();
+    });
 }
 
 function fetchMyOrders() {
@@ -95,6 +102,7 @@ function fetchMyOrders() {
 function renderMyOrdersTable() {
     const tableBody = document.getElementById('myorders-table-body');
     const searchInput = document.getElementById('search-myorders-input');
+    const paginationContainer = document.getElementById('myorders-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -111,17 +119,27 @@ function renderMyOrdersTable() {
         return;
     }
 
+    const filtered = myOrdersCache.filter(order => {
+        const serviceName = order.serviceName || '';
+        const link = order.link || '';
+        const shortId = order.id.substring(0,8);
+        return serviceName.toLowerCase().includes(searchTerm) || link.toLowerCase().includes(searchTerm) || shortId.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    myOrdersCache.forEach(order => {
+    paginated.forEach(order => {
+        visibleCount++;
         const serviceName = order.serviceName || 'Unknown Service';
         const link = order.link || '#';
         const shortId = order.id.substring(0,8).toUpperCase();
         
-        if (serviceName.toLowerCase().includes(searchTerm) || link.toLowerCase().includes(searchTerm) || shortId.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            let dateStr = 'N/A';
+        let dateStr = 'N/A';
             if (order.createdAt) {
                 dateStr = order.createdAt.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
             }
@@ -142,11 +160,17 @@ function renderMyOrdersTable() {
                     <td class="px-6 py-4 text-center">${getStatusBadge(order.status)}</td>
                 </tr>
             `;
-        }
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-gray-500">No matching orders found.</td></tr>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderMyOrdersTable();
+        }, paginationContainer);
     }
 }
 

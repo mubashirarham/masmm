@@ -7,12 +7,15 @@ import {
     setDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allUsers = [];
 let currentManagingUserId = null;
+let currentPage = 1;
+const rowsPerPage = 20;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -63,6 +66,7 @@ function renderUsersUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-users-pagination-container"></div>
         </div>
 
         <!-- Manage User Modal -->
@@ -103,6 +107,17 @@ function renderUsersUI() {
                         </div>
                         <p class="text-xs text-gray-500 mt-2">Use positive numbers to add funds, negative numbers to deduct.</p>
                     </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Global Discount % (VIP Pricing)</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="user-discount-amount" placeholder="e.g. 5, 10, 15" min="0" max="100" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            <button id="apply-discount-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap flex items-center gap-2">
+                                <i class="fa-solid fa-percent text-sm"></i> Set
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Discount given to this user natively on all service purchases.</p>
+                    </div>
                 </div>
 
                 <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2 justify-end">
@@ -118,7 +133,10 @@ function renderUsersUI() {
     // Attach Search Listener
     const searchInput = document.getElementById('admin-search-users');
     if (searchInput) {
-        searchInput.addEventListener('input', renderUsersTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderUsersTable();
+        });
     }
 
     // Attach Modal Close Listeners
@@ -140,6 +158,9 @@ function renderUsersUI() {
 
     // Attach Balance Update Listener
     document.getElementById('apply-balance-btn').addEventListener('click', handleBalanceAdjustment);
+
+    // Attach Discount Update Listener
+    document.getElementById('apply-discount-btn').addEventListener('click', handleDiscountUpdate);
 
     // Attach API Ban Listener
     document.getElementById('toggle-api-ban-btn').addEventListener('click', handleApiBanToggle);
@@ -166,6 +187,7 @@ function fetchUsers() {
 function renderUsersTable() {
     const tableBody = document.getElementById('admin-users-table-body');
     const searchInput = document.getElementById('admin-search-users');
+    const paginationContainer = document.getElementById('admin-users-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -176,50 +198,64 @@ function renderUsersTable() {
         return;
     }
 
+    const filtered = allUsers.filter(user => {
+        const email = user.email || '';
+        return email.toLowerCase().includes(searchTerm) || user.id.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allUsers.forEach(user => {
+    paginated.forEach(user => {
+        visibleCount++;
         const email = user.email || 'No Email';
         const displayId = user.id.substring(0, 8);
         const role = user.role || 'user';
         const isVerified = user.isVerified !== false;
 
-        if (email.toLowerCase().includes(searchTerm) || user.id.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            const roleBadge = role === 'admin' 
-                ? `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold uppercase tracking-wider">Admin</span>`
-                : `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold uppercase tracking-wider">User</span>`;
+        const roleBadge = role === 'admin' 
+            ? `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold uppercase tracking-wider">Admin</span>`
+            : `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold uppercase tracking-wider">User</span>`;
 
-            const statusBadge = isVerified 
-                ? `<span class="px-2 py-1 text-green-600 text-xs font-semibold"><i class="fa-solid fa-check-circle mr-1"></i> Active</span>`
-                : `<span class="px-2 py-1 text-red-600 text-xs font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Banned</span>`;
+        const statusBadge = isVerified 
+            ? `<span class="px-2 py-1 text-green-600 text-xs font-semibold"><i class="fa-solid fa-check-circle mr-1"></i> Active</span>`
+            : `<span class="px-2 py-1 text-red-600 text-xs font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Banned</span>`;
 
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayId}</td>
-                <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
-                <td class="px-6 py-4 text-center">${roleBadge}</td>
-                <td class="px-6 py-4 text-center">${statusBadge}</td>
-                <td class="px-6 py-4 flex justify-center gap-2">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        Manage
-                    </button>
-                    <button class="text-orange-600 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded transition-colors text-xs font-bold shadow-sm flex items-center gap-1" onclick="window.impersonateUser('${user.id}')">
-                        <i class="fa-solid fa-right-to-bracket"></i> Login
-                    </button>
-                </td>
-            `;
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayId}</td>
+            <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
+            <td class="px-6 py-4 text-center">${roleBadge}</td>
+            <td class="px-6 py-4 text-center">${statusBadge}</td>
+            <td class="px-6 py-4 flex justify-center gap-2">
+                <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
+                    Manage
+                </button>
+                <button class="text-orange-600 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded transition-colors text-xs font-bold shadow-sm flex items-center gap-1" onclick="window.impersonateUser('${user.id}')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
+            </td>
+        `;
 
-            row.querySelector('.manage-btn').addEventListener('click', () => openUserModal(user));
-            tableBody.appendChild(row);
-        }
+        row.querySelector('.manage-btn').addEventListener('click', () => openUserModal(user));
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No matching users found.</td></tr>`;
+    }
+
+    if (paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderUsersTable();
+        }, paginationContainer);
     }
 }
 
@@ -256,9 +292,11 @@ async function openUserModal(user) {
             const data = statsSnap.data();
             document.getElementById('modal-user-balance').innerText = `Rs ${Number(data.balance || 0).toFixed(4)}`;
             document.getElementById('modal-user-spent').innerText = `Rs ${Number(data.totalSpent || 0).toFixed(4)}`;
+            document.getElementById('user-discount-amount').value = data.discount || 0;
         } else {
             document.getElementById('modal-user-balance').innerText = `Rs 0.0000`;
             document.getElementById('modal-user-spent').innerText = `Rs 0.0000`;
+            document.getElementById('user-discount-amount').value = 0;
             await setDoc(statsRef, { balance: 0, totalSpent: 0, totalOrders: 0 }, { merge: true });
         }
 
@@ -341,6 +379,39 @@ async function handleBalanceAdjustment() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = 'Apply';
+    }
+}
+
+async function handleDiscountUpdate() {
+    if (!currentManagingUserId) return;
+    const amountInput = document.getElementById('user-discount-amount');
+    const amount = parseFloat(amountInput.value) || 0;
+    
+    if (amount < 0 || amount > 100) {
+        alert("Discount must be between 0 and 100.");
+        return;
+    }
+
+    const btn = document.getElementById('apply-discount-btn');
+    btn.disabled = true;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+    try {
+        const statsRef = doc(db, 'artifacts', appId, 'users', currentManagingUserId, 'account', 'stats');
+        await setDoc(statsRef, { discount: amount }, { merge: true });
+        
+        // Soft refresh the modal
+        const emailLabel = document.getElementById('modal-user-email').innerText;
+        openUserModal({ id: currentManagingUserId, email: emailLabel });
+        
+        alert("Discount tier applied successfully.");
+    } catch(err) {
+        console.error(err);
+        alert("Failed to modify discount tier.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = oldHtml;
     }
 }
 

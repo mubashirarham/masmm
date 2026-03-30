@@ -7,12 +7,15 @@ import {
     arrayUnion,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allTickets = [];
 let currentManagingTicket = null;
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -64,6 +67,7 @@ function renderSupportUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-support-pagination-container"></div>
         </div>
 
         <!-- Manage Ticket Modal -->
@@ -114,7 +118,10 @@ function renderSupportUI() {
     // Attach Search Listener
     const searchInput = document.getElementById('admin-search-tickets');
     if (searchInput) {
-        searchInput.addEventListener('input', renderTicketsTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderTicketsTable();
+        });
     }
 
     // Attach Modal Close Listeners
@@ -192,6 +199,7 @@ function fetchAllTickets() {
 function renderTicketsTable() {
     const tableBody = document.getElementById('admin-tickets-table-body');
     const searchInput = document.getElementById('admin-search-tickets');
+    const paginationContainer = document.getElementById('admin-support-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -202,55 +210,67 @@ function renderTicketsTable() {
         return;
     }
 
+    const filtered = allTickets.filter(ticket => {
+        const subject = ticket.subject || '';
+        const status = ticket.status || 'Open';
+        return ticket.id.toLowerCase().includes(searchTerm) || 
+               ticket.userId.toLowerCase().includes(searchTerm) ||
+               subject.toLowerCase().includes(searchTerm) ||
+               status.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allTickets.forEach(ticket => {
+    paginated.forEach(ticket => {
+        visibleCount++;
         const displayTicketId = ticket.id.substring(0, 8).toUpperCase();
         const displayUserId = ticket.userId.substring(0, 8);
         const subject = ticket.subject || 'No Subject';
         const status = ticket.status || 'Open';
         
-        // Search Filter Logic
-        const matchesSearch = ticket.id.toLowerCase().includes(searchTerm) || 
-                              ticket.userId.toLowerCase().includes(searchTerm) ||
-                              subject.toLowerCase().includes(searchTerm) ||
-                              status.toLowerCase().includes(searchTerm);
-
-        if (matchesSearch) {
-            visibleCount++;
-            
-            // Format Last Updated safely
-            let dateStr = 'N/A';
-            const timeObj = ticket.updatedAt || ticket.createdAt;
-            if (timeObj) {
-                dateStr = timeObj.toDate().toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono font-bold text-gray-800">${displayTicketId}</td>
-                <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${ticket.userId}">${displayUserId}...</td>
-                <td class="px-6 py-4 text-gray-800 font-medium truncate max-w-[250px]">${subject}</td>
-                <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
-                <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-4 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        View
-                    </button>
-                </td>
-            `;
-
-            row.querySelector('.manage-btn').addEventListener('click', () => openTicketModal(ticket));
-            tableBody.appendChild(row);
+        // Format Last Updated safely
+        let dateStr = 'N/A';
+        const timeObj = ticket.updatedAt || ticket.createdAt;
+        if (timeObj) {
+            dateStr = timeObj.toDate().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
         }
+
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono font-bold text-gray-800">${displayTicketId}</td>
+            <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${ticket.userId}">${displayUserId}...</td>
+            <td class="px-6 py-4 text-gray-800 font-medium truncate max-w-[250px]">${subject}</td>
+            <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
+            <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
+            <td class="px-6 py-4 text-center">
+                <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-4 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
+                    View
+                </button>
+            </td>
+        `;
+
+        row.querySelector('.manage-btn').addEventListener('click', () => openTicketModal(ticket));
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No matching tickets found.</td></tr>`;
+    }
+
+    if (paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderTicketsTable();
+        }, paginationContainer);
     }
 }
 

@@ -1,12 +1,15 @@
 import { 
     getFirestore, collectionGroup, onSnapshot, doc, updateDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allRefills = [];
 let currentManagingRefill = null;
+let currentPage = 1;
+const rowsPerPage = 50;
 
 window.addEventListener('admin-section-load', (e) => {
     if (e.detail.section !== 'refills') return;
@@ -54,6 +57,7 @@ function renderRefillsUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-refills-pagination-container"></div>
         </div>
 
         <!-- Manage Refill Modal -->
@@ -108,7 +112,12 @@ function renderRefillsUI() {
     `;
 
     const searchInput = document.getElementById('admin-search-refills');
-    if (searchInput) searchInput.addEventListener('input', renderRefillsTable);
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderRefillsTable();
+        });
+    }
 
     const modal = document.getElementById('manage-refill-modal');
     const closeBtn = document.getElementById('close-refill-modal-btn');
@@ -161,6 +170,7 @@ function fetchAllRefills() {
 function renderRefillsTable() {
     const tableBody = document.getElementById('admin-refills-table-body');
     const searchInput = document.getElementById('admin-search-refills');
+    const paginationContainer = document.getElementById('admin-refills-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -171,8 +181,24 @@ function renderRefillsTable() {
         return;
     }
 
+    const filtered = allRefills.filter(refill => {
+        const serviceName = refill.serviceName || '';
+        const link = refill.link || '';
+        return serviceName.toLowerCase().includes(searchTerm) || 
+               link.toLowerCase().includes(searchTerm) || 
+               refill.id.toLowerCase().includes(searchTerm) ||
+               (refill.orderId || '').toLowerCase().includes(searchTerm) ||
+               refill.userId.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
-    allRefills.forEach(refill => {
+    paginated.forEach(refill => {
+        visibleCount++;
         const displayRefillId = refill.id.substring(0, 8).toUpperCase();
         const displayOrderId = (refill.orderId || 'Unknown').substring(0, 8).toUpperCase();
         const displayUserId = refill.userId.substring(0, 8);
@@ -180,48 +206,46 @@ function renderRefillsTable() {
         const link = refill.link || 'N/A';
         const status = refill.status || 'Pending';
         
-        const matchesSearch = serviceName.toLowerCase().includes(searchTerm) || 
-                              link.toLowerCase().includes(searchTerm) || 
-                              refill.id.toLowerCase().includes(searchTerm) ||
-                              (refill.orderId || '').toLowerCase().includes(searchTerm) ||
-                              refill.userId.toLowerCase().includes(searchTerm);
-
-        if (matchesSearch) {
-            visibleCount++;
-            let dateStr = 'N/A';
-            if (refill.createdAt) {
-                dateStr = refill.createdAt.toDate().toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayRefillId}</td>
-                <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${refill.userId}">${displayUserId}...</td>
-                <td class="px-6 py-4 font-mono text-xs font-bold text-gray-700" title="${refill.orderId}">${displayOrderId}</td>
-                <td class="px-6 py-4 whitespace-normal min-w-[200px]">
-                    <p class="font-semibold text-gray-800 text-sm leading-tight mb-1">${serviceName}</p>
-                    <a href="${link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate block max-w-[200px]" title="${link}">${link}</a>
-                </td>
-                <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
-                <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        Manage
-                    </button>
-                </td>
-            `;
-
-            row.querySelector('.manage-btn').addEventListener('click', () => openRefillModal(refill));
-            tableBody.appendChild(row);
+        let dateStr = 'N/A';
+        if (refill.createdAt) {
+            dateStr = refill.createdAt.toDate().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
         }
+
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayRefillId}</td>
+            <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${refill.userId}">${displayUserId}...</td>
+            <td class="px-6 py-4 font-mono text-xs font-bold text-gray-700" title="${refill.orderId}">${displayOrderId}</td>
+            <td class="px-6 py-4 whitespace-normal min-w-[200px]">
+                <p class="font-semibold text-gray-800 text-sm leading-tight mb-1">${serviceName}</p>
+                <a href="${link}" target="_blank" class="text-xs text-blue-500 hover:underline truncate block max-w-[200px]" title="${link}">${link}</a>
+            </td>
+            <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
+            <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
+            <td class="px-6 py-4 text-center">
+                <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
+                    Manage
+                </button>
+            </td>
+        `;
+
+        row.querySelector('.manage-btn').addEventListener('click', () => openRefillModal(refill));
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No matching refills found.</td></tr>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderRefillsTable();
+        }, paginationContainer);
     }
 }
 

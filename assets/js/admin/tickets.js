@@ -9,12 +9,15 @@ import {
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allTickets = [];
 let currentTicketId = null;
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -55,6 +58,7 @@ function renderTicketsUI() {
                         <p class="text-sm">Loading tickets...</p>
                     </div>
                 </div>
+                <div id="admin-tickets-pagination-container" class="border-t border-gray-100 bg-white"></div>
             </div>
 
             <!-- Active Ticket View -->
@@ -92,10 +96,15 @@ function renderTicketsUI() {
                 <h3 class="text-xl font-bold text-gray-700">No Ticket Selected</h3>
                 <p class="text-sm mt-1">Select a ticket from the inbox to view and reply.</p>
             </div>
-        </div>
     `;
 
-    document.getElementById('admin-search-tickets')?.addEventListener('input', renderInboxList);
+    const searchInput = document.getElementById('admin-search-tickets');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderInboxList();
+        });
+    }
     
     document.getElementById('close-ticket-btn')?.addEventListener('click', async () => {
         if (!currentTicketId) return;
@@ -182,6 +191,7 @@ function fetchTickets() {
 function renderInboxList() {
     const container = document.getElementById('tickets-list-container');
     const searchInput = document.getElementById('admin-search-tickets');
+    const paginationContainer = document.getElementById('admin-tickets-pagination-container');
     if (!container) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -192,39 +202,55 @@ function renderInboxList() {
         return;
     }
 
+    const filtered = allTickets.filter(ticket => {
+        return ticket.subject.toLowerCase().includes(searchTerm) || 
+               ticket.id.toLowerCase().includes(searchTerm) || 
+               ticket.uid.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
-    allTickets.forEach(ticket => {
-        if (ticket.subject.toLowerCase().includes(searchTerm) || ticket.id.toLowerCase().includes(searchTerm) || ticket.uid.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            let statusBadge = '';
-            if (ticket.status === 'Pending') statusBadge = '<span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Pending</span>';
-            else if (ticket.status === 'Answered') statusBadge = '<span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Answered</span>';
-            else statusBadge = '<span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Closed</span>';
+    paginated.forEach(ticket => {
+        visibleCount++;
+        
+        let statusBadge = '';
+        if (ticket.status === 'Pending') statusBadge = '<span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Pending</span>';
+        else if (ticket.status === 'Answered') statusBadge = '<span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Answered</span>';
+        else statusBadge = '<span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Closed</span>';
 
-            const dateStr = ticket.lastUpdatedAt ? ticket.lastUpdatedAt.toDate().toLocaleDateString() : 'N/A';
-            const isActive = currentTicketId === ticket.id;
+        const dateStr = ticket.lastUpdatedAt ? ticket.lastUpdatedAt.toDate().toLocaleDateString() : 'N/A';
+        const isActive = currentTicketId === ticket.id;
 
-            const div = document.createElement('div');
-            div.className = `p-3 rounded-lg cursor-pointer transition-all border ${isActive ? 'bg-blue-50 border-blue-200' : 'bg-white border-transparent hover:border-gray-200 hover:shadow-sm'}`;
-            div.innerHTML = `
-                <div class="flex justify-between items-start mb-1">
-                    <h4 class="text-sm font-bold text-gray-800 truncate pr-2">${ticket.subject}</h4>
-                    ${statusBadge}
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-500 font-mono">#${ticket.id.substring(0,6)}</span>
-                    <span class="text-gray-400 font-medium">${dateStr}</span>
-                </div>
-            `;
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-lg cursor-pointer transition-all border ${isActive ? 'bg-blue-50 border-blue-200' : 'bg-white border-transparent hover:border-gray-200 hover:shadow-sm'}`;
+        div.innerHTML = `
+            <div class="flex justify-between items-start mb-1">
+                <h4 class="text-sm font-bold text-gray-800 truncate pr-2">${ticket.subject}</h4>
+                ${statusBadge}
+            </div>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-gray-500 font-mono">#${ticket.id.substring(0,6)}</span>
+                <span class="text-gray-400 font-medium">${dateStr}</span>
+            </div>
+        `;
 
-            div.addEventListener('click', () => openTicket(ticket));
-            container.appendChild(div);
-        }
+        div.addEventListener('click', () => openTicket(ticket));
+        container.appendChild(div);
     });
 
     if (visibleCount === 0) {
         container.innerHTML = `<div class="p-8 text-center text-gray-400 font-medium">No matching tickets.</div>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderInboxList();
+        }, paginationContainer);
     }
 }
 

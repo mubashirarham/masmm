@@ -6,14 +6,18 @@ import {
     updateDoc,
     increment,
     getDoc,
-    setDoc
+    setDoc,
+    collection
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allDeposits = [];
 let currentManagingDeposit = null;
+let currentPage = 1;
+const rowsPerPage = 50;
 
 // Listen for the custom routing event from admin/index.html
 window.addEventListener('admin-section-load', (e) => {
@@ -66,6 +70,7 @@ function renderDepositsUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="admin-deposits-pagination-container"></div>
         </div>
 
         <!-- Manage Deposit Modal -->
@@ -119,7 +124,10 @@ function renderDepositsUI() {
     // Attach Search Listener
     const searchInput = document.getElementById('admin-search-deposits');
     if (searchInput) {
-        searchInput.addEventListener('input', renderDepositsTable);
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderDepositsTable();
+        });
     }
 
     // Attach Modal Close Listeners
@@ -192,6 +200,7 @@ function fetchAllDeposits() {
 function renderDepositsTable() {
     const tableBody = document.getElementById('admin-deposits-table-body');
     const searchInput = document.getElementById('admin-search-deposits');
+    const paginationContainer = document.getElementById('admin-deposits-pagination-container');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -202,55 +211,66 @@ function renderDepositsTable() {
         return;
     }
 
+    const filtered = allDeposits.filter(deposit => {
+        const tid = deposit.tid || '';
+        const status = deposit.status || '';
+        return tid.toLowerCase().includes(searchTerm) || 
+               deposit.userId.toLowerCase().includes(searchTerm) ||
+               status.toLowerCase().includes(searchTerm);
+    });
+
+    const totalPages = Math.ceil(filtered.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let visibleCount = 0;
 
-    allDeposits.forEach(deposit => {
+    paginated.forEach(deposit => {
+        visibleCount++;
         const displayUserId = deposit.userId.substring(0, 8);
         const tid = deposit.tid || 'N/A';
         const method = deposit.method || 'Unknown';
         const status = deposit.status || 'Pending';
         const amount = Number(deposit.amount || 0).toFixed(2);
         
-        // Search Filter Logic
-        const matchesSearch = tid.toLowerCase().includes(searchTerm) || 
-                              deposit.userId.toLowerCase().includes(searchTerm) ||
-                              status.toLowerCase().includes(searchTerm);
-
-        if (matchesSearch) {
-            visibleCount++;
-            
-            // Format Date safely
-            let dateStr = 'N/A';
-            if (deposit.createdAt) {
-                dateStr = deposit.createdAt.toDate().toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
-            
-            row.innerHTML = `
-                <td class="px-6 py-4 font-mono font-bold text-gray-800">${tid}</td>
-                <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${deposit.userId}">${displayUserId}...</td>
-                <td class="px-6 py-4 text-gray-700">${method}</td>
-                <td class="px-6 py-4 text-center font-bold text-gray-800">Rs ${amount}</td>
-                <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
-                <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
-                <td class="px-6 py-4 text-center">
-                    <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
-                        Review
-                    </button>
-                </td>
-            `;
-
-            row.querySelector('.manage-btn').addEventListener('click', () => openDepositModal(deposit));
-            tableBody.appendChild(row);
+        let dateStr = 'N/A';
+        if (deposit.createdAt) {
+            dateStr = deposit.createdAt.toDate().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
         }
+
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 font-mono font-bold text-gray-800">${tid}</td>
+            <td class="px-6 py-4 font-mono text-xs text-brand-600" title="${deposit.userId}">${displayUserId}...</td>
+            <td class="px-6 py-4 text-gray-700">${method}</td>
+            <td class="px-6 py-4 text-center font-bold text-gray-800">Rs ${amount}</td>
+            <td class="px-6 py-4 text-center">${getStatusBadge(status)}</td>
+            <td class="px-6 py-4 text-center text-xs text-gray-500">${dateStr}</td>
+            <td class="px-6 py-4 text-center">
+                <button class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded transition-colors text-xs font-bold manage-btn shadow-sm">
+                    Review
+                </button>
+            </td>
+        `;
+
+        row.querySelector('.manage-btn').addEventListener('click', () => openDepositModal(deposit));
+        tableBody.appendChild(row);
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">No matching deposits found.</td></tr>`;
+    }
+
+    if (paginationContainer) {
+        renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderDepositsTable();
+        }, paginationContainer);
     }
 }
 
@@ -319,6 +339,46 @@ async function handleDepositAction(newStatus) {
                     await setDoc(statsRef, { balance: amountToAdd, totalSpent: 0, totalOrders: 0 }, { merge: true });
                 } else {
                     await updateDoc(statsRef, { balance: increment(amountToAdd) });
+                }
+
+                // Affiliate/Referral Bonus Execution
+                try {
+                    const userRef = doc(db, 'artifacts', appId, 'users', currentManagingDeposit.userId);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists() && userSnap.data().referrer) {
+                        const referrerId = userSnap.data().referrer;
+                        
+                        // Fetch Global Commission Rate (Configurable)
+                        const configRef = doc(db, 'artifacts', appId, 'public', 'settings', 'affiliates', 'config');
+                        const configSnap = await getDoc(configRef);
+                        const commissionRate = configSnap.exists() && configSnap.data().commissionRate !== undefined ? Number(configSnap.data().commissionRate) : 3;
+                        
+                        if (commissionRate > 0) {
+                            const bonusAmount = amountToAdd * (commissionRate / 100);
+                            const referrerStatsRef = doc(db, 'artifacts', appId, 'users', referrerId, 'account', 'stats');
+                            
+                            // Atomically increment referrer balance and tracking stats
+                            await setDoc(referrerStatsRef, {
+                                balance: increment(bonusAmount),
+                                referralEarnings: increment(bonusAmount)
+                            }, { merge: true });
+
+                            // Log a Referral Reward transaction for the referrer
+                            const refTxDoc = doc(collection(db, 'artifacts', appId, 'users', referrerId, 'transactions'));
+                            await setDoc(refTxDoc, {
+                                type: 'Deposit',
+                                method: 'Affiliate Bonus',
+                                amount: bonusAmount,
+                                status: 'Completed',
+                                tid: 'REF-' + Date.now().toString().slice(-6) + '-' + Math.floor(Math.random() * 1000),
+                                relatedUserId: currentManagingDeposit.userId,
+                                createdAt: new Date()
+                            });
+                        }
+                    }
+                } catch (affiliateError) {
+                    // Failing to map affiliate should not crash main deposit workflow!
+                    console.error("Affiliate Margin Engine Error:", affiliateError);
                 }
             }
         }

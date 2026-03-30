@@ -163,20 +163,29 @@ async function fetchRealtimeStats() {
             if(el) el.innerText = "Needs Index";
         }
 
-        // 4. Total Revenue Calculation
-        // This calculates totalSpent across all user stats documents
+        // 4. Financial Analytics Calculation (Exact Margins based on Order history)
         try {
-            const allStatsQuery = collectionGroup(db, 'stats'); // Needs an index
-            onSnapshot(allStatsQuery, (snapshot) => {
+            const allOrdersQuery = query(collectionGroup(db, 'orders'), where('status', '==', 'Completed'));
+            onSnapshot(allOrdersQuery, (snapshot) => {
                 let totalRevenue = 0;
+                let upstreamLiability = 0;
+                
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    if (data.totalSpent) totalRevenue += Number(data.totalSpent);
+                    const charge = Number(data.charge || 0);
+                    totalRevenue += charge;
+                    
+                    if (data._original_rate && data.quantity) {
+                        const originalRate = Number(data._original_rate);
+                        const exchangeRate = Number(data._pkr_exchange_rate || 1); // fallback to 1 if not set
+                        const qty = Number(data.quantity);
+                        upstreamLiability += (originalRate * exchangeRate / 1000) * qty;
+                    } else {
+                        // Fallback to average 20% markup rule if legacy order lacks metadata
+                        upstreamLiability += charge / 1.2;
+                    }
                 });
                 
-                // Master Financial Analytics (Derives exact margins based on Global Markup)
-                const GLOBAL_MARKUP = 1.2; // 20% target margin
-                const upstreamLiability = totalRevenue / GLOBAL_MARKUP;
                 const netProfit = totalRevenue - upstreamLiability;
 
                 const elRev = document.getElementById('stat-total-revenue');
@@ -188,8 +197,9 @@ async function fetchRealtimeStats() {
                 if(elProfit) elProfit.innerText = `+ Rs ${netProfit.toFixed(0)}`;
             });
         } catch(e) {
-             const el = document.getElementById('stat-total-revenue');
-             if(el) el.innerText = "Needs Index";
+            console.warn("Financial Analytics requires Collection Group index on orders by status.", e);
+            const el = document.getElementById('stat-total-revenue');
+            if(el) el.innerText = "Needs Index";
         }
 
     } catch (error) {

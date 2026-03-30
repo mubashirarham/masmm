@@ -294,6 +294,42 @@ function renderApiUI() {
         if (provider) fetchRemoteServices(provider, btnElement);
     };
 
+    window.autoImportAll = async (id, btnElement) => {
+        const markup = prompt("Enter Profit Markup (%) for all services across all categories:", "150");
+        if (markup === null) return;
+
+        if (!confirm("WARNING: This will fetch all remote services, automatically create any missing categories in your local DB, and import EVERY service from this provider. Proceed?")) return;
+
+        const originalHtml = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing...';
+        btnElement.disabled = true;
+
+        try {
+            const response = await fetch('/.netlify/functions/sync-provider', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    action: 'import_all_categories', 
+                    providerId: id,
+                    markupPercentage: parseFloat(markup) || 150
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(`Success: ${result.message}`);
+                fetchLocalCategories(); // Refresh cache
+            } else {
+                alert(`Error: ${result.error}`);
+            }
+        } catch (error) {
+            console.error("Auto import execution error:", error);
+            alert("Failed to connect to backend server.");
+        } finally {
+            btnElement.innerHTML = originalHtml;
+            btnElement.disabled = false;
+        }
+    };
+
     // --- Import Modal Logic UI Binding ---
     document.getElementById('close-import-modal-btn').addEventListener('click', closeImportModal);
     document.getElementById('cancel-import-btn').addEventListener('click', closeImportModal);
@@ -369,8 +405,11 @@ function renderProvidersTable() {
             <td class="px-6 py-4 text-gray-500 font-mono text-xs truncate max-w-[250px]" title="${url}">${url}</td>
             <td class="px-6 py-4 text-center">${statusBadge}</td>
             <td class="px-6 py-4 text-right space-x-2">
+                <button onclick="window.autoImportAll('${provider.id}', this)" class="text-white bg-green-500 hover:bg-green-600 px-3 py-1.5 rounded text-xs font-semibold transition-colors shadow-sm" title="Auto Import All Categories & Services">
+                    <i class="fa-solid fa-bolt mr-1"></i> Auto Import All
+                </button>
                 <button onclick="window.openImportModal('${provider.id}', this)" class="text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded text-xs font-semibold transition-colors shadow-sm" title="Import Services">
-                    <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Import
+                    <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Import Manual
                 </button>
                 <button onclick="window.editProvider('${provider.id}')" class="text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm" title="Edit Provider">
                     <i class="fa-solid fa-pen"></i>

@@ -45,32 +45,28 @@ export async function initDynamicTheme(app) {
                 if (metaKey) metaKey.setAttribute("content", data.seoKeywords);
             }
             
-            // 2. INJECT BRANDING LOGOS
-            if (data.theme && data.theme.logoUrl) {
-                document.querySelectorAll('.site-logo').forEach(el => {
+            // 2. INJECT BRANDING LOGOS & NAMES
+            if (data.siteName) {
+                document.querySelectorAll('.site-title-text').forEach(el => {
+                    el.innerText = data.siteName;
+                    // For HTML elements using name naturally
+                });
+            }
+
+            if (data.theme && data.theme.logoUrl && data.theme.logoUrl.trim() !== '') {
+                document.querySelectorAll('.site-logo-container').forEach(el => {
                     if (el.tagName === 'IMG') {
                         el.src = data.theme.logoUrl;
                     } else {
-                        // If it's a div/span container, create an image and set it inside
-                        el.innerHTML = `<img src="${data.theme.logoUrl}" class="h-10 object-contain drop-shadow-sm" alt="Logo">`;
-                    }
-                });
-            } else if (data.siteName) {
-                document.querySelectorAll('.site-logo').forEach(el => {
-                    if (el.tagName !== 'IMG') {
-                        el.innerText = data.siteName.substring(0, 2).toUpperCase();
+                        el.innerHTML = `<img src="${data.theme.logoUrl}" class="h-10 object-contain drop-shadow-sm" style="max-height: 40px;" alt="Logo">`;
                     }
                 });
             }
 
             // 3. INJECT TAILWIND COLORS & FONTS
-            if (data.theme && window.tailwind) {
-                const colors = window.tailwind.config.theme.extend.colors;
+            if (data.theme) {
                 const activePalette = PALETTE_CONFIGS[data.theme.palette] || PALETTE_CONFIGS['green'];
                 
-                // Override the tailwind runtime config safely
-                colors.brand = activePalette;
-
                 // Load Custom Google Fonts (Heading & Body)
                 const gFontsList = new Set([data.theme.headingFont || 'Inter', data.theme.bodyFont || 'Inter']);
                 let gFontQuery = Array.from(gFontsList).map(f => `family=${f.replace(/ /g, '+')}:wght@300;400;500;600;700;800`).join('&');
@@ -83,11 +79,48 @@ export async function initDynamicTheme(app) {
                 // Construct styles based on selection
                 const headStr = `'${data.theme.headingFont || 'Inter'}', sans-serif`;
                 const bodyStr = `'${data.theme.bodyFont || 'Inter'}', sans-serif`;
+                const b = activePalette; // Shortcut
 
                 const style = document.createElement('style');
                 style.innerHTML = `
                     body, p, input, select, textarea { font-family: ${bodyStr} !important; }
                     h1, h2, h3, h4, h5, h6, .brand-heading { font-family: ${headStr} !important; }
+                    
+                    /* Dynamic Tailwind Overrides */
+                    .bg-brand-50, .hover\\:bg-brand-50:hover { background-color: ${b[50]} !important; }
+                    .bg-brand-100, .hover\\:bg-brand-100:hover { background-color: ${b[100]} !important; }
+                    .bg-brand-200, .hover\\:bg-brand-200:hover { background-color: ${b[200] || b[100]} !important; }
+                    .bg-brand-500, .hover\\:bg-brand-500:hover { background-color: ${b[500]} !important; }
+                    .bg-brand-600, .hover\\:bg-brand-600:hover { background-color: ${b[600]} !important; }
+                    .bg-brand-800, .hover\\:bg-brand-800:hover { background-color: ${b[800]} !important; }
+                    .bg-brand-900, .hover\\:bg-brand-900:hover { background-color: ${b[900]} !important; }
+
+                    .text-brand-50, .hover\\:text-brand-50:hover { color: ${b[50]} !important; }
+                    .text-brand-100, .hover\\:text-brand-100:hover { color: ${b[100]} !important; }
+                    .text-brand-200, .hover\\:text-brand-200:hover { color: ${b[200] || b[100]} !important; }
+                    .text-brand-400, .hover\\:text-brand-400:hover { color: ${b[400] || b[500]} !important; }
+                    .text-brand-500, .hover\\:text-brand-500:hover { color: ${b[500]} !important; }
+                    .text-brand-600, .hover\\:text-brand-600:hover { color: ${b[600]} !important; }
+                    .text-brand-700, .hover\\:text-brand-700:hover { color: ${b[700] || b[800]} !important; }
+                    .text-brand-800, .hover\\:text-brand-800:hover { color: ${b[800]} !important; }
+                    .text-brand-900, .hover\\:text-brand-900:hover { color: ${b[900]} !important; }
+
+                    .border-brand-50 { border-color: ${b[50]} !important; }
+                    .border-brand-100 { border-color: ${b[100]} !important; }
+                    .border-brand-200 { border-color: ${b[200] || b[100]} !important; }
+                    .border-brand-500, .focus\\:border-brand-500:focus { border-color: ${b[500]} !important; }
+                    .border-brand-600 { border-color: ${b[600]} !important; }
+                    
+                    .ring-brand-500, .focus\\:ring-brand-500:focus { --tw-ring-color: ${b[500]} !important; }
+
+                    .shadow-brand-500\\/30 { 
+                        --tw-shadow-color: ${b[500]}4D !important;
+                        --tw-shadow: var(--tw-shadow-colored) !important;
+                    }
+                    
+                    .from-brand-400 { --tw-gradient-from: ${b[400] || b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+                    .from-brand-500 { --tw-gradient-from: ${b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+                    .to-brand-600 { --tw-gradient-to: ${b[600]} !important; }
                 `;
                 document.head.appendChild(style);
             }

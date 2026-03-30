@@ -2,11 +2,15 @@ import {
     getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, getDocs, query, where, updateDoc, increment
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const auth = getAuth(window.firebaseApp);
 const appId = window.__app_id;
 const PANEL_PRICE = 4999;
+let allPanels = [];
+let currentPage = 1;
+const rowsPerPage = 10;
 
 export async function renderChildPanelUI(container) {
     if (!auth.currentUser) return;
@@ -76,6 +80,7 @@ export async function renderChildPanelUI(container) {
                         </div>
                     </div>
                 </div>
+                <div id="cp-pagination-container" class="mt-4"></div>
             </div>
         </div>
     `;
@@ -94,35 +99,60 @@ async function fetchMyPanels(uid) {
         const panelsRef = collection(db, 'artifacts', appId, 'child_panels');
         const q = query(panelsRef, where('ownerUid', '==', uid));
         const snap = await getDocs(q);
-
-        if(snap.empty) {
-            listBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-sm text-gray-500 font-medium">You don't have any active child panels.</td></tr>`;
-            return;
-        }
-
-        let html = '';
-        snap.forEach(docSnap => {
-            const data = docSnap.data();
-            const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'N/A';
-            const statusBadge = data.status === 'Active' 
-                ? '<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md text-xs font-bold">Active</span>'
-                : '<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-md text-xs font-bold">Suspended</span>';
-
-            html += `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs text-gray-400"></i> ${data.domain}</a></td>
-                    <td class="p-4">${statusBadge}</td>
-                    <td class="p-4 text-xs text-gray-500 font-semibold uppercase tracking-wide">${date}</td>
-                    <td class="p-4 text-right">
-                        <button class="text-gray-400 hover:text-brand-600 transition-colors" title="Settings"><i class="fa-solid fa-gear"></i></button>
-                    </td>
-                </tr>
-            `;
-        });
-        listBody.innerHTML = html;
+        
+        allPanels = [];
+        snap.forEach(docSnap => allPanels.push(docSnap.data()));
+        
+        allPanels.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+        
+        renderPanelsTable();
     } catch(err) {
         console.error("Error fetching child panels", err);
         listBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 text-sm font-semibold">Failed to load panels.</td></tr>`;
+    }
+}
+
+function renderPanelsTable() {
+    const listBody = document.getElementById('cp-list-body');
+    const paginationContainer = document.getElementById('cp-pagination-container');
+    if(!listBody) return;
+
+    if(allPanels.length === 0) {
+        listBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-sm text-gray-500 font-medium">You don't have any active child panels.</td></tr>`;
+        if(paginationContainer) paginationContainer.innerHTML = '';
+        return;
+    }
+
+    const totalPages = Math.ceil(allPanels.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = allPanels.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    let html = '';
+    paginated.forEach(data => {
+        const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'N/A';
+        const statusBadge = data.status === 'Active' 
+            ? '<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md text-xs font-bold">Active</span>'
+            : '<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-md text-xs font-bold">Suspended</span>';
+
+        html += `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs text-gray-400"></i> ${data.domain}</a></td>
+                <td class="p-4">${statusBadge}</td>
+                <td class="p-4 text-xs text-gray-500 font-semibold uppercase tracking-wide">${date}</td>
+                <td class="p-4 text-right">
+                    <button class="text-gray-400 hover:text-brand-600 transition-colors" title="Settings"><i class="fa-solid fa-gear"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+    listBody.innerHTML = html;
+
+    if(paginationContainer) {
+        renderPagination(allPanels.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderPanelsTable();
+        }, paginationContainer);
     }
 }
 

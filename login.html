@@ -74,10 +74,12 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="index.html" class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
-                            M
+                        <div class="site-logo-container">
+                            <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                                M
+                            </div>
                         </div>
-                        <span class="font-bold text-2xl text-brand-900 tracking-tight">MAsmmpanel</span>
+                        <span class="font-bold text-2xl text-brand-900 tracking-tight site-title-text">MAsmmpanel</span>
                     </a>
                 </div>
                 
@@ -205,8 +207,10 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="md:col-span-2">
                     <a href="index.html" class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-brand-900 font-bold text-lg">M</div>
-                        <span class="font-bold text-2xl tracking-tight text-white">MAsmmpanel</span>
+                        <div class="site-logo-container">
+                            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-brand-900 font-bold text-lg">M</div>
+                        </div>
+                        <span class="font-bold text-2xl tracking-tight text-white site-title-text">MAsmmpanel</span>
                     </a>
                     <p class="text-brand-100 text-sm mb-6 max-w-sm">
                         The #1 and cheapest Pakistani SMM Panel. We provide high-quality services to help you scale your social media presence effectively and affordably.
@@ -296,6 +300,12 @@
             panelAppId = __currentHost.replace(/\./g, '-');
         } 
 
+        // Cache Referral Link Parameter
+        const refParam = new URLSearchParams(window.location.search).get('ref');
+        if (refParam) {
+            localStorage.setItem('masmm_referrer', refParam);
+        }
+
         // UI Elements
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -334,11 +344,25 @@
             // SAVE USER TO FIRESTORE SO ADMIN PANEL CAN SEE THEM
             try {
                 const userRef = doc(db, 'artifacts', panelAppId, 'users', user.uid);
-                await setDoc(userRef, {
+                
+                const userPayload = {
                     email: user.email,
                     role: role,
                     lastLogin: serverTimestamp()
-                }, { merge: true });
+                };
+
+                const storedRef = localStorage.getItem('masmm_referrer');
+                // Only attribute if they aren't somehow referring themselves
+                if (storedRef && storedRef !== user.uid) {
+                    userPayload.referrer = storedRef;
+                }
+
+                await setDoc(userRef, userPayload, { merge: true });
+                
+                // Clear the cache so it doesn't overwrite future logins natively
+                if (storedRef) {
+                    localStorage.removeItem('masmm_referrer');
+                }
             } catch (err) {
                 console.error("Failed to save user doc:", err);
             }

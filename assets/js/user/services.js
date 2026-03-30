@@ -1,12 +1,15 @@
 import { 
     getFirestore, collection, onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let allServices = [];
 let allCategories = [];
+let currentPage = 1;
+const rowsPerPage = 30;
 
 window.addEventListener('user-section-load', (e) => {
     if (e.detail.section !== 'services') return;
@@ -52,6 +55,7 @@ function renderServicesUI() {
                     </tbody>
                 </table>
             </div>
+            <div id="services-pagination-container"></div>
         </div>
 
         <!-- Service Description Modal -->
@@ -68,7 +72,10 @@ function renderServicesUI() {
         </div>
     `;
 
-    document.getElementById('search-services-input').addEventListener('input', renderServicesTable);
+    document.getElementById('search-services-input').addEventListener('input', () => {
+        currentPage = 1;
+        renderServicesTable();
+    });
     document.getElementById('close-desc-modal-btn').addEventListener('click', closeDescModal);
     
     // Attach to window so table buttons can trigger it
@@ -121,19 +128,27 @@ function fetchServices() {
 function renderServicesTable() {
     const tableBody = document.getElementById('user-services-table-body');
     const searchInput = document.getElementById('search-services-input');
+    const paginationContainer = document.getElementById('services-pagination-container');
     if (!tableBody || allCategories.length === 0 || allServices.length === 0) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     tableBody.innerHTML = '';
 
+    const filteredServices = allServices.filter(s => s.name.toLowerCase().includes(searchTerm));
+    
+    // Check page bounds
+    const totalPages = Math.ceil(filteredServices.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = filteredServices.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     let currentCategoryRendered = null;
     let visibleCount = 0;
 
-    allServices.forEach(service => {
-        if (service.name.toLowerCase().includes(searchTerm)) {
-            visibleCount++;
-            
-            // Add Category Header Row if it changes
+    paginated.forEach(service => {
+        visibleCount++;
+        
+        // Add Category Header Row if it changes
             if (currentCategoryRendered !== service.categoryId) {
                 const cat = allCategories.find(c => c.id === service.categoryId);
                 const catName = cat ? cat.name : 'Other Services';
@@ -165,10 +180,16 @@ function renderServicesTable() {
                     </td>
                 </tr>
             `;
-        }
     });
 
     if (visibleCount === 0) {
         tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No services match your search.</td></tr>`;
+    }
+
+    if(paginationContainer) {
+        renderPagination(filteredServices.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderServicesTable();
+        }, paginationContainer);
     }
 }

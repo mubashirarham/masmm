@@ -10,12 +10,15 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { renderPagination } from '../pagination.js';
 
 const db = getFirestore(window.firebaseApp);
 const appId = window.__app_id;
 
 let myTickets = [];
 let currentTicketId = null;
+let currentPage = 1;
+const rowsPerPage = 10;
 
 // Listen for the custom routing event from user/index.html
 window.addEventListener('user-section-load', (e) => {
@@ -52,6 +55,7 @@ function renderTicketsUI() {
                         <p class="text-sm">Loading history...</p>
                     </div>
                 </div>
+                <div id="tickets-pagination-container"></div>
             </div>
 
             <!-- Active Ticket View -->
@@ -260,6 +264,7 @@ function fetchTickets() {
 
 function renderInboxList() {
     const container = document.getElementById('tickets-list-container');
+    const paginationContainer = document.getElementById('tickets-pagination-container');
     if (!container) return;
     container.innerHTML = '';
 
@@ -268,7 +273,12 @@ function renderInboxList() {
         return;
     }
 
-    myTickets.forEach(ticket => {
+    const totalPages = Math.ceil(myTickets.length / rowsPerPage);
+    if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+    const paginated = myTickets.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    paginated.forEach(ticket => {
         let statusBadge = '';
         if (ticket.status === 'Pending') statusBadge = '<span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Investigating</span>';
         else if (ticket.status === 'Answered') statusBadge = '<span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Answered</span>';
@@ -293,6 +303,13 @@ function renderInboxList() {
         div.addEventListener('click', () => openTicket(ticket));
         container.appendChild(div);
     });
+
+    if(paginationContainer) {
+        renderPagination(myTickets.length, rowsPerPage, currentPage, (page) => {
+            currentPage = page;
+            renderInboxList();
+        }, paginationContainer);
+    }
 }
 
 let activeMessageUnsubscribe = null;
