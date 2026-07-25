@@ -779,13 +779,8 @@
         // Listen to Auth State changes (Fires on load and login/logout)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User is signed in, show the "Welcome Back" screen
-                authFormView.classList.add('hidden');
-                loggedInView.classList.remove('hidden');
-                userEmailDisplay.innerText = user.email || "Anonymous User";
-                
+                // Automatically redirect logged-in users directly to their dedicated panel
                 const isAdmin = user.email === 'mubashirarham12@gmail.com';
-                dashboardLink.href = isAdmin ? 'admin/index.html' : 'user/index.html';
                 
                 // Silently update their last login in Firestore
                 try {
@@ -793,6 +788,7 @@
                     await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
                 } catch(e){}
 
+                window.location.replace(isAdmin ? 'admin/index.html' : 'user/index.html');
             } else {
                 // User is signed out, show the auth form
                 authFormView.classList.remove('hidden');
