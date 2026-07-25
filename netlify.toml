@@ -48,6 +48,37 @@
   to = "/.netlify/functions/cashmaal-utils"
   status = 200
 
+# Clean URL & SPA Redirects for User and Admin Portals
+[[redirects]]
+  from = "/user/index.html"
+  to = "/user/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/user/*"
+  to = "/user/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/user"
+  to = "/user/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/index.html"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
 # Activate the 100% Automated Background Worker (Runs Every 5 Minutes)
 [functions."worker"]
   schedule = "*/5 * * * *"

@@ -304,7 +304,14 @@ async function handleFundSubmit(e) {
         // IMPORTANT: Add your actual CashMaal Web ID here!
         const CASHMAAL_WEB_ID = "11191"; 
         
-        const originUrl = window.location.origin + window.location.pathname;
+        // Build clean URL for Netlify routing compatibility
+        let basePath = window.location.pathname;
+        if (basePath.endsWith('/index.html')) {
+            basePath = basePath.replace(/\/index\.html$/, '/');
+        } else if (!basePath.endsWith('/')) {
+            basePath += '/';
+        }
+        const originUrl = window.location.origin + basePath;
         const successUrl = originUrl + '?payment=success#transactions';
         const cancelUrl = originUrl + '?payment=cancelled#addfunds';
 
