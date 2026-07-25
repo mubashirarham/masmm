@@ -13,32 +13,87 @@ let allServices = [];
 let currentBalance = 0;
 let currentDiscount = 0;
 
-// Helper to detect platform for icons - using Real Brand SVGs via SimpleIcons
+// Helper to detect platform for icons with real-time style preset & admin custom logo support
 function getPlatformLogo(categoryName) {
     const name = (categoryName || '').toLowerCase();
-    const renderSvg = (slug, color, bg) => ({ 
-        icon: `<img src="https://cdn.simpleicons.org/${slug}/${color.replace('#','')}" class="w-full h-full object-contain" alt="${slug}">`, 
-        color, bg 
+    const socialConfig = window.__socialIconsConfig || {};
+    const stylePreset = socialConfig.style || '3d-gradient';
+    const customPlatforms = socialConfig.platforms || [];
+    const customLogos = socialConfig.customLogos || {};
+
+    let styleClass = "w-8 h-8 rounded-lg shrink-0 p-1.5 flex items-center justify-center transition-all ";
+    switch(stylePreset) {
+        case 'minimal-flat':
+            styleClass += "bg-slate-900 text-white border border-slate-800 shadow-sm";
+            break;
+        case 'neon-glass':
+            styleClass += "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.4)]";
+            break;
+        case 'circle-solid':
+            styleClass += "rounded-full bg-brand-600 text-white shadow-sm";
+            break;
+        case 'outline-stroke':
+            styleClass += "border-2 border-slate-700 text-slate-800 bg-white shadow-sm";
+            break;
+        case '3d-gradient':
+        default:
+            styleClass += "bg-gradient-to-tr from-brand-500 via-emerald-500 to-teal-400 text-white shadow-md";
+            break;
+    }
+
+    // 1. Check custom platform entry from Admin Panel
+    const matchPlat = customPlatforms.find(p => p.name && name.includes(p.name.toLowerCase()));
+    if (matchPlat && matchPlat.icon) {
+        const isImg = matchPlat.icon.startsWith('http') || matchPlat.icon.startsWith('data:image');
+        const iconHtml = isImg
+            ? `<img src="${matchPlat.icon}" class="w-full h-full object-contain rounded" alt="${matchPlat.name}">`
+            : `<i class="${matchPlat.icon} text-sm"></i>`;
+        return { icon: iconHtml, styleClass };
+    }
+
+    // 2. Check custom logos mapping (Instagram, TikTok, YouTube, Facebook)
+    let customImgUrl = null;
+    if (name.includes('tiktok') && customLogos.tiktok) customImgUrl = customLogos.tiktok;
+    else if ((name.includes('instagram') || name.includes('ig')) && customLogos.instagram) customImgUrl = customLogos.instagram;
+    else if ((name.includes('youtube') || name.includes('yt')) && customLogos.youtube) customImgUrl = customLogos.youtube;
+    else if ((name.includes('facebook') || name.includes('fb')) && customLogos.facebook) customImgUrl = customLogos.facebook;
+
+    if (customImgUrl && customImgUrl.trim() !== '') {
+        return {
+            icon: `<img src="${customImgUrl}" class="w-full h-full object-contain rounded" alt="Logo">`,
+            styleClass
+        };
+    }
+
+    // 3. Fallback to SimpleIcons
+    const renderSimpleSvg = (slug) => ({ 
+        icon: `<img src="https://cdn.simpleicons.org/${slug}/ffffff" class="w-full h-full object-contain" alt="${slug}">`, 
+        styleClass 
     });
 
-    if (name.includes('tiktok')) return renderSvg('tiktok', '#000000', 'bg-gray-100');
-    if (name.includes('instagram') || name.includes('ig')) return renderSvg('instagram', '#E1306C', 'bg-pink-50');
-    if (name.includes('youtube') || name.includes('yt')) return renderSvg('youtube', '#FF0000', 'bg-red-50');
-    if (name.includes('facebook') || name.includes('fb')) return renderSvg('facebook', '#1877F2', 'bg-blue-50');
-    if (name.includes('twitter') || name.includes('x')) return renderSvg('x', '#000000', 'bg-gray-100');
-    if (name.includes('telegram')) return renderSvg('telegram', '#26A5E4', 'bg-sky-50');
-    if (name.includes('spotify')) return renderSvg('spotify', '#1DB954', 'bg-green-50');
-    if (name.includes('linkedin')) return renderSvg('linkedin', '#0A66C2', 'bg-blue-50');
-    if (name.includes('discord')) return renderSvg('discord', '#5865F2', 'bg-indigo-50');
-    if (name.includes('twitch')) return renderSvg('twitch', '#9146FF', 'bg-purple-50');
-    if (name.includes('reddit')) return renderSvg('reddit', '#FF4500', 'bg-orange-50');
-    if (name.includes('pinterest')) return renderSvg('pinterest', '#E60023', 'bg-red-50');
-    if (name.includes('snapchat')) return renderSvg('snapchat', '#FFFC00', 'bg-yellow-50');
-    if (name.includes('threads')) return renderSvg('threads', '#000000', 'bg-gray-100');
-    
-    // Generic Fallback using classic FontAwesome if no brand found
-    return { icon: '<i class="fa-solid fa-layer-group text-lg"></i>', color: '#22c55e', bg: 'bg-brand-50' };
+    if (name.includes('tiktok')) return renderSimpleSvg('tiktok');
+    if (name.includes('instagram') || name.includes('ig')) return renderSimpleSvg('instagram');
+    if (name.includes('youtube') || name.includes('yt')) return renderSimpleSvg('youtube');
+    if (name.includes('facebook') || name.includes('fb')) return renderSimpleSvg('facebook');
+    if (name.includes('twitter') || name.includes('x')) return renderSimpleSvg('x');
+    if (name.includes('telegram')) return renderSimpleSvg('telegram');
+    if (name.includes('spotify')) return renderSimpleSvg('spotify');
+    if (name.includes('linkedin')) return renderSimpleSvg('linkedin');
+    if (name.includes('discord')) return renderSimpleSvg('discord');
+    if (name.includes('twitch')) return renderSimpleSvg('twitch');
+    if (name.includes('reddit')) return renderSimpleSvg('reddit');
+    if (name.includes('pinterest')) return renderSimpleSvg('pinterest');
+    if (name.includes('snapchat')) return renderSimpleSvg('snapchat');
+    if (name.includes('threads')) return renderSimpleSvg('threads');
+
+    return { icon: '<i class="fa-solid fa-layer-group text-sm"></i>', styleClass };
 }
+
+window.addEventListener('social-icons-updated', () => {
+    if (document.getElementById('cat-dropdown-options')) {
+        fetchCategories();
+    }
+});
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
@@ -58,67 +113,65 @@ function renderDashboardUI() {
     
     contentArea.innerHTML = `
         <!-- Welcome Banner -->
-        <div class="mb-8 bg-gradient-to-r from-brand-600 to-brand-800 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+        <div class="mb-8 bg-gradient-to-r from-brand-500 to-emerald-600 rounded-[24px] p-6 sm:p-8 text-white shadow-md relative overflow-hidden animate-fade-in-up">
             <div class="relative z-10">
-                <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="welcome-username">User</span>! 👋</h2>
-                <p class="text-brand-100 text-sm md:text-base max-w-2xl">Ready to skyrocket your social media presence? Select a service below to get started instantly.</p>
+                <h2 class="text-3xl font-extrabold mb-1 tracking-tight">Welcome back, <span id="welcome-username">User</span>! 👋</h2>
+                <p class="text-emerald-50 text-sm max-w-2xl opacity-90 font-medium">Boost your social media presence instantly. Select a service below to place your order.</p>
             </div>
-            <i class="fa-solid fa-rocket absolute -bottom-6 -right-6 text-9xl text-white opacity-10 transform -rotate-12"></i>
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <i class="fa-solid fa-chart-line absolute -bottom-6 -right-2 text-[8rem] text-white/10 transform -rotate-12"></i>
         </div>
 
         <!-- Top Statistics Panel -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
-                <div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0"><i class="fa-solid fa-wallet"></i></div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div class="glass-card rounded-[20px] p-5 flex items-center gap-4 hover:-translate-y-1 transition-all duration-200 cursor-default bg-white/80 border border-slate-200/80 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0 border border-emerald-100"><i class="fa-solid fa-wallet"></i></div>
                 <div class="min-w-0">
-                    <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Available Balance</p>
-                    <h3 id="stat-balance" class="text-2xl font-bold text-gray-900 truncate">...</h3>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-0.5">Available Balance</p>
+                    <h3 id="stat-balance" class="text-2xl font-black text-slate-900 truncate tracking-tight">...</h3>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
-                <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shrink-0"><i class="fa-solid fa-chart-pie"></i></div>
+            <div class="glass-card rounded-[20px] p-5 flex items-center gap-4 hover:-translate-y-1 transition-all duration-200 cursor-default bg-white/80 border border-slate-200/80 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl shrink-0 border border-sky-100"><i class="fa-solid fa-receipt"></i></div>
                 <div class="min-w-0">
-                    <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Spent</p>
-                    <h3 id="stat-spent" class="text-2xl font-bold text-gray-900 truncate">...</h3>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-0.5">Total Spent</p>
+                    <h3 id="stat-spent" class="text-2xl font-black text-slate-900 truncate tracking-tight">...</h3>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
-                <div class="w-14 h-14 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-2xl shrink-0"><i class="fa-solid fa-box-open"></i></div>
+            <div class="glass-card rounded-[20px] p-5 flex items-center gap-4 hover:-translate-y-1 transition-all duration-200 cursor-default bg-white/80 border border-slate-200/80 shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0 border border-purple-100"><i class="fa-solid fa-box-open"></i></div>
                 <div class="min-w-0">
-                    <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Orders</p>
-                    <h3 id="stat-orders" class="text-2xl font-bold text-gray-900 truncate">0</h3>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-0.5">Total Orders</p>
+                    <h3 id="stat-orders" class="text-2xl font-black text-slate-900 truncate tracking-tight">0</h3>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto w-full">
+        <div class="max-w-4xl mx-auto w-full z-10 relative">
             
             <!-- Centered New Order Form -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 relative overflow-visible">
-                <!-- Subtle top border accent -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+            <div class="glass-card rounded-[24px] shadow-lg p-6 sm:p-8 relative bg-white/90 border border-slate-200/80 animate-fade-in-up">
 
-                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-cart-plus text-brand-500"></i> Place New Order
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-base"><i class="fa-solid fa-cart-plus"></i></div> 
+                    Place New Order
                 </h3>
 
-                <form id="new-order-form" class="space-y-6">
+                <form id="new-order-form" class="space-y-5">
                     
                     <!-- Custom Category Dropdown Row -->
                     <div class="relative w-full z-20">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Category <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold tracking-wider uppercase text-slate-700 mb-1.5">Category <span class="text-brand-600">*</span></label>
                         <div class="relative">
-                            <button type="button" id="cat-dropdown-btn" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white flex items-center justify-between transition-all text-sm font-medium cursor-pointer shadow-sm">
-                                <span id="cat-dropdown-text" class="flex items-center gap-3 text-gray-500">
-                                    <div class="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-gray-100"><i class="fa-solid fa-layer-group"></i></div>
-                                    -- Choose Category --
+                            <button type="button" id="cat-dropdown-btn" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none bg-slate-50/80 flex items-center justify-between transition-all text-sm font-semibold cursor-pointer text-slate-800">
+                                <span id="cat-dropdown-text" class="flex items-center gap-2.5 text-slate-700">
+                                    <div class="w-5 h-5 rounded bg-slate-200/80 flex items-center justify-center shrink-0 text-brand-600 text-xs"><i class="fa-solid fa-list"></i></div>
+                                    -- Select Category --
                                 </span>
-                                <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-200" id="cat-dropdown-arrow"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-200 text-xs" id="cat-dropdown-arrow"></i>
                             </button>
-                            <div id="cat-dropdown-menu" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-72 overflow-y-auto">
-                                <div class="p-2" id="cat-dropdown-options">
-                                    <div class="p-3 text-sm text-gray-500">Loading categories...</div>
+                            <div id="cat-dropdown-menu" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl max-h-72 overflow-y-auto z-50">
+                                <div class="p-1" id="cat-dropdown-options">
+                                    <div class="p-3 text-sm text-slate-500 text-center font-medium">Loading categories...</div>
                                 </div>
                             </div>
                         </div>
@@ -127,90 +180,88 @@ function renderDashboardUI() {
 
                     <!-- Custom Service Dropdown Row -->
                     <div class="relative w-full z-10">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Service <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold tracking-wider uppercase text-slate-700 mb-1.5">Service <span class="text-brand-600">*</span></label>
                         <div class="relative">
-                            <button type="button" id="srv-dropdown-btn" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white flex items-center justify-between transition-all text-sm font-medium cursor-pointer shadow-sm disabled:bg-gray-50 disabled:opacity-75 disabled:cursor-not-allowed" disabled>
-                                <span id="srv-dropdown-text" class="flex items-center gap-3 text-gray-500 overflow-hidden">
-                                    <div class="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-gray-100"><i class="fa-solid fa-tags"></i></div>
-                                    <span class="truncate block">Select a category first...</span>
+                            <button type="button" id="srv-dropdown-btn" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none bg-slate-50/80 flex items-center justify-between transition-all text-sm font-semibold cursor-pointer text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <span id="srv-dropdown-text" class="flex items-center gap-2.5 text-slate-700 overflow-hidden">
+                                    <div class="w-5 h-5 rounded bg-slate-200/80 flex items-center justify-center shrink-0 text-brand-600 text-xs"><i class="fa-solid fa-tag"></i></div>
+                                    <span class="truncate block">Select category first...</span>
                                 </span>
-                                <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-200 shrink-0" id="srv-dropdown-arrow"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-200 shrink-0 text-xs" id="srv-dropdown-arrow"></i>
                             </button>
-                            <div id="srv-dropdown-menu" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-72 overflow-y-auto">
-                                <div class="p-2 flex flex-col gap-1" id="srv-dropdown-options">
-                                    <div class="p-3 text-sm text-gray-500 text-center">No services available</div>
+                            <div id="srv-dropdown-menu" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl max-h-72 overflow-y-auto z-50">
+                                <div class="p-1 flex flex-col gap-1" id="srv-dropdown-options">
+                                    <div class="p-3 text-sm text-slate-500 text-center font-medium">No services available</div>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" id="service-select" required>
                         
-                        <!-- Beautiful Description Box -->
-                        <div id="service-description" class="hidden mt-3 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl text-sm text-gray-700 whitespace-pre-wrap leading-relaxed shadow-sm">
+                        <!-- Description Box -->
+                        <div id="service-description" class="hidden mt-2.5 p-3.5 bg-brand-50/60 border-l-4 border-brand-500 rounded-r-xl text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">
                             <!-- Populated by JS -->
                         </div>
                     </div>
 
                     <!-- Link Row -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Target Link <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold tracking-wider uppercase text-slate-700 mb-1.5">Link / URL <span class="text-brand-600">*</span></label>
                         <div class="relative">
-                            <i class="fa-solid fa-link absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="url" id="order-link" placeholder="https://..." required class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm">
+                            <i class="fa-solid fa-link absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="url" id="order-link" placeholder="https://..." required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm">
                         </div>
                     </div>
 
                     <!-- Quantity & Charge Row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity <span class="text-red-500">*</span></label>
-                            <input type="number" id="order-quantity" placeholder="0" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm">
-                            <div class="flex justify-between items-center mt-2 px-1">
-                                <span id="service-limits" class="text-xs font-semibold text-gray-500">Min: 0 - Max: 0</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <div class="relative z-0">
+                            <label class="block text-xs font-bold tracking-wider uppercase text-slate-700 mb-1.5">Quantity <span class="text-brand-600">*</span></label>
+                            <input type="number" id="order-quantity" placeholder="1000" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-base font-bold">
+                            <div class="flex justify-between items-center mt-1.5 px-1 text-[11px] font-medium text-slate-500">
+                                <span id="service-limits">Limits: 0 - 0</span>
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Total Charge</label>
-                            <div class="relative">
-                                <input type="text" id="order-charge" readonly value="" class="w-full px-4 py-3 rounded-xl border border-brand-200 bg-brand-50 text-brand-700 font-bold outline-none cursor-not-allowed text-sm shadow-sm">
-                            </div>
+                        <div class="relative z-0">
+                            <label class="block text-xs font-bold tracking-wider uppercase text-slate-700 mb-1.5">Total Charge</label>
+                            <input type="text" id="order-charge" readonly value="" class="w-full px-4 py-3 rounded-xl border border-brand-200 bg-brand-50/50 text-brand-700 font-extrabold outline-none cursor-not-allowed text-base tracking-wide">
                         </div>
                     </div>
 
                     <!-- Drip Feed Toggle -->
-                    <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm transition-colors mb-2">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200/80 transition-colors">
                         <div>
-                            <p class="font-bold text-gray-800 text-sm">Drip-feed Order</p>
-                            <p class="text-xs text-gray-500 mt-0.5">Automate delivery over multiple intervals.</p>
+                            <p class="font-bold text-slate-900 text-sm">Drip-Feed Option</p>
+                            <p class="text-xs text-slate-500">Deliver order automatically in intervals.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="drip-feed-checkbox" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+                            <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
                         </label>
                     </div>
 
                     <!-- Drip Feed Options -->
-                    <div id="drip-feed-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-6 bg-blue-50/30 p-4 rounded-xl border border-blue-100 mb-6">
+                    <div id="drip-feed-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 bg-brand-50/40 p-4 rounded-xl border border-brand-200">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Runs (Phases)</label>
-                            <input type="number" id="order-runs" value="2" min="2" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm bg-white">
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Runs (Splits)</label>
+                            <input type="number" id="order-runs" value="2" min="2" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Interval (Minutes)</label>
-                            <input type="number" id="order-interval" value="60" min="1" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm bg-white">
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Interval (Minutes)</label>
+                            <input type="number" id="order-interval" value="60" min="1" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm">
                         </div>
                         <div class="sm:col-span-2">
-                            <div class="flex justify-between items-center text-sm font-bold bg-white p-3 rounded-lg border border-gray-200">
-                                <span class="text-gray-600">Total Formatted Quantity:</span>
-                                <span id="drip-feed-total-qty" class="text-brand-600 font-mono text-base">0</span>
+                            <div class="flex justify-between items-center text-xs font-bold bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-600">Total Quantity:</span>
+                                <span id="drip-feed-total-qty" class="text-brand-600 font-bold text-sm">0</span>
                             </div>
                         </div>
                     </div>
 
-                    <div id="order-notification" class="hidden text-sm px-4 py-3 rounded-xl font-semibold shadow-sm"></div>
+                    <div id="order-notification" class="hidden text-sm px-4 py-3 rounded-xl font-bold"></div>
 
                     <div class="pt-2">
-                        <button type="submit" id="submit-order-btn" class="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-xl font-bold transition-all shadow-lg flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-base" disabled>
-                            <i class="fa-solid fa-paper-plane"></i> Place Order Now
+                        <button type="submit" id="submit-order-btn" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-extrabold uppercase tracking-wider text-xs transition-all shadow-md flex justify-center items-center gap-2 disabled:opacity-50">
+                            <i class="fa-solid fa-paper-plane text-sm"></i> Submit Order
                         </button>
                     </div>
                 </form>
@@ -333,7 +384,7 @@ function fetchCategories() {
                 const platform = getPlatformLogo(cat.name);
                 optionsContainer.innerHTML += `
                     <div class="cat-option flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-800 transition-colors" data-value="${cat.id}">
-                        <div class="w-8 h-8 rounded-lg ${platform.bg} flex items-center justify-center shrink-0 shadow-sm p-1.5" style="color: ${platform.color}">
+                        <div class="${platform.styleClass}">
                             ${platform.icon}
                         </div>
                         <span class="font-medium">${cat.name}</span>
@@ -371,6 +422,19 @@ function fetchServices() {
     onSnapshot(servicesRef, (snapshot) => {
         allServices = [];
         snapshot.forEach(doc => allServices.push({ id: doc.id, ...doc.data() }));
+        
+        // Sort explicitly by numeric sort field, fallback to oldest order logically
+        allServices.sort((a, b) => {
+            if (a.sort !== undefined && b.sort !== undefined) {
+                return a.sort - b.sort;
+            }
+            if (a.sort !== undefined) return -1;
+            if (b.sort !== undefined) return 1;
+            
+            const timeA = a.createdAt?.seconds || (a.updatedAt?.seconds || 0);
+            const timeB = b.createdAt?.seconds || (b.updatedAt?.seconds || 0);
+            return timeA - timeB; // New UI prefers older items first as generic fallback
+        });
     });
 }
 

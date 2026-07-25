@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+
+    // Checks if the request comes from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Checks if the authenticated user matches the specified userId
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Checks if the user is the master application admin
+    function isMasterAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'mubashirarham12@gmail.com' ||
+        (request.auth.token.keys().contains('admin') && request.auth.token.admin == true)
+      );
+    }
+
+    // Checks if the user is an admin for the current panel/appId
+    function isAdmin(appId) {
+      return isAuthenticated() && (
+        isMasterAdmin() ||
+        (
+          exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.role == 'admin'
+        ) ||
+        (
+          exists(/databases/$(database)/documents/artifacts/$(appId)) &&
+          get(/databases/$(database)/documents/artifacts/$(appId)).data.adminEmail == request.auth.token.email
+        )
+      );
+    }
+
+    // --- Collection Group Security Rules ---
+    // Required for Admin Dashboard collectionGroup queries across all users
+
+    match /{path=**}/orders/{orderId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /{path=**}/transactions/{txId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /{path=**}/refills/{refillId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /{path=**}/tickets/{ticketId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /{path=**}/api/{apiId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // --- Primary Tenant Namespace (artifacts/{appId}) ---
+
+    match /artifacts/{appId} {
+      // Panel metadata read by anyone, modified by admin
+      allow read: if true;
+      allow write: if isAdmin(appId);
+
+      // Public data (categories, services, blogs, gateways, settings)
+      match /public/{allPublic=**} {
+        allow read: if true;
+        allow write: if isAdmin(appId);
+      }
+
+      // API Providers configuration
+      match /api_providers/{providerId} {
+        allow read, write: if isAdmin(appId);
+      }
+
+      // Admin core settings and providers
+      match /admin/{allAdmin=**} {
+        allow read, write: if isAdmin(appId);
+      }
+
+      // System operations & cron tracking
+      match /system/{allSystem=**} {
+        allow read, write: if isAdmin(appId);
+      }
+
+      // Child Panels registry
+      match /child_panels/{panelId} {
+        allow read: if true;
+        allow create, update: if isAuthenticated();
+        allow delete: if isAdmin(appId);
+      }
+
+      // Support Tickets (Top-level under tenant)
+      match /tickets/{ticketId} {
+        allow read, write: if isAuthenticated();
+        
+        match /messages/{msgId} {
+          allow read, write: if isAuthenticated();
+        }
+      }
+
+      // User Profiles & Personal Collections
+      match /users/{userId} {
+        allow read, write: if isUser(userId) || isAdmin(appId);
+
+        match /{allUserSubcollections=**} {
+          allow read, write: if isUser(userId) || isAdmin(appId);
+        }
+      }
+    }
+  }
+}

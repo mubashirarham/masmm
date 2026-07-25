@@ -52,48 +52,91 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
+        
+        /* White Minimal Glassmorphism */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
         }
-        .login-pattern {
-            background-color: #f0fdf4;
-            background-image: radial-gradient(#dcfce7 2px, transparent 2px);
-            background-size: 32px 32px;
+        @keyframes sweep {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-blob { animation: blob 15s infinite alternate ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; opacity: 0; }
+
+        /* Minimal White Glass Panel & Cards */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        .text-glow {
+            background: linear-gradient(to right, #16a34a, #0284c7, #9333ea, #16a34a);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: sweep 4s linear infinite;
+        }
+        
+        .bg-sweep {
+            background: linear-gradient(90deg, #22c55e, #06b6d4, #22c55e);
+            background-size: 200% auto;
+            animation: sweep 3s linear infinite;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen selection:bg-brand-500 selection:text-white">
 
     <!-- Header / Navigation -->
-    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300 border-b border-brand-100">
+    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="index.html" class="flex items-center gap-2">
-                        <div class="site-logo-container">
-                            <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-brand-500 blur-md opacity-30 animate-pulse"></div>
+                            <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-white/40">
                                 M
                             </div>
                         </div>
-                        <span class="font-bold text-2xl text-brand-900 tracking-tight site-title-text">MAsmmpanel</span>
+                        <span class="font-extrabold text-2xl text-slate-900 tracking-wider site-title-text">MAsmmpanel</span>
                     </a>
                 </div>
                 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="about.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">About</a>
-                    <a href="services.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Services</a>
-                    <a href="policies.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Policies</a>
-                    <a href="index.html#hero-login" class="px-5 py-2.5 rounded-lg font-semibold bg-brand-100 text-brand-800 hover:bg-brand-200 transition-colors">Sign Up</a>
+                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">About</a>
+                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">Services</a>
+                    <a href="policies.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">Policies</a>
+                    <a href="index.html#hero-login" class="px-6 py-2.5 rounded-xl font-bold bg-white text-slate-800 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm">Register</a>
                 </nav>
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-brand-600 focus:outline-none p-2">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2 transition-colors">
                         <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -101,102 +144,101 @@
         </div>
         
         <!-- Mobile Navigation -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-1 shadow-lg">
-            <a href="about.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">About</a>
-            <a href="services.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">Services</a>
-            <a href="policies.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">Policies</a>
-            <a href="index.html#hero-login" class="block px-3 py-2 rounded-md text-base font-medium bg-brand-500 text-white mt-4 text-center">Sign Up</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-2xl border-t border-slate-200 px-4 pt-4 pb-6 space-y-2 shadow-xl">
+            <a href="about.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">About</a>
+            <a href="services.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Services</a>
+            <a href="policies.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Policies</a>
+            <a href="index.html#hero-login" class="block px-4 py-3.5 rounded-xl text-base font-bold bg-brand-500 text-white mt-4 text-center shadow-md">Register Account</a>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow pt-20 flex items-center justify-center login-pattern relative overflow-hidden">
-        <!-- Decorative blobs -->
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand-200 opacity-50 blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-200 opacity-40 blur-3xl pointer-events-none"></div>
+    <main class="flex-grow pt-24 flex items-center justify-center relative overflow-hidden min-h-[90vh] bg-slate-50">
+        <!-- Liquid Blobs -->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-[-10%] left-[20%] w-[45vw] h-[45vw] bg-emerald-400/15 rounded-full blur-[140px] animate-blob"></div>
+            <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-sky-400/15 rounded-full blur-[140px] animate-blob animation-delay-2000"></div>
+        </div>
 
-        <div class="max-w-md w-full mx-auto px-4 py-12 relative z-10">
-            
-            <!-- Login Container -->
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
+        <div class="max-w-md w-full mx-auto px-4 py-12 relative z-10 animate-fade-in-up">
+            <!-- Login Card -->
+            <div class="glass-card rounded-[24px] overflow-hidden relative z-10 p-6 sm:p-8 bg-white/90 border border-slate-200/80 shadow-xl">
                 
-                <!-- Loading Overlay (Visible during auth check) -->
-                <div id="loading-overlay" class="absolute inset-0 bg-white/90 z-20 flex flex-col items-center justify-center">
+                <!-- Loading Overlay -->
+                <div id="loading-overlay" class="absolute inset-0 bg-white/90 z-20 flex flex-col items-center justify-center backdrop-blur-sm">
                     <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
-                    <p class="text-gray-600 font-medium">Authenticating...</p>
+                    <p class="text-slate-700 font-bold text-sm">Checking login status...</p>
                 </div>
 
-                <div class="p-8">
-                    <div class="text-center mb-8">
-                        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                        <p class="text-gray-500">Login to access your SMM dashboard</p>
+                <div class="text-center mb-6">
+                    <h1 class="text-3xl font-black text-slate-900 mb-2">Welcome Back</h1>
+                    <p class="text-slate-500 text-xs font-medium">Sign in to manage your SMM orders and balance</p>
+                </div>
+                
+                <!-- Messages Container -->
+                <div id="auth-message" class="hidden w-full p-3 mb-5 text-xs rounded-xl border font-bold" role="alert"></div>
+
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Email Address</label>
+                        <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none placeholder-slate-400 text-sm font-sans" placeholder="user@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Password</label>
+                        <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none placeholder-slate-400 text-sm" placeholder="••••••••">
                     </div>
                     
-                    <!-- Messages Container -->
-                    <div id="auth-message" class="hidden w-full p-4 mb-6 text-sm rounded-xl transition-all" role="alert"></div>
-
-                    <form id="login-form" class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none" placeholder="you@example.com">
+                    <div class="flex justify-between items-center text-sm pt-1">
+                        <div class="flex items-center">
+                            <input id="remember-me" type="checkbox" class="h-4 w-4 border-slate-300 text-brand-600 focus:ring-brand-500 rounded cursor-pointer">
+                            <label for="remember-me" class="ml-2 block text-xs font-medium text-slate-600 cursor-pointer">
+                                Remember Me
+                            </label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none" placeholder="••••••••">
-                        </div>
-                        
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center">
-                                <input id="remember-me" type="checkbox" class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded cursor-pointer">
-                                <label for="remember-me" class="ml-2 block text-sm text-gray-700 cursor-pointer">
-                                    Remember me
-                                </label>
-                            </div>
-                            <button type="button" id="forgot-password-btn" class="text-sm text-brand-600 hover:text-brand-800 font-semibold transition-colors">
-                                Forgot password?
-                            </button>
-                        </div>
-
-                        <button type="submit" id="submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-brand-500/30 flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                            <span>Login to Dashboard</span>
+                        <button type="button" id="forgot-password-btn" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition-colors">
+                            Forgot Password?
                         </button>
-                    </form>
-
-                    <!-- MFA Challenge UI (Hidden by default) -->
-                    <div id="mfa-challenge-container" class="hidden flex flex-col items-center">
-                        <i class="fa-solid fa-mobile-screen text-4xl text-brand-500 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Two-Factor Authentication</h3>
-                        <p class="text-sm text-center text-gray-600 mb-4">We're sending an SMS code to your phone. Enter the code to continue.</p>
-                        <div id="recaptcha-login-container" class="mb-3"></div>
-                        <input type="text" id="mfa-code-input" maxlength="6" class="hidden w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-center font-mono text-2xl tracking-widest font-bold mb-4" placeholder="000000">
-                        <button id="verify-mfa-btn" class="hidden w-full flex justify-center items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all">
-                            Verify Code
-                        </button>
-                        <button id="cancel-mfa-btn" onclick="window.location.reload()" class="mt-4 text-xs font-semibold text-gray-500 hover:text-gray-800 underline">Cancel Login</button>
                     </div>
 
-                    <div class="mt-8 flex items-center justify-between">
-                        <span class="border-b border-gray-200 w-1/4"></span>
-                        <span class="text-xs text-center text-gray-500 uppercase font-semibold">Or continue with</span>
-                        <span class="border-b border-gray-200 w-1/4"></span>
-                    </div>
-
-                    <button id="google-auth-btn" type="button" class="mt-6 w-full flex justify-center items-center gap-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-colors shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Sign in with Google
+                    <button type="submit" id="submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-3.5 px-4 rounded-xl transition-all shadow-md flex justify-center items-center gap-2 mt-2">
+                        <i class="fa-solid fa-arrow-right-to-bracket text-sm"></i>
+                        <span class="tracking-wider uppercase text-xs">Sign In</span>
                     </button>
-                    
-                    <p class="mt-8 text-center text-sm text-gray-600">
-                        Don't have an account? 
-                        <a href="index.html#hero-login" class="font-bold text-brand-600 hover:text-brand-800">Sign up here</a>
-                    </p>
+                </form>
+
+                <!-- MFA Challenge UI (Hidden by default) -->
+                <div id="mfa-challenge-container" class="hidden flex flex-col items-center mt-4">
+                    <i class="fa-solid fa-mobile-screen text-4xl text-brand-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-900 mb-1">Two-Factor Verification</h3>
+                    <p class="text-xs text-center text-slate-500 mb-4 font-medium">Enter the 6-digit code sent to your phone</p>
+                    <div id="recaptcha-login-container" class="mb-4"></div>
+                    <input type="text" id="mfa-code-input" maxlength="6" class="hidden w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 text-center text-2xl tracking-[0.5em] font-bold mb-4" placeholder="000000">
+                    <button id="verify-mfa-btn" class="hidden w-full flex justify-center items-center gap-2 bg-brand-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-md uppercase tracking-wider text-xs">
+                        Verify & Sign In
+                    </button>
+                    <button id="cancel-mfa-btn" onclick="window.location.reload()" class="mt-4 text-xs font-medium text-slate-500 hover:text-slate-700 underline transition-colors">Cancel</button>
                 </div>
+
+                <div class="mt-6 flex items-center justify-between">
+                    <span class="border-b border-slate-200 w-1/4"></span>
+                    <span class="text-[10px] text-center text-slate-400 uppercase font-bold tracking-wider">Or</span>
+                    <span class="border-b border-slate-200 w-1/4"></span>
+                </div>
+
+                <button id="google-auth-btn" type="button" class="mt-4 w-full flex justify-center items-center gap-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all shadow-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span class="tracking-wide text-xs">Sign In with Google</span>
+                </button>
+                
+                <p class="mt-6 text-center text-xs text-slate-500 font-medium">
+                    Don't have an account? 
+                    <a href="index.html#hero-login" class="font-bold text-brand-600 hover:text-brand-700">Register Here</a>
+                </p>
             </div>
         </div>
     </main>

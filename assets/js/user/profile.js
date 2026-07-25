@@ -11,7 +11,8 @@ let currentUser = null;
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
-    if (user && document.getElementById('view-profile').classList.contains('active')) {
+    const viewEl = document.getElementById('view-profile');
+    if (user && viewEl && viewEl.classList.contains('active')) {
         fetchProfile();
     }
 });

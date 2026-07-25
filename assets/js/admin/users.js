@@ -43,12 +43,31 @@ function renderUsersUI() {
             </div>
         </div>
 
+        <!-- Bulk Action Bar -->
+        <div id="users-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3 text-sm font-bold text-brand-900">
+                <i class="fa-solid fa-check-double text-brand-600 text-base"></i>
+                <span id="users-selected-count">0 users selected</span>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button id="bulk-users-delete-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-trash"></i> Delete Selected
+                </button>
+                <button id="bulk-users-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-shield"></i> Toggle Active/Banned
+                </button>
+            </div>
+        </div>
+
         <!-- Users Table -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600">
                     <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
                         <tr>
+                            <th class="px-4 py-4 w-12 text-center">
+                                <input type="checkbox" id="users-select-all" class="w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer">
+                            </th>
                             <th class="px-6 py-4 font-semibold w-24">User ID</th>
                             <th class="px-6 py-4 font-semibold">Email / User</th>
                             <th class="px-6 py-4 font-semibold text-center w-32">Role</th>
@@ -58,7 +77,7 @@ function renderUsersUI() {
                     </thead>
                     <tbody id="admin-users-table-body">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
                                 <p>Loading users database...</p>
                             </td>
@@ -188,13 +207,16 @@ function renderUsersTable() {
     const tableBody = document.getElementById('admin-users-table-body');
     const searchInput = document.getElementById('admin-search-users');
     const paginationContainer = document.getElementById('admin-users-pagination-container');
+    const selectAllCb = document.getElementById('users-select-all');
+    const bulkBar = document.getElementById('users-bulk-bar');
+    const selectedCountEl = document.getElementById('users-selected-count');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     tableBody.innerHTML = '';
 
     if (allUsers.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No users found in the database.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No users found in the database.</td></tr>`;
         return;
     }
 
@@ -209,6 +231,21 @@ function renderUsersTable() {
     const paginated = filtered.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
     let visibleCount = 0;
+
+    const updateBulkBar = () => {
+        const checkedCbs = document.querySelectorAll('.user-select-cb:checked');
+        const count = checkedCbs.length;
+        if (count > 0) {
+            bulkBar.classList.remove('hidden');
+            selectedCountEl.innerText = `${count} user${count > 1 ? 's' : ''} selected`;
+        } else {
+            bulkBar.classList.add('hidden');
+        }
+        if (selectAllCb) {
+            const allCbs = document.querySelectorAll('.user-select-cb');
+            selectAllCb.checked = allCbs.length > 0 && checkedCbs.length === allCbs.length;
+        }
+    };
 
     paginated.forEach(user => {
         visibleCount++;
@@ -229,6 +266,9 @@ function renderUsersTable() {
         row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
         
         row.innerHTML = `
+            <td class="px-4 py-4 text-center">
+                <input type="checkbox" class="user-select-cb w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer" data-id="${user.id}">
+            </td>
             <td class="px-6 py-4 font-mono text-xs text-gray-500">${displayId}</td>
             <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
             <td class="px-6 py-4 text-center">${roleBadge}</td>
@@ -243,12 +283,67 @@ function renderUsersTable() {
             </td>
         `;
 
+        row.querySelector('.user-select-cb').addEventListener('change', updateBulkBar);
         row.querySelector('.manage-btn').addEventListener('click', () => openUserModal(user));
         tableBody.appendChild(row);
     });
 
+    if (selectAllCb) {
+        selectAllCb.checked = false;
+        selectAllCb.onclick = (e) => {
+            document.querySelectorAll('.user-select-cb').forEach(cb => cb.checked = e.target.checked);
+            updateBulkBar();
+        };
+    }
+    updateBulkBar();
+
+    // Attach Bulk Action Listeners
+    const bulkDeleteBtn = document.getElementById('bulk-users-delete-btn');
+    const bulkStatusBtn = document.getElementById('bulk-users-status-btn');
+
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.onclick = async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.user-select-cb:checked')).map(cb => cb.dataset.id);
+            if (selectedIds.length === 0) return;
+            if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected user(s)?`)) return;
+
+            try {
+                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                for (const uid of selectedIds) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'users', uid));
+                }
+                alert(`Successfully deleted ${selectedIds.length} user(s).`);
+            } catch (err) {
+                console.error("Bulk user delete error:", err);
+                alert("Failed to delete some users.");
+            }
+        };
+    }
+
+    if (bulkStatusBtn) {
+        bulkStatusBtn.onclick = async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.user-select-cb:checked')).map(cb => cb.dataset.id);
+            if (selectedIds.length === 0) return;
+
+            try {
+                const { updateDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                for (const uid of selectedIds) {
+                    const targetUser = allUsers.find(u => u.id === uid);
+                    const currentStatus = targetUser ? targetUser.isVerified !== false : true;
+                    await updateDoc(doc(db, 'artifacts', appId, 'users', uid), {
+                        isVerified: !currentStatus
+                    });
+                }
+                alert(`Successfully updated status for ${selectedIds.length} user(s).`);
+            } catch (err) {
+                console.error("Bulk status update error:", err);
+                alert("Failed to update status for some users.");
+            }
+        };
+    }
+
     if (visibleCount === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No matching users found.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No matching users found.</td></tr>`;
     }
 
     if (paginationContainer) {

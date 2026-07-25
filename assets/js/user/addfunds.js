@@ -304,14 +304,17 @@ async function handleFundSubmit(e) {
         // IMPORTANT: Add your actual CashMaal Web ID here!
         const CASHMAAL_WEB_ID = "11191"; 
         
-        const currentUrl = window.location.origin + window.location.pathname;
+        const originUrl = window.location.origin + window.location.pathname;
+        const successUrl = originUrl + '?payment=success#transactions';
+        const cancelUrl = originUrl + '?payment=cancelled#addfunds';
 
         const fields = {
             'pay_method': '',
             'amount': amount,
             'currency': 'PKR',
-            'succes_url': currentUrl + '#transactions',
-            'cancel_url': currentUrl + '#addfunds',
+            'succes_url': successUrl,
+            'success_url': successUrl,
+            'cancel_url': cancelUrl,
             'client_email': currentUser.email,
             'web_id': CASHMAAL_WEB_ID,
             'order_id': currentUser.uid, // We pass the UID so the Webhook knows whose balance to increase

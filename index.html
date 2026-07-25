@@ -55,48 +55,97 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
+        
+        /* Minimal White Glassmorphism */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
         }
-        .hero-pattern {
-            background-color: #f0fdf4;
-            background-image: radial-gradient(#dcfce7 2px, transparent 2px);
-            background-size: 32px 32px;
+        @keyframes sweep {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-blob { animation: blob 15s infinite alternate ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; opacity: 0; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* Minimal White Glass Panel & Cards */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.04);
+        }
+
+        .text-glow {
+            background: linear-gradient(to right, #16a34a, #0284c7, #9333ea, #16a34a);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: sweep 4s linear infinite;
+        }
+        
+        .bg-sweep {
+            background: linear-gradient(90deg, #22c55e, #06b6d4, #22c55e);
+            background-size: 200% auto;
+            animation: sweep 3s linear infinite;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen selection:bg-brand-500 selection:text-white">
 
     <!-- Header / Navigation -->
-    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300 border-b border-brand-100">
+    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="#" class="flex items-center gap-2">
-                        <div class="site-logo-container">
-                            <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-brand-500 blur-md opacity-30 animate-pulse"></div>
+                            <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-white/40">
                                 M
                             </div>
                         </div>
-                        <span class="font-bold text-2xl text-brand-900 tracking-tight site-title-text">MAsmmpanel</span>
+                        <span class="font-extrabold text-2xl text-slate-900 tracking-wider site-title-text">MAsmmpanel</span>
                     </a>
                 </div>
                 
                 <!-- Desktop Navigation -->
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="about.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">About</a>
-                    <a href="services.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Services</a>
-                    <a href="policies.html" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Policies</a>
-                    <a href="#hero-login" class="px-5 py-2.5 rounded-lg font-semibold bg-brand-100 text-brand-800 hover:bg-brand-200 transition-colors">Login</a>
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200 text-sm">About</a>
+                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200 text-sm">Services</a>
+                    <a href="policies.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200 text-sm">Policies</a>
+                    <div class="flex items-center gap-2.5 ml-2">
+                        <a href="#hero-login" id="nav-login-btn" class="px-5 py-2.5 rounded-xl font-bold text-slate-700 hover:text-slate-900 bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-all shadow-sm text-xs uppercase tracking-wider">Log In</a>
+                        <a href="#hero-login" id="nav-signup-btn" class="px-5 py-2.5 rounded-xl font-bold bg-brand-500 hover:bg-brand-600 text-white border border-brand-600 transition-all shadow-sm text-xs uppercase tracking-wider">Sign Up</a>
+                    </div>
                 </nav>
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-brand-600 focus:outline-none p-2">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2 transition-colors">
                         <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -104,237 +153,252 @@
         </div>
         
         <!-- Mobile Navigation -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-1 shadow-lg">
-            <a href="about.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">About</a>
-            <a href="services.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">Services</a>
-            <a href="policies.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-brand-50">Policies</a>
-            <a href="#hero-login" class="block px-3 py-2 rounded-md text-base font-medium bg-brand-500 text-white mt-4 text-center">Login / Sign Up</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-2xl border-t border-slate-200 px-4 pt-4 pb-6 space-y-2 shadow-xl">
+            <a href="about.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">About</a>
+            <a href="services.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Services</a>
+            <a href="policies.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Policies</a>
+            <div class="grid grid-cols-2 gap-3 pt-3">
+                <a href="#hero-login" id="mobile-login-btn" class="block px-4 py-3 rounded-xl text-sm font-bold text-slate-800 bg-white border border-slate-300 text-center shadow-sm">Log In</a>
+                <a href="#hero-login" id="mobile-signup-btn" class="block px-4 py-3 rounded-xl text-sm font-bold bg-brand-500 text-white border border-brand-600 text-center shadow-sm">Sign Up</a>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow pt-20">
+    <main class="flex-grow">
         <!-- Hero Section -->
-        <section class="hero-pattern relative overflow-hidden min-h-[90vh] flex items-center">
-            <!-- Decorative blobs -->
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand-200 opacity-50 blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-200 opacity-40 blur-3xl"></div>
+        <section class="relative overflow-hidden min-h-[90vh] flex items-center pt-16 bg-slate-50">
+            <!-- Liquid Blobs (Clean Green Tint Only) -->
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-emerald-400/10 rounded-full blur-[140px] animate-blob"></div>
+                <div class="absolute top-[30%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-300/10 rounded-full blur-[140px] animate-blob animation-delay-2000"></div>
+            </div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-12 lg:py-20">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-12 lg:py-16 animate-fade-in-up">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-10 items-center">
                     
-                    <!-- Left: SEO Text & Value Proposition -->
-                    <div class="text-center lg:text-left order-2 lg:order-1">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-800 font-semibold text-sm mb-6">
+                    <!-- Left Hero Content -->
+                    <div class="text-center xl:text-left order-2 xl:order-1">
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-card text-brand-700 font-bold text-xs mb-6 tracking-wider uppercase border border-slate-200/80 shadow-sm">
                             <span class="relative flex h-3 w-3">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                               <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-500"></span>
                             </span>
                             #1 Pakistani SMM Panel
                         </div>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
-                            Boost Your Social <br class="hidden lg:block"/> Presence with <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-emerald-600">MAsmmpanel</span>
+                        
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] mb-6 tracking-tight">
+                            Grow Your Social <br class="hidden xl:block"/> Reach Instantly with <br>
+                            <span class="text-glow">MAsmmpanel</span>
                         </h1>
-                        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                            Looking for the <strong>cheapest Pakistani SMM panel</strong>? You're in the right place. MAsmmpanel offers premium, blazing-fast, and highly affordable social media marketing services to skyrocket your online growth.
+                        
+                        <p class="text-lg text-slate-600 mb-8 max-w-xl mx-auto xl:mx-0 leading-relaxed font-normal">
+                            Get real followers, likes, views, and watch time with the <strong>cheapest & fastest SMM panel</strong> in Pakistan. Fast delivery, 24/7 support, and EasyPaisa/JazzCash accepted.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <div class="flex items-center gap-3 text-gray-700 bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100">
-                                <i class="fa-solid fa-bolt text-yellow-500 text-xl"></i>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start mt-6">
+                            <div class="flex items-center gap-3.5 text-slate-800 glass-card px-5 py-3.5 rounded-2xl transition-transform hover:-translate-y-1 duration-200">
+                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 text-xl">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
                                 <div class="text-left">
-                                    <div class="font-bold text-sm">Instant</div>
-                                    <div class="text-xs text-gray-500">Delivery</div>
+                                    <div class="font-bold text-sm">Instant Delivery</div>
+                                    <div class="text-xs text-slate-500 font-medium">Automatic Orders</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 text-gray-700 bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100">
-                                <i class="fa-solid fa-wallet text-brand-500 text-xl"></i>
-                                <div class="text-left">
-                                    <div class="font-bold text-sm">Cheapest</div>
-                                    <div class="text-xs text-gray-500">Prices Globally</div>
+                            
+                            <div class="flex items-center gap-3.5 text-slate-800 glass-card px-5 py-3.5 rounded-2xl transition-transform hover:-translate-y-1 duration-200">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl">
+                                    <i class="fa-solid fa-coins"></i>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3 text-gray-700 bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100">
-                                <i class="fa-solid fa-headset text-blue-500 text-xl"></i>
                                 <div class="text-left">
-                                    <div class="font-bold text-sm">24/7</div>
-                                    <div class="text-xs text-gray-500">Support</div>
+                                    <div class="font-bold text-sm">Cheapest Rates</div>
+                                    <div class="text-xs text-slate-500 font-medium">Starting from Rs 1</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right: Authentication Form -->
-                    <div class="w-full max-w-md mx-auto lg:ml-auto order-1 lg:order-2" id="hero-login">
-                        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
+                    <!-- Right: Minimal Glass Authentication Form -->
+                    <div class="w-full max-w-[440px] mx-auto xl:ml-auto order-1 xl:order-2" id="hero-login">
+                        <div class="glass-card rounded-[24px] overflow-hidden relative z-10 p-1 shadow-lg border border-slate-200/80">
                             
-                            <!-- Auth State: Logged In (Hidden by default) -->
-                            <div id="logged-in-view" class="hidden p-8 text-center flex-col items-center justify-center min-h-[400px]">
-                                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto">
-                                    <i class="fa-solid fa-user-check"></i>
+                            <!-- Auth State: Logged In -->
+                            <div id="logged-in-view" class="hidden p-8 text-center flex-col items-center justify-center min-h-[400px] bg-white/90 rounded-[20px]">
+                                <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-3xl mb-4 mx-auto border border-emerald-200 shadow-sm">
+                                    <i class="fa-solid fa-circle-check"></i>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h3>
-                                <p id="user-email-display" class="text-gray-600 mb-6 font-medium">user@example.com</p>
-                                <a href="#" id="dashboard-link" class="w-full block bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-brand-500/30 mb-3">
-                                    Go to Dashboard
+                                <h3 class="text-2xl font-bold text-slate-900 mb-1">Welcome Back</h3>
+                                <p id="user-email-display" class="text-brand-600 mb-6 text-xs font-semibold">user@example.com</p>
+                                <a href="#" id="dashboard-link" class="w-full block bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-3.5 px-4 rounded-xl transition-all shadow-md mb-3 tracking-wider uppercase text-xs">
+                                    Go To Dashboard
                                 </a>
-                                <button id="logout-btn" class="text-gray-500 hover:text-red-500 text-sm font-medium transition-colors">
+                                <button id="logout-btn" class="text-slate-500 hover:text-red-500 text-xs font-bold transition-colors uppercase tracking-wider mt-2">
                                     Sign Out
                                 </button>
                             </div>
 
-                            <!-- Auth State: Form (Visible by default) -->
-                            <div id="auth-form-view">
-                                <div class="flex border-b border-gray-100">
-                                    <button id="tab-login" class="flex-1 py-4 text-center font-semibold text-brand-600 border-b-2 border-brand-500 bg-brand-50 transition-colors">Login</button>
-                                    <button id="tab-signup" class="flex-1 py-4 text-center font-semibold text-gray-500 hover:text-brand-600 hover:bg-gray-50 transition-colors border-b-2 border-transparent">Sign Up</button>
+                            <!-- Auth State: Form View -->
+                            <div id="auth-form-view" class="bg-white/90 rounded-[20px]">
+                                <div class="flex border-b border-slate-200/80">
+                                    <button id="tab-login" class="flex-1 py-4 text-center font-bold text-slate-900 border-b-2 border-brand-500 bg-slate-50/50 transition-all tracking-wider uppercase text-xs">Sign In</button>
+                                    <button id="tab-signup" class="flex-1 py-4 text-center font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-50/50 transition-all border-b-2 border-transparent tracking-wider uppercase text-xs">Register</button>
                                 </div>
                                 
                                 <div class="p-6 sm:p-8">
-                                    <h2 id="form-title" class="text-2xl font-bold text-gray-800 mb-6">Access your Account</h2>
+                                    <h2 id="form-title" class="text-2xl font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-2.5">
+                                        <i class="fa-solid fa-user-lock text-brand-500"></i> Account Access
+                                    </h2>
                                     
                                     <!-- Messages Container -->
-                                    <div id="auth-message" class="hidden w-full p-3 mb-4 text-sm rounded-lg" role="alert"></div>
+                                    <div id="auth-message" class="hidden w-full p-3 mb-5 text-xs rounded-xl border font-bold" role="alert"></div>
 
                                     <form id="auth-form" class="space-y-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                            <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none" placeholder="you@example.com">
+                                            <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Email Address</label>
+                                            <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none placeholder-slate-400 text-sm font-sans" placeholder="user@example.com">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                            <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none" placeholder="••••••••">
+                                            <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Password</label>
+                                            <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none placeholder-slate-400 text-sm" placeholder="••••••••">
                                         </div>
                                         
                                         <div id="forgot-password-wrap" class="flex justify-end">
-                                            <a href="#" class="text-xs text-brand-600 hover:text-brand-800 font-medium">Forgot password?</a>
+                                            <a href="#" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition-colors">Forgot Password?</a>
                                         </div>
 
-                                        <button type="submit" id="submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-brand-500/30 flex justify-center items-center">
-                                            <span>Login to Panel</span>
+                                        <button type="submit" id="submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-3.5 px-4 rounded-xl transition-all shadow-md flex justify-center items-center mt-2">
+                                            <span class="tracking-wider uppercase text-xs">Sign In</span>
                                         </button>
                                     </form>
 
                                     <div class="mt-6 flex items-center justify-between">
-                                        <span class="border-b border-gray-200 w-1/5 lg:w-1/4"></span>
-                                        <span class="text-xs text-center text-gray-500 uppercase font-semibold">Or continue with</span>
-                                        <span class="border-b border-gray-200 w-1/5 lg:w-1/4"></span>
+                                        <span class="border-b border-slate-200 w-1/4"></span>
+                                        <span class="text-[10px] text-center text-slate-400 uppercase font-bold tracking-wider">Or</span>
+                                        <span class="border-b border-slate-200 w-1/4"></span>
                                     </div>
 
-                                    <button id="google-auth-btn" type="button" class="mt-6 w-full flex justify-center items-center gap-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-colors shadow-sm">
-                                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                    <button id="google-auth-btn" type="button" class="mt-4 w-full flex justify-center items-center gap-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all shadow-sm">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24">
                                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                                         </svg>
-                                        Sign in with Google
+                                        <span class="tracking-wide text-xs">Sign In with Google</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </section>
 
         <!-- Quick Info / Features Section -->
-        <section class="py-16 bg-white border-t border-brand-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-brand-900 mb-4">Why Choose MAsmmpanel?</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">As the leading Pakistani SMM panel, we guarantee quality, speed, and affordability for all your social media needs.</p>
+        <section class="py-20 relative bg-slate-900 border-t border-white/5 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+                <div class="text-center mb-16 animate-fade-in-up">
+                    <h2 class="text-4xl font-black text-white mb-4 tracking-tight">Why Choose <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">MAsmmpanel?</span></h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto font-light text-lg">As the leading SMM gateway, we guarantee algorithmic quality, speed, and affordability for all your cross-platform requirements.</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Features Section -->
+        <section class="py-16 relative bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">Why Choose MAsmmpanel</h2>
+                    <p class="text-slate-600 max-w-xl mx-auto text-base font-normal">Everything you need to accelerate your social media growth in one clean dashboard.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Feature 1 -->
-                    <div class="p-6 rounded-2xl bg-brand-50 border border-brand-100 hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-brand-500 mb-4 text-xl border border-brand-100">
+                    <div class="p-6 sm:p-8 rounded-[20px] glass-card hover:-translate-y-1 transition-transform duration-200 group border border-slate-200/80 bg-white/80 shadow-sm relative overflow-hidden">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-5 border border-emerald-100">
                             <i class="fa-solid fa-tags"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Unbeatable Prices</h3>
-                        <p class="text-gray-600 text-sm">We are known as the cheapest SMM panel in Pakistan, providing top-tier services that fit perfectly into your budget without compromising on quality.</p>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Cheapest Market Rates</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">We offer the most affordable SMM prices in Pakistan, giving you high quality followers, likes, and views without breaking your budget.</p>
                     </div>
                     <!-- Feature 2 -->
-                    <div class="p-6 rounded-2xl bg-brand-50 border border-brand-100 hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-brand-500 mb-4 text-xl border border-brand-100">
+                    <div class="p-6 sm:p-8 rounded-[20px] glass-card hover:-translate-y-1 transition-transform duration-200 group border border-slate-200/80 bg-white/80 shadow-sm relative overflow-hidden delay-100">
+                        <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl mb-5 border border-sky-100">
                             <i class="fa-solid fa-rocket"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Automated & Instant</h3>
-                        <p class="text-gray-600 text-sm">Our fully automated system ensures your orders start processing instantly. Watch your social metrics grow within minutes of placing an order.</p>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">Instant Order Delivery</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Our automated system processes your order immediately after placement. Watch your metrics grow in real-time within minutes.</p>
                     </div>
                     <!-- Feature 3 -->
-                    <div class="p-6 rounded-2xl bg-brand-50 border border-brand-100 hover:shadow-md transition-shadow">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-brand-500 mb-4 text-xl border border-brand-100">
+                    <div class="p-6 sm:p-8 rounded-[20px] glass-card hover:-translate-y-1 transition-transform duration-200 group border border-slate-200/80 bg-white/80 shadow-sm relative overflow-hidden delay-200">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-5 border border-purple-100">
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Secure & Reliable</h3>
-                        <p class="text-gray-600 text-sm">We prioritize your security. MAsmmpanel uses encrypted payment gateways and safe delivery methods to protect your social accounts completely.</p>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2 tracking-tight">100% Safe & Secure</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Your privacy and account safety are guaranteed. We use secure payment processing and safe delivery methods for all services.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Platform Services Section -->
-        <section class="py-16 bg-brand-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <span class="text-brand-600 font-semibold tracking-wider uppercase text-sm">Premium Services</span>
-                    <h2 class="text-3xl font-bold text-gray-900 mt-2 mb-4">Dominate Every Platform</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">From short-form video views to long-term subscriber growth, our cheapest SMM panel covers all your social media marketing needs.</p>
+        <section class="py-16 relative bg-white border-y border-slate-200/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12 animate-fade-in-up">
+                    <span class="inline-block py-1 px-3 rounded-full bg-brand-50 border border-brand-200 text-brand-700 font-bold tracking-wider uppercase text-[11px] mb-3 shadow-sm">All Social Platforms</span>
+                    <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">Supported Social Networks</h2>
+                    <p class="text-slate-600 max-w-xl mx-auto text-base font-normal">We provide full marketing support across all major social networks.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Instagram -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all group">
-                        <div class="w-14 h-14 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                    <div class="glass-card rounded-[20px] p-6 hover:-translate-y-1 transition-all duration-200 group bg-slate-50/80 border border-slate-200/80 shadow-sm">
+                        <div class="w-12 h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl mb-4 shadow-sm">
                             <i class="fa-brands fa-instagram"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">Instagram Services</h3>
-                        <ul class="space-y-2 text-gray-600 mb-4">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Real Followers</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Instant Likes</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Reel Views & Saves</li>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Instagram</h3>
+                        <ul class="space-y-2 text-slate-600 text-xs font-semibold">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> High Quality Followers</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Fast Post & Reel Likes</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Reel Views & Saves</li>
                         </ul>
                     </div>
 
                     <!-- TikTok -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all group">
-                        <div class="w-14 h-14 bg-black rounded-xl flex items-center justify-center text-white text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                    <div class="glass-card rounded-[20px] p-6 hover:-translate-y-1 transition-all duration-200 group bg-slate-50/80 border border-slate-200/80 shadow-sm">
+                        <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white text-2xl mb-4 shadow-sm">
                             <i class="fa-brands fa-tiktok"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">TikTok Services</h3>
-                        <ul class="space-y-2 text-gray-600 mb-4">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Viral Views</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Active Followers</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Video Likes & Shares</li>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">TikTok</h3>
+                        <ul class="space-y-2 text-slate-600 text-xs font-semibold">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Video Views & Reach</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Followers & Likes</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Shares & Favorites</li>
                         </ul>
                     </div>
 
                     <!-- YouTube -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all group">
-                        <div class="w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center text-white text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                    <div class="glass-card rounded-[20px] p-6 hover:-translate-y-1 transition-all duration-200 group bg-slate-50/80 border border-slate-200/80 shadow-sm">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-white text-2xl mb-4 shadow-sm">
                             <i class="fa-brands fa-youtube"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">YouTube Services</h3>
-                        <ul class="space-y-2 text-gray-600 mb-4">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> High Retention Views</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Permanent Subscribers</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Watch Time Hours</li>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">YouTube</h3>
+                        <ul class="space-y-2 text-slate-600 text-xs font-semibold">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> High Retention Views</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Real Subscribers</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Watch Time Hours</li>
                         </ul>
                     </div>
 
                     <!-- Facebook -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all group">
-                        <div class="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                    <div class="glass-card rounded-[20px] p-6 hover:-translate-y-1 transition-all duration-200 group bg-slate-50/80 border border-slate-200/80 shadow-sm">
+                        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl mb-4 shadow-sm">
                             <i class="fa-brands fa-facebook-f"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">Facebook Services</h3>
-                        <ul class="space-y-2 text-gray-600 mb-4">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Page Likes & Follows</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Post Engagement</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-500 text-sm"></i> Video Monetization</li>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Facebook</h3>
+                        <ul class="space-y-2 text-slate-600 text-xs font-semibold">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Page Likes & Followers</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Profile Followers</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-600 text-xs"></i> Video & Stream Views</li>
                         </ul>
                     </div>
                 </div>
@@ -342,109 +406,104 @@
         </section>
 
         <!-- How it Works -->
-        <section class="py-16 bg-white border-t border-brand-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">How MAsmmpanel Works</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">Get started in three simple steps and watch your social media accounts explode with growth.</p>
+        <section class="py-16 relative bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-16 animate-fade-in-up">
+                    <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">How To Get Started</h2>
+                    <p class="text-slate-600 max-w-xl mx-auto text-base font-normal">Start growing your account in 3 simple steps.</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    <!-- Connecting Line for Desktop -->
-                    <div class="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0.5 bg-brand-100 -translate-y-1/2 z-0"></div>
-                    
-                    <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-16 h-16 rounded-full bg-brand-500 text-white flex items-center justify-center text-2xl font-bold mb-6 border-4 border-white shadow-lg">1</div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Create an Account</h3>
-                        <p class="text-gray-600">Sign up using your email or Google account to access our cheap Pakistani SMM dashboard.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative pb-6">
+                    <div class="relative z-10 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-white text-brand-600 flex items-center justify-center text-2xl font-black mb-6 border border-slate-200 shadow-md">1</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Register Account</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Sign up for a free account in less than 10 seconds with your email or Google account.</p>
                     </div>
                     
-                    <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-16 h-16 rounded-full bg-brand-500 text-white flex items-center justify-center text-2xl font-bold mb-6 border-4 border-white shadow-lg">2</div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Add Funds</h3>
-                        <p class="text-gray-600">Deposit money securely using EasyPaisa, JazzCash, Bank Transfer, or Crypto.</p>
+                    <div class="relative z-10 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-white text-brand-600 flex items-center justify-center text-2xl font-black mb-6 border border-slate-200 shadow-md">2</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Add Funds</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Deposit funds easily using EasyPaisa, JazzCash, CashMaal, or Bank Transfer.</p>
                     </div>
                     
-                    <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-16 h-16 rounded-full bg-brand-500 text-white flex items-center justify-center text-2xl font-bold mb-6 border-4 border-white shadow-lg">3</div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Place Order</h3>
-                        <p class="text-gray-600">Select your desired service, paste your link, and see results delivered instantly.</p>
+                    <div class="relative z-10 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-500 text-white flex items-center justify-center text-2xl font-black mb-6 border border-brand-400 shadow-md">3</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Place Order</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Select your category, paste your link, enter quantity, and click submit order.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Platform Updates & Blogs -->
-        <section class="py-16 bg-white border-t border-brand-50" id="platform-blogs-section">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="py-16 bg-white border-t border-slate-200/80 relative z-10" id="platform-blogs-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4 brand-heading">Latest Platform Updates</h2>
-                    <p class="text-gray-600">Stay informed on the newest features, tutorials, and system enhancements.</p>
+                    <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">Latest Updates & Articles</h2>
+                    <p class="text-slate-600 font-normal text-base">Read news, growth guides, and platform updates.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="landing-blogs-grid">
-                    <!-- Blogs dynamically injected here -->
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="landing-blogs-grid"></div>
             </div>
         </section>
 
         <!-- FAQs Section -->
-        <section class="py-16 bg-brand-50 border-t border-brand-100">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="py-16 bg-slate-50 border-t border-slate-200/80">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-                    <p class="text-gray-600">Everything you need to know about the cheapest SMM panel in Pakistan.</p>
+                    <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">Frequently Asked Questions</h2>
+                    <p class="text-slate-600 font-normal text-base">Everything you need to know about our SMM services.</p>
                 </div>
                 
-                <div class="space-y-4">
+                <div class="space-y-3.5">
                     <!-- FAQ 1 -->
-                    <details class="group bg-white rounded-2xl shadow-sm border border-gray-100 open:shadow-md transition-all">
-                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-lg text-gray-900">
+                    <details class="group glass-card rounded-[16px] bg-white border border-slate-200/80 shadow-sm transition-all">
+                        <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-base text-slate-900">
                             <span>What is MAsmmpanel?</span>
-                            <span class="transition group-open:rotate-180 text-brand-500">
-                                <i class="fa-solid fa-chevron-down"></i>
+                            <span class="transition group-open:rotate-180 text-brand-600">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
                             </span>
                         </summary>
-                        <div class="text-gray-600 px-6 pb-6 pt-0 leading-relaxed">
-                            MAsmmpanel is the most affordable and reliable Social Media Marketing (SMM) panel in Pakistan. We provide resellers and direct users with cheap likes, followers, views, and more for platforms like Instagram, TikTok, YouTube, and Facebook.
+                        <div class="text-slate-600 px-5 pb-5 pt-0 leading-relaxed text-sm">
+                            MAsmmpanel is Pakistan's cheapest and fastest SMM panel. We provide automated social media marketing services including followers, likes, views, and watch time for Instagram, TikTok, YouTube, and Facebook.
                         </div>
                     </details>
                     
                     <!-- FAQ 2 -->
-                    <details class="group bg-white rounded-2xl shadow-sm border border-gray-100 open:shadow-md transition-all">
-                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-lg text-gray-900">
-                            <span>Are the followers and likes real?</span>
-                            <span class="transition group-open:rotate-180 text-brand-500">
-                                <i class="fa-solid fa-chevron-down"></i>
+                    <details class="group glass-card rounded-[16px] bg-white border border-slate-200/80 shadow-sm transition-all">
+                        <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-base text-slate-900">
+                            <span>What payment methods are supported?</span>
+                            <span class="transition group-open:rotate-180 text-brand-600">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
                             </span>
                         </summary>
-                        <div class="text-gray-600 px-6 pb-6 pt-0 leading-relaxed">
-                            Yes! We offer a variety of service tiers. You can choose high-quality, non-drop, real-looking accounts to ensure your growth looks organic and boosts your algorithm ranking safely.
+                        <div class="text-slate-600 px-5 pb-5 pt-0 leading-relaxed text-sm">
+                            We support all popular Pakistani payment methods including EasyPaisa, JazzCash, Bank Transfer, and CashMaal (Auto deposit).
                         </div>
                     </details>
                     
                     <!-- FAQ 3 -->
-                    <details class="group bg-white rounded-2xl shadow-sm border border-gray-100 open:shadow-md transition-all">
-                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-lg text-gray-900">
-                            <span>How fast is the delivery?</span>
-                            <span class="transition group-open:rotate-180 text-brand-500">
-                                <i class="fa-solid fa-chevron-down"></i>
+                    <details class="group glass-card rounded-[16px] bg-white border border-slate-200/80 shadow-sm transition-all">
+                        <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-base text-slate-900">
+                            <span>How fast are orders delivered?</span>
+                            <span class="transition group-open:rotate-180 text-brand-600">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
                             </span>
                         </summary>
-                        <div class="text-gray-600 px-6 pb-6 pt-0 leading-relaxed">
-                            Most of our services are fully automated and start within seconds to a few minutes after the order is placed. Larger orders (like massive YouTube watch time) may be dripped over a few days for safety.
+                        <div class="text-slate-600 px-5 pb-5 pt-0 leading-relaxed text-sm">
+                            Most orders start instantly within a few seconds after submitting. Large orders are delivered smoothly to ensure account safety.
                         </div>
                     </details>
                     
                     <!-- FAQ 4 -->
-                    <details class="group bg-white rounded-2xl shadow-sm border border-gray-100 open:shadow-md transition-all">
-                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-lg text-gray-900">
-                            <span>What payment methods do you accept in Pakistan?</span>
-                            <span class="transition group-open:rotate-180 text-brand-500">
-                                <i class="fa-solid fa-chevron-down"></i>
+                    <details class="group glass-card rounded-[16px] bg-white border border-slate-200/80 shadow-sm transition-all">
+                        <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-base text-slate-900">
+                            <span>Is my account safe?</span>
+                            <span class="transition group-open:rotate-180 text-brand-600">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
                             </span>
                         </summary>
-                        <div class="text-gray-600 px-6 pb-6 pt-0 leading-relaxed">
-                            Being a dedicated Pakistani SMM panel, we highly prioritize local payment methods. We accept EasyPaisa, JazzCash, SadaPay, NayaPay, all local Bank Transfers, as well as Crypto and PerfectMoney for international users.
+                        <div class="text-slate-600 px-5 pb-5 pt-0 leading-relaxed text-sm">
+                            Yes! We never ask for your account passwords or private keys. All services only require your public page or post link.
                         </div>
                     </details>
                 </div>
@@ -452,65 +511,59 @@
         </section>
 
         <!-- CTA Section -->
-        <section class="py-16 bg-brand-900 relative overflow-hidden">
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand-800 opacity-50 blur-3xl"></div>
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Ready to Skyrocket Your Social Media?</h2>
-                <p class="text-brand-100 mb-8 text-lg">Join thousands of satisfied agencies, influencers, and businesses using MAsmmpanel today.</p>
-                <a href="#hero-login" class="inline-block bg-white text-brand-900 font-bold text-lg py-4 px-10 rounded-xl shadow-lg hover:bg-brand-50 hover:scale-105 transition-all">
-                    Get Started Now <i class="fa-solid fa-arrow-right ml-2"></i>
+        <section class="py-16 relative overflow-hidden bg-slate-900 text-white">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center p-10 rounded-[28px] bg-gradient-to-r from-brand-600 to-emerald-700 shadow-xl">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 tracking-tight">Ready To Boost Your Accounts?</h2>
+                <p class="text-emerald-100 mb-8 text-base font-normal">Join thousands of Pakistani creators, resellers, and agencies growing their audience daily.</p>
+                <a href="#hero-login" class="inline-block bg-white text-slate-900 font-extrabold tracking-wider uppercase text-xs py-4 px-8 rounded-xl shadow-lg hover:bg-slate-100 transition-all">
+                    Get Started Now <i class="fa-solid fa-arrow-right ml-1"></i>
                 </a>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-brand-900 text-white pt-16 pb-8">
+    <footer class="bg-slate-900 text-slate-400 pt-12 pb-8 border-t border-slate-800 relative z-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
                 <div class="md:col-span-2">
-                    <a href="#" class="flex items-center gap-2 mb-4">
-                        <div class="site-logo-container">
-                            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-brand-900 font-bold text-lg">M</div>
-                        </div>
-                        <span class="font-bold text-2xl tracking-tight text-white site-title-text">MAsmmpanel</span>
+                    <a href="#" class="flex items-center gap-3 mb-4">
+                        <div class="site-logo-container relative w-9 h-9 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-sm border border-white/30">M</div>
+                        <span class="font-extrabold text-2xl tracking-wider text-white site-title-text">MAsmmpanel</span>
                     </a>
-                    <p class="text-brand-100 text-sm mb-6 max-w-sm">
-                        The #1 and cheapest Pakistani SMM Panel. We provide high-quality services to help you scale your social media presence effectively and affordably.
+                    <p class="text-slate-400 text-xs mb-5 max-w-sm leading-relaxed">
+                        Pakistan's #1 cheapest SMM panel for Instagram, TikTok, YouTube, and Facebook growth services.
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-brand-800 flex items-center justify-center text-brand-100 hover:bg-white hover:text-brand-900 transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-brand-800 flex items-center justify-center text-brand-100 hover:bg-white hover:text-brand-900 transition-colors"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-brand-800 flex items-center justify-center text-brand-100 hover:bg-white hover:text-brand-900 transition-colors"><i class="fa-brands fa-instagram"></i></a>
-                    </div>
+                    <div class="dynamic-social-links flex items-center gap-2 flex-wrap"></div>
                 </div>
                 
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 text-white">Quick Links</h4>
-                    <ul class="space-y-2 text-sm text-brand-200">
-                        <li><a href="login.html" class="hover:text-white transition-colors">Login</a></li>
-                        <li><a href="services.html" class="hover:text-white transition-colors">Services</a></li>
-                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="policies.html" class="hover:text-white transition-colors">Policies</a></li>
+                    <h4 class="text-sm font-bold tracking-wider mb-4 text-white uppercase">Quick Links</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-400">
+                        <li><a href="index.html#hero-login" class="hover:text-brand-400 transition-colors">Sign In</a></li>
+                        <li><a href="services.html" class="hover:text-brand-400 transition-colors">Services List</a></li>
+                        <li><a href="about.html" class="hover:text-brand-400 transition-colors">About Us</a></li>
+                        <li><a href="policies.html" class="hover:text-brand-400 transition-colors">Terms of Service</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 text-white">Support</h4>
-                    <ul class="space-y-2 text-sm text-brand-200">
-                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                    <h4 class="text-sm font-bold tracking-wider mb-4 text-white uppercase">Payment Gateways</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-400">
+                        <li><span class="text-emerald-400 font-bold">EasyPaisa</span> (Local PKR)</li>
+                        <li><span class="text-red-400 font-bold">JazzCash</span> (Local PKR)</li>
+                        <li><span class="text-sky-400 font-bold">CashMaal</span> (Auto Gateway)</li>
+                        <li><span class="text-purple-400 font-bold">Bank Transfer</span></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-brand-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-brand-300">
+            <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
                 <p>&copy; 2026 MAsmmpanel. All rights reserved.</p>
-                <div class="mt-4 md:mt-0 flex space-x-4">
-                    <span>Cheapest SMM Panel</span>
+                <div class="mt-3 md:mt-0 flex space-x-4">
+                    <span class="text-emerald-400">System Online</span>
                     <span>|</span>
-                    <span>Pakistani SMM Panel</span>
+                    <span>Pakistan SMM Panel</span>
                 </div>
             </div>
         </div>
@@ -660,6 +713,16 @@
 
         tabLogin.addEventListener('click', setLoginMode);
         tabSignup.addEventListener('click', setSignupMode);
+
+        const navLoginBtn = document.getElementById('nav-login-btn');
+        const navSignupBtn = document.getElementById('nav-signup-btn');
+        const mobileLoginBtn = document.getElementById('mobile-login-btn');
+        const mobileSignupBtn = document.getElementById('mobile-signup-btn');
+
+        if(navLoginBtn) navLoginBtn.addEventListener('click', setLoginMode);
+        if(navSignupBtn) navSignupBtn.addEventListener('click', setSignupMode);
+        if(mobileLoginBtn) mobileLoginBtn.addEventListener('click', () => { setLoginMode(); mobileMenu.classList.add('hidden'); });
+        if(mobileSignupBtn) mobileSignupBtn.addEventListener('click', () => { setSignupMode(); mobileMenu.classList.add('hidden'); });
 
         // --- Helper: Messages ---
         function showMessage(msg, type = "error") {

@@ -28,6 +28,26 @@
   to = "/.netlify/functions/sync-provider"
   status = 200
 
+[[redirects]]
+  from = "/api/cashmaal-ipn"
+  to = "/.netlify/functions/cashmaal-ipn"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-cashmaal"
+  to = "/.netlify/functions/verify-cashmaal"
+  status = 200
+
+[[redirects]]
+  from = "/api/cashmaal-payout"
+  to = "/.netlify/functions/cashmaal-payout"
+  status = 200
+
+[[redirects]]
+  from = "/api/cashmaal-utils"
+  to = "/.netlify/functions/cashmaal-utils"
+  status = 200
+
 # Activate the 100% Automated Background Worker (Runs Every 5 Minutes)
 [functions."worker"]
   schedule = "*/5 * * * *"

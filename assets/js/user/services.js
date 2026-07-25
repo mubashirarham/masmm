@@ -125,6 +125,88 @@ function fetchServices() {
     });
 }
 
+// Helper to detect platform for icons with real-time style preset & admin custom logo support
+function getPlatformLogo(categoryName) {
+    const name = (categoryName || '').toLowerCase();
+    const socialConfig = window.__socialIconsConfig || {};
+    const stylePreset = socialConfig.style || '3d-gradient';
+    const customPlatforms = socialConfig.platforms || [];
+    const customLogos = socialConfig.customLogos || {};
+
+    let styleClass = "w-6 h-6 rounded shrink-0 p-1 flex items-center justify-center transition-all inline-flex mr-2.5 align-middle ";
+    switch(stylePreset) {
+        case 'minimal-flat':
+            styleClass += "bg-slate-900 text-white border border-slate-800 shadow-sm";
+            break;
+        case 'neon-glass':
+            styleClass += "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.4)]";
+            break;
+        case 'circle-solid':
+            styleClass += "rounded-full bg-brand-600 text-white shadow-sm";
+            break;
+        case 'outline-stroke':
+            styleClass += "border-2 border-slate-700 text-slate-800 bg-white shadow-sm";
+            break;
+        case '3d-gradient':
+        default:
+            styleClass += "bg-gradient-to-tr from-brand-500 via-emerald-500 to-teal-400 text-white shadow-md";
+            break;
+    }
+
+    // 1. Check custom platform entry from Admin Panel
+    const matchPlat = customPlatforms.find(p => p.name && name.includes(p.name.toLowerCase()));
+    if (matchPlat && matchPlat.icon) {
+        const isImg = matchPlat.icon.startsWith('http') || matchPlat.icon.startsWith('data:image');
+        const iconHtml = isImg
+            ? `<img src="${matchPlat.icon}" class="w-full h-full object-contain rounded" alt="${matchPlat.name}">`
+            : `<i class="${matchPlat.icon} text-xs"></i>`;
+        return { icon: iconHtml, styleClass };
+    }
+
+    // 2. Check custom logos mapping
+    let customImgUrl = null;
+    if (name.includes('tiktok') && customLogos.tiktok) customImgUrl = customLogos.tiktok;
+    else if ((name.includes('instagram') || name.includes('ig')) && customLogos.instagram) customImgUrl = customLogos.instagram;
+    else if ((name.includes('youtube') || name.includes('yt')) && customLogos.youtube) customImgUrl = customLogos.youtube;
+    else if ((name.includes('facebook') || name.includes('fb')) && customLogos.facebook) customImgUrl = customLogos.facebook;
+
+    if (customImgUrl && customImgUrl.trim() !== '') {
+        return {
+            icon: `<img src="${customImgUrl}" class="w-full h-full object-contain rounded" alt="Logo">`,
+            styleClass
+        };
+    }
+
+    // 3. Fallback SimpleIcons
+    const renderSimpleSvg = (slug) => ({ 
+        icon: `<img src="https://cdn.simpleicons.org/${slug}/ffffff" class="w-full h-full object-contain" alt="${slug}">`, 
+        styleClass 
+    });
+
+    if (name.includes('tiktok')) return renderSimpleSvg('tiktok');
+    if (name.includes('instagram') || name.includes('ig')) return renderSimpleSvg('instagram');
+    if (name.includes('youtube') || name.includes('yt')) return renderSimpleSvg('youtube');
+    if (name.includes('facebook')) return renderSimpleSvg('facebook');
+    if (name.includes('twitter') || name.includes('x')) return renderSimpleSvg('x');
+    if (name.includes('telegram')) return renderSimpleSvg('telegram');
+    if (name.includes('spotify')) return renderSimpleSvg('spotify');
+    if (name.includes('linkedin')) return renderSimpleSvg('linkedin');
+    if (name.includes('discord')) return renderSimpleSvg('discord');
+    if (name.includes('twitch')) return renderSimpleSvg('twitch');
+    if (name.includes('reddit')) return renderSimpleSvg('reddit');
+    if (name.includes('pinterest')) return renderSimpleSvg('pinterest');
+    if (name.includes('snapchat')) return renderSimpleSvg('snapchat');
+    if (name.includes('threads')) return renderSimpleSvg('threads');
+
+    return { icon: '<i class="fa-solid fa-folder-open text-xs"></i>', styleClass };
+}
+
+window.addEventListener('social-icons-updated', () => {
+    if (document.getElementById('user-services-table-body')) {
+        renderServicesTable();
+    }
+});
+
 function renderServicesTable() {
     const tableBody = document.getElementById('user-services-table-body');
     const searchInput = document.getElementById('search-services-input');
@@ -149,19 +231,21 @@ function renderServicesTable() {
         visibleCount++;
         
         // Add Category Header Row if it changes
-            if (currentCategoryRendered !== service.categoryId) {
-                const cat = allCategories.find(c => c.id === service.categoryId);
-                const catName = cat ? cat.name : 'Other Services';
-                
-                tableBody.innerHTML += `
-                    <tr class="bg-gray-100 border-b border-gray-200">
-                        <td colspan="6" class="px-6 py-3 font-bold text-gray-800 text-sm">
-                            <i class="fa-solid fa-folder-open text-brand-500 mr-2"></i> ${catName}
-                        </td>
-                    </tr>
-                `;
-                currentCategoryRendered = service.categoryId;
-            }
+        if (currentCategoryRendered !== service.categoryId) {
+            const cat = allCategories.find(c => c.id === service.categoryId);
+            const catName = cat ? cat.name : 'Other Services';
+            const platform = getPlatformLogo(catName);
+            
+            tableBody.innerHTML += `
+                <tr class="bg-slate-100/90 border-b border-slate-200">
+                    <td colspan="6" class="px-6 py-3 font-bold text-slate-900 text-sm flex items-center">
+                        <span class="${platform.styleClass}">${platform.icon}</span>
+                        <span>${catName}</span>
+                    </td>
+                </tr>
+            `;
+            currentCategoryRendered = service.categoryId;
+        }
 
             const displayId = service.serviceId || service.id.substring(0,4);
             const safeDesc = (service.description || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');

@@ -1,5 +1,5 @@
-// theme-loader.js - Dynamic Tailwind Configurator and SEO Injector
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// theme-loader.js - Real-Time Dynamic Theme, Logo, & Social Icon Style Loader
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const PALETTE_CONFIGS = {
     "green": { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 800: '#166534', 900: '#14532d' },
@@ -19,7 +19,7 @@ const PALETTE_CONFIGS = {
     "red": { 50: '#fef2f2', 100: '#fee2e2', 500: '#ef4444', 600: '#dc2626', 800: '#991b1b', 900: '#7f1d1d' }
 };
 
-export async function initDynamicTheme(app) {
+export function initDynamicTheme(app) {
     const db = getFirestore(app);
     let __currentHost = window.location.hostname;
     let appId = "masmmpanel-default";
@@ -27,105 +27,154 @@ export async function initDynamicTheme(app) {
         appId = __currentHost.replace(/\./g, '-');
     }
 
-    try {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'general');
-        const snap = await getDoc(ref);
+    const ref = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'general');
+    
+    // Realtime Listener for Settings, Logo, Branding, and Social Icons Style
+    onSnapshot(ref, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
         
-        if (snap.exists()) {
-            const data = snap.data();
-            
-            // 1. INJECT SEO METADATA
-            if (data.seoTitle) document.title = data.seoTitle;
-            if (data.seoDescription) {
-                let metaDesc = document.querySelector('meta[name="description"]');
-                if (metaDesc) metaDesc.setAttribute("content", data.seoDescription);
-            }
-            if (data.seoKeywords) {
-                let metaKey = document.querySelector('meta[name="keywords"]');
-                if (metaKey) metaKey.setAttribute("content", data.seoKeywords);
-            }
-            
-            // 2. INJECT BRANDING LOGOS & NAMES
-            if (data.siteName) {
-                document.querySelectorAll('.site-title-text').forEach(el => {
-                    el.innerText = data.siteName;
-                    // For HTML elements using name naturally
-                });
-            }
-
-            if (data.theme && data.theme.logoUrl && data.theme.logoUrl.trim() !== '') {
-                document.querySelectorAll('.site-logo-container').forEach(el => {
-                    if (el.tagName === 'IMG') {
-                        el.src = data.theme.logoUrl;
-                    } else {
-                        el.innerHTML = `<img src="${data.theme.logoUrl}" class="h-10 object-contain drop-shadow-sm" style="max-height: 40px;" alt="Logo">`;
-                    }
-                });
-            }
-
-            // 3. INJECT TAILWIND COLORS & FONTS
-            if (data.theme) {
-                const activePalette = PALETTE_CONFIGS[data.theme.palette] || PALETTE_CONFIGS['green'];
-                
-                // Load Custom Google Fonts (Heading & Body)
-                const gFontsList = new Set([data.theme.headingFont || 'Inter', data.theme.bodyFont || 'Inter']);
-                let gFontQuery = Array.from(gFontsList).map(f => `family=${f.replace(/ /g, '+')}:wght@300;400;500;600;700;800`).join('&');
-                
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = `https://fonts.googleapis.com/css2?${gFontQuery}&display=swap`;
-                document.head.appendChild(link);
-                
-                // Construct styles based on selection
-                const headStr = `'${data.theme.headingFont || 'Inter'}', sans-serif`;
-                const bodyStr = `'${data.theme.bodyFont || 'Inter'}', sans-serif`;
-                const b = activePalette; // Shortcut
-
-                const style = document.createElement('style');
-                style.innerHTML = `
-                    body, p, input, select, textarea { font-family: ${bodyStr} !important; }
-                    h1, h2, h3, h4, h5, h6, .brand-heading { font-family: ${headStr} !important; }
-                    
-                    /* Dynamic Tailwind Overrides */
-                    .bg-brand-50, .hover\\:bg-brand-50:hover { background-color: ${b[50]} !important; }
-                    .bg-brand-100, .hover\\:bg-brand-100:hover { background-color: ${b[100]} !important; }
-                    .bg-brand-200, .hover\\:bg-brand-200:hover { background-color: ${b[200] || b[100]} !important; }
-                    .bg-brand-500, .hover\\:bg-brand-500:hover { background-color: ${b[500]} !important; }
-                    .bg-brand-600, .hover\\:bg-brand-600:hover { background-color: ${b[600]} !important; }
-                    .bg-brand-800, .hover\\:bg-brand-800:hover { background-color: ${b[800]} !important; }
-                    .bg-brand-900, .hover\\:bg-brand-900:hover { background-color: ${b[900]} !important; }
-
-                    .text-brand-50, .hover\\:text-brand-50:hover { color: ${b[50]} !important; }
-                    .text-brand-100, .hover\\:text-brand-100:hover { color: ${b[100]} !important; }
-                    .text-brand-200, .hover\\:text-brand-200:hover { color: ${b[200] || b[100]} !important; }
-                    .text-brand-400, .hover\\:text-brand-400:hover { color: ${b[400] || b[500]} !important; }
-                    .text-brand-500, .hover\\:text-brand-500:hover { color: ${b[500]} !important; }
-                    .text-brand-600, .hover\\:text-brand-600:hover { color: ${b[600]} !important; }
-                    .text-brand-700, .hover\\:text-brand-700:hover { color: ${b[700] || b[800]} !important; }
-                    .text-brand-800, .hover\\:text-brand-800:hover { color: ${b[800]} !important; }
-                    .text-brand-900, .hover\\:text-brand-900:hover { color: ${b[900]} !important; }
-
-                    .border-brand-50 { border-color: ${b[50]} !important; }
-                    .border-brand-100 { border-color: ${b[100]} !important; }
-                    .border-brand-200 { border-color: ${b[200] || b[100]} !important; }
-                    .border-brand-500, .focus\\:border-brand-500:focus { border-color: ${b[500]} !important; }
-                    .border-brand-600 { border-color: ${b[600]} !important; }
-                    
-                    .ring-brand-500, .focus\\:ring-brand-500:focus { --tw-ring-color: ${b[500]} !important; }
-
-                    .shadow-brand-500\\/30 { 
-                        --tw-shadow-color: ${b[500]}4D !important;
-                        --tw-shadow: var(--tw-shadow-colored) !important;
-                    }
-                    
-                    .from-brand-400 { --tw-gradient-from: ${b[400] || b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-                    .from-brand-500 { --tw-gradient-from: ${b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-                    .to-brand-600 { --tw-gradient-to: ${b[600]} !important; }
-                `;
-                document.head.appendChild(style);
-            }
+        // 1. REALTIME SEO METADATA
+        if (data.seoTitle) document.title = data.seoTitle;
+        if (data.seoDescription) {
+            let metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute("content", data.seoDescription);
         }
-    } catch (e) {
-        console.warn("Dynamic Theme Initialization Error:", e);
+        if (data.seoKeywords) {
+            let metaKey = document.querySelector('meta[name="keywords"]');
+            if (metaKey) metaKey.setAttribute("content", data.seoKeywords);
+        }
+        
+        // 2. REALTIME BRANDING LOGOS & SITE NAME
+        if (data.siteName) {
+            document.querySelectorAll('.site-title-text').forEach(el => {
+                el.innerText = data.siteName;
+            });
+        }
+
+        if (data.theme && data.theme.logoUrl && data.theme.logoUrl.trim() !== '') {
+            document.querySelectorAll('.site-logo-container').forEach(el => {
+                if (el.tagName === 'IMG') {
+                    el.src = data.theme.logoUrl;
+                } else {
+                    el.innerHTML = `<img src="${data.theme.logoUrl}" class="h-9 object-contain drop-shadow-sm max-h-[36px]" alt="Logo">`;
+                }
+            });
+        }
+
+        // 3. REALTIME DYNAMIC SOCIAL PLATFORMS & STYLE PRESET
+        if (data.socialIconsConfig) {
+            window.__socialIconsConfig = data.socialIconsConfig;
+            window.dispatchEvent(new CustomEvent('social-icons-updated', { detail: data.socialIconsConfig }));
+
+            const platforms = data.socialIconsConfig.platforms || [];
+            const stylePreset = data.socialIconsConfig.style || '3d-gradient';
+            
+            document.querySelectorAll('.dynamic-social-links').forEach(container => {
+                container.innerHTML = '';
+                platforms.forEach(soc => {
+                    if (!soc.url) return;
+                    const a = document.createElement('a');
+                    a.href = soc.url;
+                    a.target = "_blank";
+                    a.className = getSocialStyleClasses(stylePreset);
+                    
+                    const isImage = soc.icon && (soc.icon.startsWith('http') || soc.icon.startsWith('data:image'));
+                    const iconHtml = isImage
+                        ? `<img src="${soc.icon}" class="w-4 h-4 object-contain rounded">`
+                        : `<i class="${soc.icon || 'fa-solid fa-share-nodes'}"></i>`;
+                        
+                    a.innerHTML = `${iconHtml} <span>${soc.name}</span>`;
+                    container.appendChild(a);
+                });
+            });
+        }
+
+        // 4. REALTIME TAILWIND COLORS & FONTS
+        if (data.theme) {
+            const activePalette = PALETTE_CONFIGS[data.theme.palette] || PALETTE_CONFIGS['green'];
+            
+            // Load Custom Google Fonts (Heading & Body)
+            const gFontsList = new Set([data.theme.headingFont || 'Inter', data.theme.bodyFont || 'Inter']);
+            let gFontQuery = Array.from(gFontsList).map(f => `family=${f.replace(/ /g, '+')}:wght@300;400;500;600;700;800`).join('&');
+            
+            let existingFontLink = document.getElementById('dynamic-theme-fonts');
+            if (existingFontLink) existingFontLink.remove();
+
+            const link = document.createElement('link');
+            link.id = 'dynamic-theme-fonts';
+            link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?${gFontQuery}&display=swap`;
+            document.head.appendChild(link);
+            
+            const headStr = `'${data.theme.headingFont || 'Inter'}', sans-serif`;
+            const bodyStr = `'${data.theme.bodyFont || 'Inter'}', sans-serif`;
+            const b = activePalette;
+
+            let existingStyle = document.getElementById('dynamic-theme-styles');
+            if (existingStyle) existingStyle.remove();
+
+            const style = document.createElement('style');
+            style.id = 'dynamic-theme-styles';
+            style.innerHTML = `
+                body, p, input, select, textarea { font-family: ${bodyStr} !important; }
+                h1, h2, h3, h4, h5, h6, .brand-heading { font-family: ${headStr} !important; }
+                
+                /* Dynamic Tailwind Overrides */
+                .bg-brand-50, .hover\\:bg-brand-50:hover { background-color: ${b[50]} !important; }
+                .bg-brand-100, .hover\\:bg-brand-100:hover { background-color: ${b[100]} !important; }
+                .bg-brand-200, .hover\\:bg-brand-200:hover { background-color: ${b[200] || b[100]} !important; }
+                .bg-brand-500, .hover\\:bg-brand-500:hover { background-color: ${b[500]} !important; }
+                .bg-brand-600, .hover\\:bg-brand-600:hover { background-color: ${b[600]} !important; }
+                .bg-brand-800, .hover\\:bg-brand-800:hover { background-color: ${b[800]} !important; }
+                .bg-brand-900, .hover\\:bg-brand-900:hover { background-color: ${b[900]} !important; }
+
+                .text-brand-50, .hover\\:text-brand-50:hover { color: ${b[50]} !important; }
+                .text-brand-100, .hover\\:text-brand-100:hover { color: ${b[100]} !important; }
+                .text-brand-200, .hover\\:text-brand-200:hover { color: ${b[200] || b[100]} !important; }
+                .text-brand-400, .hover\\:text-brand-400:hover { color: ${b[400] || b[500]} !important; }
+                .text-brand-500, .hover\\:text-brand-500:hover { color: ${b[500]} !important; }
+                .text-brand-600, .hover\\:text-brand-600:hover { color: ${b[600]} !important; }
+                .text-brand-700, .hover\\:text-brand-700:hover { color: ${b[700] || b[800]} !important; }
+                .text-brand-800, .hover\\:text-brand-800:hover { color: ${b[800]} !important; }
+                .text-brand-900, .hover\\:text-brand-900:hover { color: ${b[900]} !important; }
+
+                .border-brand-50 { border-color: ${b[50]} !important; }
+                .border-brand-100 { border-color: ${b[100]} !important; }
+                .border-brand-200 { border-color: ${b[200] || b[100]} !important; }
+                .border-brand-500, .focus\\:border-brand-500:focus { border-color: ${b[500]} !important; }
+                .border-brand-600 { border-color: ${b[600]} !important; }
+                
+                .ring-brand-500, .focus\\:ring-brand-500:focus { --tw-ring-color: ${b[500]} !important; }
+
+                .shadow-brand-500\\/30 { 
+                    --tw-shadow-color: ${b[500]}4D !important;
+                    --tw-shadow: var(--tw-shadow-colored) !important;
+                }
+                
+                .from-brand-400 { --tw-gradient-from: ${b[400] || b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+                .from-brand-500 { --tw-gradient-from: ${b[500]} !important; --tw-gradient-to: transparent !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+                .to-brand-600 { --tw-gradient-to: ${b[600]} !important; }
+            `;
+            document.head.appendChild(style);
+        }
+    }, (error) => {
+        console.warn("Real-time theme listener error:", error);
+    });
+}
+
+function getSocialStyleClasses(style) {
+    switch(style) {
+        case 'minimal-flat':
+            return 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm';
+        case 'neon-glass':
+            return 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 text-cyan-600 border border-cyan-500/30 hover:bg-cyan-500/20 font-bold text-xs transition-all shadow-sm';
+        case 'circle-solid':
+            return 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition-all shadow-sm';
+        case 'outline-stroke':
+            return 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white text-slate-700 font-bold text-xs transition-all shadow-sm';
+        case '3d-gradient':
+        default:
+            return 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold text-xs transition-all shadow-sm hover:scale-105';
     }
 }

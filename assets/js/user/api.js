@@ -12,7 +12,8 @@ let currentApiKey = "Not generated yet";
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
-    if (user && document.getElementById('view-api').classList.contains('active')) {
+    const viewEl = document.getElementById('view-api');
+    if (user && viewEl && viewEl.classList.contains('active')) {
         fetchApiKey();
     }
 });

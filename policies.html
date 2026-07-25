@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policies | MAsmmpanel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Color Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#22c55e', 400: '#4ade80' }
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Dynamic Theme Injector -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initDynamicTheme } from "./assets/js/theme-loader.js";
+        const themeApp = initializeApp({
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            projectId: "masmmpanel-7af8c"
+        }, "ThemeLoader");
+        initDynamicTheme(themeApp);
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-blob { animation: blob 15s infinite alternate ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; opacity: 0; }
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03); }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-white/40">M</div>
+                        <span class="font-extrabold text-2xl text-slate-900 tracking-wider">MAsmmpanel</span>
+                    </a>
+                </div>
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all">Home</a>
+                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all">About</a>
+                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all">Services</a>
+                    <a href="index.html#hero-login" class="px-6 py-2 rounded-xl font-bold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-md">Sign In</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-28 pb-20 relative overflow-hidden flex items-center justify-center bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4 relative z-10 animate-fade-in-up w-full text-center">
+            <div class="glass-card p-10 sm:p-12 rounded-[28px]">
+                <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center text-3xl mb-6 mx-auto border border-brand-200 shadow-sm">
+                    <i class="fa-solid fa-file-shield"></i>
+                </div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-6">Terms of Service & Policies</h1>
+                
+                <div class="text-left bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 text-sm leading-relaxed text-slate-700 shadow-sm space-y-4 font-normal">
+                    <p class="flex items-start gap-3"><span class="font-bold text-brand-600">1.</span> <strong>Privacy & Confidentiality:</strong> All user information, account details, and transaction history are kept strictly confidential and secure.</p>
+                    <p class="flex items-start gap-3"><span class="font-bold text-brand-600">2.</span> <strong>Order Fulfillment:</strong> Once an order is placed and processing has started, it cannot be edited or cancelled.</p>
+                    <p class="flex items-start gap-3"><span class="font-bold text-brand-600">3.</span> <strong>Refund Policy:</strong> Deposited funds are credited to your panel balance for service purchases.</p>
+                    <p class="flex items-start gap-3"><span class="font-bold text-brand-600">4.</span> <strong>Fair Usage:</strong> API keys and automated requests are subject to standard rate limits to maintain high system availability for all users.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

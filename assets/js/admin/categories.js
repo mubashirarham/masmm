@@ -49,12 +49,31 @@ function renderCategoriesUI() {
             </div>
         </div>
 
+        <!-- Bulk Action Bar -->
+        <div id="categories-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3 text-sm font-bold text-brand-900">
+                <i class="fa-solid fa-check-double text-brand-600 text-base"></i>
+                <span id="categories-selected-count">0 categories selected</span>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button id="bulk-categories-delete-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-trash"></i> Delete Selected
+                </button>
+                <button id="bulk-categories-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye-slash"></i> Toggle Active/Disabled
+                </button>
+            </div>
+        </div>
+
         <!-- Categories Table -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600">
                     <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
                         <tr>
+                            <th class="px-4 py-4 w-12 text-center">
+                                <input type="checkbox" id="categories-select-all" class="w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer">
+                            </th>
                             <th class="px-6 py-4 font-semibold w-16 text-center">Sort</th>
                             <th class="px-6 py-4 font-semibold">Category Name</th>
                             <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
@@ -63,7 +82,7 @@ function renderCategoriesUI() {
                     </thead>
                     <tbody id="admin-categories-table-body">
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
                                 <p>Loading categories...</p>
                             </td>
@@ -224,13 +243,16 @@ function renderCategoriesTable() {
     const tableBody = document.getElementById('admin-categories-table-body');
     const searchInput = document.getElementById('admin-search-categories');
     const paginationContainer = document.getElementById('admin-categories-pagination-container');
+    const selectAllCb = document.getElementById('categories-select-all');
+    const bulkBar = document.getElementById('categories-bulk-bar');
+    const selectedCountEl = document.getElementById('categories-selected-count');
     if (!tableBody) return;
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     tableBody.innerHTML = '';
 
     if (allCategories.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">No categories found. Click "Add New" to create one.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No categories found. Click "Add New" to create one.</td></tr>`;
         return;
     }
 
@@ -246,18 +268,38 @@ function renderCategoriesTable() {
 
     let visibleCount = 0;
 
+    const updateBulkBar = () => {
+        const checkedCbs = document.querySelectorAll('.category-select-cb:checked');
+        const count = checkedCbs.length;
+        if (count > 0) {
+            bulkBar.classList.remove('hidden');
+            selectedCountEl.innerText = `${count} categor${count > 1 ? 'ies' : 'y'} selected`;
+        } else {
+            bulkBar.classList.add('hidden');
+        }
+        if (selectAllCb) {
+            const allCbs = document.querySelectorAll('.category-select-cb');
+            selectAllCb.checked = allCbs.length > 0 && checkedCbs.length === allCbs.length;
+        }
+    };
+
     paginated.forEach(category => {
         visibleCount++;
         const name = category.name || 'Unnamed';
         const sort = category.sort || 0;
         const status = category.status || 'Active';
 
-        const statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">${status}</span>`;
+        const statusBadge = status === 'Active'
+            ? `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">Active</span>`
+            : `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold uppercase tracking-wider">Disabled</span>`;
 
         const row = document.createElement('tr');
         row.className = "border-b border-gray-50 hover:bg-gray-50 transition-colors";
         
         row.innerHTML = `
+            <td class="px-4 py-4 text-center">
+                <input type="checkbox" class="category-select-cb w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer" data-id="${category.id}">
+            </td>
             <td class="px-6 py-4 text-center font-semibold text-gray-500">${sort}</td>
             <td class="px-6 py-4 font-bold text-gray-800">${name}</td>
             <td class="px-6 py-4 text-center">${statusBadge}</td>
@@ -266,19 +308,73 @@ function renderCategoriesTable() {
                     <i class="fa-solid fa-pen"></i>
                 </button>
                 <button onclick="window.deleteCategory('${category.id}', '${name.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 w-8 h-8 rounded inline-flex items-center justify-center transition-colors shadow-sm">
-                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </td>
         `;
 
+        row.querySelector('.category-select-cb').addEventListener('change', updateBulkBar);
         tableBody.appendChild(row);
     });
 
-    if (visibleCount === 0) {
-        tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">No matching categories found.</td></tr>`;
+    if (selectAllCb) {
+        selectAllCb.checked = false;
+        selectAllCb.onclick = (e) => {
+            document.querySelectorAll('.category-select-cb').forEach(cb => cb.checked = e.target.checked);
+            updateBulkBar();
+        };
+    }
+    updateBulkBar();
+
+    // Bulk Action Handlers
+    const bulkDeleteBtn = document.getElementById('bulk-categories-delete-btn');
+    const bulkStatusBtn = document.getElementById('bulk-categories-status-btn');
+
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.onclick = async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.category-select-cb:checked')).map(cb => cb.dataset.id);
+            if (selectedIds.length === 0) return;
+            if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected category/categories?`)) return;
+
+            try {
+                for (const catId of selectedIds) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', catId));
+                }
+                alert(`Successfully deleted ${selectedIds.length} category/categories.`);
+            } catch (err) {
+                console.error("Bulk category delete error:", err);
+                alert("Failed to delete some categories.");
+            }
+        };
     }
 
-    if(paginationContainer) {
+    if (bulkStatusBtn) {
+        bulkStatusBtn.onclick = async () => {
+            const selectedIds = Array.from(document.querySelectorAll('.category-select-cb:checked')).map(cb => cb.dataset.id);
+            if (selectedIds.length === 0) return;
+
+            try {
+                for (const catId of selectedIds) {
+                    const targetCat = allCategories.find(c => c.id === catId);
+                    const currentStatus = targetCat ? targetCat.status : 'Active';
+                    const newStatus = currentStatus === 'Active' ? 'Disabled' : 'Active';
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', catId), {
+                        status: newStatus
+                    });
+                }
+                alert(`Successfully updated status for ${selectedIds.length} category/categories.`);
+            } catch (err) {
+                console.error("Bulk category status error:", err);
+                alert("Failed to update status for some categories.");
+            }
+        };
+    }
+
+    if (visibleCount === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No matching categories found.</td></tr>`;
+    }
+
+    if (paginationContainer) {
         renderPagination(filtered.length, rowsPerPage, currentPage, (page) => {
             currentPage = page;
             renderCategoriesTable();

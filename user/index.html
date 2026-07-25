@@ -49,94 +49,124 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        /* Custom Scrollbar for Sidebar & Main Content */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
 
         /* Mobile Sidebar Overlay Transition */
         #sidebar-overlay { transition: opacity 0.3s ease-in-out; }
         #sidebar { transition: transform 0.3s ease-in-out; }
+        
+        /* White Minimal Glassmorphism */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes sweep {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        .animate-blob { animation: blob 15s infinite alternate; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; opacity: 0; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        
+        /* Minimal White Glass Cards */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.75); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(226, 232, 240, 0.8); 
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03); 
+        }
+        .bg-sweep { background: linear-gradient(90deg, #22c55e, #06b6d4, #22c55e); background-size: 200% auto; animation: sweep 3s linear infinite; }
     </style>
 </head>
-<body class="text-gray-800 antialiased overflow-hidden flex h-screen">
+<body class="antialiased overflow-hidden flex h-screen text-slate-800 bg-slate-50">
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden opacity-0 pointer-events-none"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 z-20 hidden lg:hidden opacity-0 pointer-events-none backdrop-blur-sm"></div>
 
     <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="bg-white w-64 border-r border-gray-200 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none">
+    <aside id="sidebar" class="bg-white/80 backdrop-blur-2xl w-64 border-r border-slate-200/80 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-sm transition-all">
         
         <!-- Sidebar Header (Logo) -->
-        <div class="h-20 flex items-center px-6 border-b border-gray-100 bg-brand-50/50">
-            <a href="../index.html" class="flex items-center gap-2">
-                <div class="site-logo-container">
-                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                        M
-                    </div>
-                </div>
-                <span class="font-bold text-xl text-brand-900 tracking-tight site-title-text">MAsmmpanel</span>
+        <div class="h-20 flex items-center px-6 border-b border-slate-200/80 bg-white">
+            <a href="../index.html" class="flex items-center gap-3">
+                <div class="site-logo-container relative w-9 h-9 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold shadow-sm border border-white/40">M</div>
+                <span class="font-extrabold text-xl tracking-wider text-slate-900 site-title-text">MAsmmpanel</span>
             </a>
-            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-500 hover:text-red-500">
+            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
 
         <!-- Sidebar Links -->
         <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Menu</p>
+            <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Main Menu</p>
             
-            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-700 bg-brand-50 font-medium transition-colors" data-target="dashboard">
-                <i class="fa-solid fa-cart-plus w-5 text-center"></i> New Order
+            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-900 bg-slate-100/80 border border-slate-200 font-bold transition-all" data-target="dashboard">
+                <i class="fa-solid fa-cart-plus w-5 text-center text-brand-600"></i> New Order
             </a>
-            <a href="#massorder" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="massorder">
-                <i class="fa-solid fa-layer-group w-5 text-center"></i> Mass Order
+            <a href="#massorder" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="massorder">
+                <i class="fa-solid fa-layer-group w-5 text-center text-emerald-600"></i> Mass Order
             </a>
-            <a href="#myorders" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="myorders">
-                <i class="fa-solid fa-box-open w-5 text-center"></i> My Orders
+            <a href="#myorders" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="myorders">
+                <i class="fa-solid fa-box-open w-5 text-center text-sky-600"></i> My Orders
             </a>
         
-            <a href="#refill" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="refill">
-                <i class="fa-solid fa-rotate w-5 text-center"></i> Refill History
+            <a href="#refill" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="refill">
+                <i class="fa-solid fa-rotate w-5 text-center text-amber-600"></i> Refill Orders
             </a>
-            <a href="#support" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="support">
-                <i class="fa-solid fa-headset w-5 text-center"></i> Support Tickets
+            <a href="#support" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="support">
+                <i class="fa-solid fa-headset w-5 text-center text-purple-600"></i> Support Tickets
             </a>
-            <a href="#addfunds" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="addfunds">
-                <i class="fa-solid fa-wallet w-5 text-center"></i> Add Funds
+            <a href="#addfunds" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="addfunds">
+                <i class="fa-solid fa-wallet w-5 text-center text-emerald-600"></i> Add Funds
             </a>
-            <a href="#services" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="services">
-                <i class="fa-solid fa-tags w-5 text-center"></i> Services
+            <a href="#services" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="services">
+                <i class="fa-solid fa-list-check w-5 text-center text-slate-600"></i> Services List
             </a>
-            <a href="#transactions" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="transactions">
-                <i class="fa-solid fa-money-bill-transfer w-5 text-center"></i> Transactions
+            <a href="#transactions" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="transactions">
+                <i class="fa-solid fa-receipt w-5 text-center text-indigo-600"></i> Transactions
             </a>
-            <a href="#api" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="api">
-                <i class="fa-solid fa-code w-5 text-center"></i> API Docs
+            <a href="#api" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="api">
+                <i class="fa-solid fa-code w-5 text-center text-sky-600"></i> API Docs
             </a>
             
-            <a href="#childpanel" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="childpanel">
-                <i class="fa-solid fa-server w-5 text-center"></i> Child Panels
+            <a href="#childpanel" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="childpanel">
+                <i class="fa-solid fa-globe w-5 text-center text-emerald-600"></i> Child Panels
             </a>
 
-            <a href="#affiliates" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="affiliates">
-                <i class="fa-solid fa-users-viewfinder w-5 text-center text-brand-500"></i> Affiliates
+            <a href="#affiliates" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="affiliates">
+                <i class="fa-solid fa-users-line w-5 text-center text-rose-500"></i> Affiliates Program
             </a>
             
-            <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">Account</p>
+            <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-6 mb-3">Account</p>
             
-            <a href="#profile" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-600 font-medium transition-colors" data-target="profile">
-                <i class="fa-solid fa-user-gear w-5 text-center"></i> Profile Settings
+            <a href="#profile" class="nav-link flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-600 hover:bg-slate-100/60 hover:text-slate-900 font-medium transition-all" data-target="profile">
+                <i class="fa-solid fa-user-gear w-5 text-center text-slate-600"></i> Profile Settings
             </a>
         </div>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-gray-100">
-            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 font-medium transition-colors">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Sign Out
+        <div class="p-4 border-t border-slate-200/80 bg-white">
+            <button id="logout-btn" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-red-600 font-bold uppercase tracking-wider text-xs bg-red-50 hover:bg-red-100 transition-colors">
+                <i class="fa-solid fa-power-off"></i> Sign Out
             </button>
         </div>
     </aside>
@@ -145,129 +175,128 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         
         <!-- Loading Overlay -->
-        <div id="page-loader" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
-            <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
-            <p class="text-gray-500 font-medium">Loading Dashboard...</p>
+        <div id="page-loader" class="absolute inset-0 bg-slate-50 z-50 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 border-4 border-slate-200 border-t-brand-500 rounded-full animate-spin mb-3"></div>
+            <p class="text-slate-600 font-bold text-sm">Loading Dashboard...</p>
         </div>
 
         <!-- Top Header -->
-        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 z-10">
+        <header class="h-20 bg-white/75 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 z-10 shadow-sm relative">
             <!-- Mobile Menu Toggle & Title -->
             <div class="flex items-center">
-                <button id="open-sidebar-btn" class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none p-2 mr-3">
+                <button id="open-sidebar-btn" class="lg:hidden text-slate-600 hover:text-slate-900 focus:outline-none p-2 mr-3 transition-colors">
                     <i class="fa-solid fa-bars text-2xl"></i>
                 </button>
-                <h1 id="page-title" class="text-xl font-bold text-gray-800">New Order</h1>
+                <h1 id="page-title" class="text-xl font-bold text-slate-900 tracking-tight">New Order</h1>
             </div>
 
             <!-- Header Right Section -->
-            <div class="flex items-center gap-4 sm:gap-6">
+            <div class="flex items-center gap-3 sm:gap-6">
+                <!-- Dynamic Social Platforms Links -->
+                <div class="dynamic-social-links hidden md:flex items-center gap-2"></div>
+
                 <!-- Currency Dropdown -->
                 <div class="relative hidden sm:block">
-                    <button id="currency-dropdown-btn" class="flex items-center gap-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg border border-gray-200 transition-colors">
-                        <span id="current-currency-label">loading...</span>
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    <button id="currency-dropdown-btn" class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 bg-white hover:bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200 transition-all shadow-sm">
+                        <span id="current-currency-label">...</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-500"></i>
                     </button>
-                    <div id="currency-dropdown-menu" class="hidden absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-lg z-[100] overflow-hidden">
-                        <button class="w-full text-left px-4 py-2.5 text-sm text-brand-700 hover:bg-brand-50 font-bold border-b border-gray-50" onclick="window.changeCurrency('PKR')">Rs PKR</button>
-                        <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-600 font-semibold border-b border-gray-50" onclick="window.changeCurrency('USD')">$ USD</button>
-                        <button class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-600 font-semibold" onclick="window.changeCurrency('EUR')">€ EUR</button>
+                    <!-- Dropdown menu -->
+                    <div id="currency-dropdown-menu" class="hidden absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-xl shadow-xl z-[100] overflow-hidden">
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-brand-600 hover:bg-slate-50 font-bold border-b border-slate-100 transition-colors" onclick="window.changeCurrency('PKR')">Rs PKR</button>
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-50 font-semibold border-b border-slate-100 transition-colors" onclick="window.changeCurrency('USD')">$ USD</button>
+                        <button class="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-50 font-semibold transition-colors" onclick="window.changeCurrency('EUR')">€ EUR</button>
                     </div>
                 </div>
 
                 <!-- Notifications -->
                 <div class="relative flex items-center h-full">
-                    <button id="header-bell-btn" class="text-gray-400 hover:text-brand-500 transition-colors relative mx-2">
+                    <button id="header-bell-btn" class="text-slate-600 hover:text-slate-900 transition-colors relative mx-2">
                         <i class="fa-regular fa-bell text-xl"></i>
-                        <span id="header-bell-badge" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-red-500 pointer-events-none"></span>
+                        <span id="header-bell-badge" class="hidden absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-brand-500 pointer-events-none animate-pulse"></span>
                     </button>
                     <!-- Notifications Dropdown Menu -->
-                    <div id="notifications-dropdown-menu" class="hidden absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white border border-gray-100 rounded-xl shadow-2xl z-[100] overflow-hidden flex-col max-h-[28rem]">
-                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <span class="font-bold text-gray-800 text-sm uppercase tracking-wide">Notifications</span>
-                            <button id="mark-all-read-btn" class="text-xs text-brand-600 hover:text-brand-800 font-bold transition-colors">Mark as read</button>
+                    <div id="notifications-dropdown-menu" class="hidden absolute right-0 top-full mt-3 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl z-[100] overflow-hidden flex-col max-h-[28rem]">
+                        <div class="px-5 py-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/80">
+                            <span class="font-bold text-slate-900 text-xs uppercase tracking-wider">Notifications</span>
+                            <button id="mark-all-read-btn" class="text-[11px] text-brand-600 hover:text-brand-700 font-bold transition-colors">Clear All</button>
                         </div>
                         <div id="notifications-list" class="flex-1 overflow-y-auto w-full max-h-96 min-h-[4rem] text-left">
-                            <div class="p-6 text-center text-sm text-gray-500 font-medium"><i class="fa-solid fa-spinner fa-spin mb-2 text-xl text-brand-500"></i><br>Loading...</div>
+                            <div class="p-6 text-center text-sm text-slate-500"><div class="w-5 h-5 border-2 border-slate-300 border-t-brand-500 rounded-full animate-spin mx-auto mb-2"></div>Loading notifications...</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- User Dropdown (Simulated) -->
-                <div class="flex items-center gap-3 border-l border-gray-200 pl-4 sm:pl-6">
-                    <div id="header-avatar-container" class="w-10 h-10 rounded-full bg-brand-100 border border-brand-200 flex items-center justify-center text-brand-700 font-bold overflow-hidden">
-                        <i id="header-avatar-icon" class="fa-solid fa-user text-lg"></i>
+                <!-- User Dropdown Profile Avatar -->
+                <div class="flex items-center gap-3 border-l border-slate-200 pl-4 sm:pl-6">
+                    <div id="header-avatar-container" class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold overflow-hidden shadow-sm">
+                        <i id="header-avatar-icon" class="fa-solid fa-user"></i>
                         <img id="header-avatar-img" class="hidden w-full h-full object-cover">
                     </div>
                     <div class="hidden md:block text-left">
-                        <p id="header-user-email" class="text-sm font-semibold text-gray-700 truncate max-w-[120px]">Loading...</p>
-                        <p class="text-xs text-gray-500">User Panel</p>
+                        <p id="header-user-email" class="text-sm font-bold text-slate-900 truncate max-w-[140px]">Loading...</p>
+                        <p class="text-[10px] uppercase font-bold text-brand-600">Active User</p>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Dynamic Content Area -->
-        <main class="flex-1 flex flex-col relative overflow-hidden bg-gray-50">
+        <main class="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden bg-slate-50">
+            <!-- Subtle Ambient Background Blobs -->
+            <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-10 -left-10 w-[40vw] h-[40vw] max-w-2xl max-h-2xl bg-emerald-400/10 rounded-full blur-[100px] animate-blob"></div>
+                <div class="absolute top-20 -right-10 w-[40vw] h-[40vw] max-w-2xl max-h-2xl bg-sky-400/10 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+            </div>
             
             <!-- Toast Notification Container (Global) -->
             <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
 
             <!-- Floating Action Buttons -->
-            <div class="fixed bottom-6 right-6 flex flex-col gap-4 z-[90]">
+            <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-[90]">
                 <!-- Floating WhatsApp Icon -->
-                <a href="https://wa.me/923701722964" target="_blank" class="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center text-3xl shadow-lg hover:scale-110 transition-transform">
+                <a href="https://wa.me/923701722964" target="_blank" title="Contact Support on WhatsApp" class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition-all duration-200">
                     <i class="fa-brands fa-whatsapp"></i>
                 </a>
                 
-                <!-- Floating MA Bot Icon -->
-                <button id="mabot-toggle-btn" class="w-14 h-14 bg-brand-600 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:scale-110 transition-transform relative group disabled:opacity-50">
+                <!-- Floating MA Bot Assistant Icon -->
+                <button id="mabot-toggle-btn" class="w-12 h-12 bg-white border border-slate-200 text-brand-600 rounded-full flex items-center justify-center text-xl shadow-lg hover:scale-110 transition-all relative group">
                     <i class="fa-solid fa-robot"></i>
-                    <span id="mabot-status-dot" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-                    
-                    <div class="absolute right-full mr-4 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none font-sans hidden sm:block">
-                        Chat with MA Bot
-                        <div class="absolute top-1/2 -mt-1 -right-1 border-4 border-transparent border-l-gray-900"></div>
-                    </div>
+                    <span id="mabot-status-dot" class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse"></span>
                 </button>
             </div>
 
             <!-- MA Bot Chat Window (Hidden by Default) -->
-            <div id="mabot-container" class="fixed bottom-24 right-6 w-[350px] sm:w-[380px] h-[500px] max-h-[75vh] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 z-[90] overflow-hidden">
+            <div id="mabot-container" class="fixed bottom-24 right-6 w-[340px] sm:w-[360px] h-[480px] max-h-[75vh] bg-white/95 backdrop-blur-2xl rounded-[24px] shadow-2xl border border-slate-200 flex flex-col transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 z-[90] overflow-hidden">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-brand-600 to-brand-800 p-4 flex items-center justify-between shrink-0">
+                <div class="bg-white p-4 flex items-center justify-between shrink-0 border-b border-slate-200">
                     <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <img id="mabot-header-avatar" src="https://ui-avatars.com/api/?name=MA+Bot&background=ffffff&color=22c55e" alt="MA Bot" class="w-10 h-10 rounded-full border-2 border-white/20 object-cover bg-white">
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-brand-800 rounded-full"></span>
+                        <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200 flex items-center justify-center text-brand-600">
+                            <i class="fa-solid fa-robot text-lg"></i>
                         </div>
                         <div>
-                            <h3 id="mabot-header-name" class="font-bold text-white leading-tight">MA Bot</h3>
-                            <p class="text-[11px] text-brand-100 flex items-center gap-1"><i class="fa-solid fa-bolt text-yellow-300"></i> AI Assistant</p>
+                            <h3 id="mabot-header-name" class="font-bold text-slate-900 text-sm">AI Support Assistant</h3>
+                            <p class="text-[10px] text-emerald-600 font-medium">Online Helpdesk</p>
                         </div>
                     </div>
-                    <button id="mabot-close-btn" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button id="mabot-close-btn" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
 
                 <!-- Chat History -->
-                <div id="mabot-chat-history" class="flex-1 overflow-y-auto p-4 bg-gray-50 flex flex-col gap-4 scroll-smooth">
+                <div id="mabot-chat-history" class="flex-1 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3 scroll-smooth">
                     <!-- Initial Greeting injected by JS -->
                 </div>
 
                 <!-- Input Area -->
-                <div class="p-3 bg-white border-t border-gray-100 shrink-0">
+                <div class="p-3 bg-white border-t border-slate-200 shrink-0">
                     <form id="mabot-form" class="flex items-center gap-2">
-                        <input type="text" id="mabot-input" placeholder="Initializing AI Engine..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:bg-white transition-all text-gray-800" autocomplete="off" disabled>
-                        <button type="submit" id="mabot-send-btn" class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700 transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            <i class="fa-solid fa-paper-plane text-sm pl-0.5"></i>
+                        <input type="text" id="mabot-input" placeholder="Ask a question..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-500 transition-all placeholder-slate-400" autocomplete="off" disabled>
+                        <button type="submit" id="mabot-send-btn" class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center hover:bg-brand-600 transition-all shrink-0 disabled:opacity-50 shadow-sm" disabled>
+                            <i class="fa-solid fa-paper-plane text-sm"></i>
                         </button>
                     </form>
-                    <div class="text-center mt-2 flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                        <i class="fa-solid fa-sparkles text-[10px] text-brand-500"></i>
-                        <span class="text-[10px] text-gray-500 font-medium">Powered by Gemini AI</span>
-                    </div>
                 </div>
             </div>
 
@@ -468,8 +497,40 @@
             });
         });
 
+        // Handle payment success / cancellation URL redirects
+        function handlePaymentRedirects() {
+            const searchParams = new URLSearchParams(window.location.search);
+            const paymentStatus = searchParams.get('payment');
+            
+            if (paymentStatus === 'success') {
+                showGlobalToast('🎉 Payment Successful! Your CashMaal deposit has been completed & credited to your account balance.', 'success');
+                history.replaceState(null, null, window.location.pathname + window.location.hash);
+            } else if (paymentStatus === 'cancelled' || paymentStatus === 'failed') {
+                showGlobalToast('⚠️ Payment Cancelled or Unsuccessful. No funds were deducted.', 'warning');
+                history.replaceState(null, null, window.location.pathname + window.location.hash);
+            }
+        }
+
+        function showGlobalToast(message, type = 'success') {
+            let toast = document.getElementById('global-payment-toast');
+            if (toast) toast.remove();
+
+            toast = document.createElement('div');
+            toast.id = 'global-payment-toast';
+            const bgClass = type === 'success' ? 'bg-emerald-600 border-emerald-500' : 'bg-amber-600 border-amber-500';
+            toast.className = `fixed top-5 right-5 z-[200] max-w-md text-white px-5 py-4 rounded-2xl shadow-2xl border flex items-center justify-between gap-3 animate-fade-in-down ${bgClass}`;
+            toast.innerHTML = `
+                <span class="text-xs font-bold leading-relaxed">${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast && toast.parentElement) toast.remove(); }, 8000);
+        }
+
         // Handle initial load based on URL hash
         function handleInitialRoute() {
+            handlePaymentRedirects();
+
             const hash = window.location.hash.replace('#', '');
             if (hash && viewTitles[hash]) {
                 // Short delay to ensure modules have registered their event listeners

@@ -34,7 +34,9 @@ exports.handler = async (event, context) => {
         const userId = params.get('order_id'); 
 
         // 1. Verify the IPN Key to ensure the request is genuinely from CashMaal
-        if (ipnKey !== process.env.CASHMAAL_IPN_KEY) {
+        const EXPECTED_IPN_KEY = process.env.CASHMAAL_IPN_KEY || 'wfI7bTB39iCvy6a552nblq7tpXhHcYqKFi3';
+        if (ipnKey !== EXPECTED_IPN_KEY) {
+            console.error(`Invalid IPN Key received: ${ipnKey}`);
             return { statusCode: 400, body: 'Invalid IPN Key' };
         }
 

@@ -49,17 +49,29 @@ export function getCurrency() {
 }
 
 export function formatMoney(pkrAmount) {
-    if (isNaN(pkrAmount) || pkrAmount === null) return formatMoney(0);
+    if (isNaN(pkrAmount) || pkrAmount === null || pkrAmount === undefined) return 'Rs 0.00';
+    const num = Number(pkrAmount);
     
     if (currentCurrency === 'PKR') {
-        const val = Number(pkrAmount);
-        // Clean display for big numbers, precise for tiny numbers
-        return `Rs ${val < 1 && val > 0 ? val.toFixed(4) : val.toFixed(2)}`;
+        if (num < 1 && num > 0) {
+            return `Rs ${num.toFixed(4)}`;
+        }
+        return `Rs ${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
     
-    const converted = pkrAmount * rates[currentCurrency];
+    const converted = num * rates[currentCurrency];
     const sym = currentCurrency === 'USD' ? '$' : '€';
-    return `${sym}${Number(converted).toFixed(4)}`;
+    if (converted < 1 && converted > 0) {
+        return `${sym}${converted.toFixed(4)}`;
+    }
+    return `${sym}${converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+// Global window bindings for access across all pages
+if (typeof window !== 'undefined') {
+    window.formatMoney = formatMoney;
+    window.changeCurrency = setCurrency;
+    window.getCurrency = getCurrency;
 }
 
 // Auto-initialize when loaded
