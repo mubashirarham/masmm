@@ -3,6 +3,8 @@ import {
     collection, 
     onSnapshot,
     addDoc,
+    query,
+    orderBy,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { 
@@ -16,123 +18,192 @@ const appId = window.__app_id;
 
 let currentUser = null;
 let activeGateways = [];
+let selectedGateway = null;
 
-// Track the current user's auth state
+// Track current user auth state
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
+    if (user && document.getElementById('deposit-history-tbody')) {
+        listenDepositHistory();
+    }
 });
 
-// Listen for the custom routing event from user/index.html
+// Listen for custom routing event from user/index.html
 window.addEventListener('user-section-load', (e) => {
     if (e.detail.section !== 'addfunds') return;
 
     renderAddFundsUI();
     fetchActiveGateways();
+    if (currentUser) listenDepositHistory();
 });
 
 function renderAddFundsUI() {
     const contentArea = document.getElementById('user-content');
     
-    // Inject HTML for a simplified, centered Add Funds View
     contentArea.innerHTML = `
-        <div class="max-w-4xl mx-auto">
-            <div class="mb-8 text-center sm:text-left">
-                <h2 class="text-3xl font-bold text-gray-900">Add Funds</h2>
-                <p class="text-gray-500 mt-2">Deposit money into your account instantly or manually.</p>
+        <div class="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-[24px] border border-slate-200/80 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-brand-500 to-emerald-600"></div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Manual Payment Deposit</h2>
+                    <p class="text-slate-500 text-sm mt-1 font-medium">Transfer funds directly via EasyPaisa, JazzCash, or Bank Transfer and submit your verification receipt.</p>
+                </div>
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold border border-emerald-100 shrink-0">
+                    <i class="fa-solid fa-shield-check text-base"></i> 100% Safe & Verified
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
-                <!-- Top Accent Line -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+            <!-- Main Form Card -->
+            <div class="bg-white rounded-[24px] border border-slate-200/80 shadow-sm overflow-hidden p-6 sm:p-10 relative">
+                <form id="add-funds-form" class="space-y-8">
+                    
+                    <!-- Step 1: Select Payment Gateway -->
+                    <div>
+                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">1</span>
+                            Select Payment Method <span class="text-red-500">*</span>
+                        </label>
 
-                <div class="p-6 sm:p-10">
-                    <form id="add-funds-form" class="space-y-8">
-                        
-                        <!-- Core Input Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Method <span class="text-red-500">*</span></label>
-                                <select id="fund-method" required class="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white transition-all text-sm font-bold text-gray-800 shadow-sm cursor-pointer hover:border-brand-300">
-                                    <option value="cashmaal_auto" class="text-brand-600">⚡ CashMaal (Auto & Instant)</option>
-                                    <!-- Manual gateways dynamically populated here -->
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (PKR) <span class="text-red-500">*</span></label>
-                                <div class="relative shadow-sm rounded-xl">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">Rs</span>
-                                    <input type="number" id="fund-amount" min="1" step="1" required placeholder="100" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm font-bold text-gray-900 hover:border-brand-300">
-                                </div>
-                                <p class="text-xs text-gray-500 mt-2 font-medium"><i class="fa-solid fa-circle-info text-brand-500 mr-1"></i> Minimum deposit limit is Rs 1.</p>
+                        <!-- Gateways Grid / Selector -->
+                        <div id="gateways-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                            <div class="col-span-full py-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-brand-500"></i>
+                                <p class="text-sm font-semibold">Loading active payment gateways...</p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Dynamic Gateway Info Box -->
-                        <div id="dynamic-gateway-info" class="bg-brand-50 rounded-2xl p-6 border border-brand-100 transition-all">
-                            <!-- Content updated dynamically by JS -->
-                            <div class="flex items-center justify-center text-brand-500 gap-3 py-4">
-                                <i class="fa-solid fa-spinner fa-spin text-xl"></i> 
-                                <span class="font-semibold text-sm">Loading method details...</span>
-                            </div>
+                    <!-- Step 2: Gateway Account Details Box -->
+                    <div id="dynamic-gateway-info" class="hidden transition-all duration-300">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Step 3: Amount & Quick Chips -->
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">2</span>
+                            Enter Deposit Amount (PKR) <span class="text-red-500">*</span>
+                        </label>
+
+                        <div class="relative max-w-md">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-extrabold text-base">Rs</span>
+                            <input type="number" id="fund-amount" min="10" step="1" required placeholder="1000" class="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xl font-black">
                         </div>
 
-                        <!-- Manual Proof Fields (Hidden when CashMaal is selected) -->
-                        <div id="manual-proof-section" class="space-y-6 hidden pt-6 border-t border-gray-100">
-                            <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i class="fa-solid fa-shield-check text-green-500"></i> Payment Verification
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Transaction ID (TID) <span class="text-red-500">*</span></label>
-                                    <input type="text" id="fund-tid" placeholder="Enter the exact TID/Reference Number" class="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm shadow-sm hover:border-brand-300">
-                                    <p class="text-xs text-gray-500 mt-2">Found in your payment confirmation SMS or app.</p>
-                                </div>
+                        <!-- Quick Presets -->
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button type="button" onclick="window.setPresetAmount(500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 500</button>
+                            <button type="button" onclick="window.setPresetAmount(1000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 1,000</button>
+                            <button type="button" onclick="window.setPresetAmount(2500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 2,500</button>
+                            <button type="button" onclick="window.setPresetAmount(5000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 5,000</button>
+                            <button type="button" onclick="window.setPresetAmount(10000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 10,000</button>
+                        </div>
+                    </div>
 
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Screenshot <span class="text-red-500">*</span></label>
-                                    <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-5 hover:border-brand-500 hover:bg-brand-50 transition-colors text-center group cursor-pointer bg-gray-50 shadow-sm" id="screenshot-upload-area">
-                                        <input type="file" id="fund-screenshot" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                        <div id="screenshot-preview-container" class="hidden">
-                                            <img id="screenshot-preview" class="max-h-24 mx-auto rounded shadow-sm">
-                                            <p class="text-xs text-brand-600 mt-2 font-medium">Click or drag to change image</p>
+                    <!-- Step 4: Verification Details (TID & Screenshot) -->
+                    <div id="manual-proof-section" class="space-y-6 pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">3</span>
+                            Payment Receipt & Proof <span class="text-red-500">*</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">Transaction ID (TID / Ref #) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-receipt absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" id="fund-tid" required placeholder="e.g. 034591823901" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-mono font-bold">
+                                </div>
+                                <p class="text-[11px] text-slate-500 mt-2 font-medium">Find the Transaction ID in your banking app or confirmation SMS.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">Upload Payment Screenshot <span class="text-red-500">*</span></label>
+                                <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-5 hover:border-brand-500 hover:bg-brand-50/40 transition-all text-center group cursor-pointer bg-slate-50/60 shadow-sm" id="screenshot-upload-area">
+                                    <input type="file" id="fund-screenshot" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    
+                                    <div id="screenshot-preview-container" class="hidden relative z-20">
+                                        <img id="screenshot-preview" class="max-h-28 mx-auto rounded-lg shadow border border-slate-200">
+                                        <p class="text-xs text-brand-600 mt-2 font-bold flex items-center justify-center gap-1">
+                                            <i class="fa-solid fa-arrows-rotate"></i> Click or drag to replace image
+                                        </p>
+                                    </div>
+                                    
+                                    <div id="screenshot-placeholder">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-sm border border-slate-200 group-hover:border-brand-300 group-hover:text-brand-500 text-slate-400 transition-colors">
+                                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                                         </div>
-                                        <div id="screenshot-placeholder">
-                                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-gray-200 group-hover:border-brand-300 group-hover:text-brand-500 text-gray-400 transition-colors">
-                                                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                                            </div>
-                                            <p class="text-sm font-semibold text-gray-700">Upload Screenshot</p>
-                                            <p class="text-xs text-gray-400 mt-1">JPEG or PNG (Max 5MB)</p>
-                                        </div>
+                                        <p class="text-xs font-extrabold text-slate-800">Upload Receipt Screenshot</p>
+                                        <p class="text-[11px] text-slate-400 mt-0.5">JPEG, PNG or WEBP (Max 5MB)</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div id="fund-notification" class="hidden text-sm px-4 py-3 rounded-xl text-center font-semibold transition-all"></div>
+                    <div id="fund-notification" class="hidden text-sm px-4 py-3.5 rounded-xl text-center font-bold transition-all"></div>
 
-                        <div class="pt-2">
-                            <button type="submit" id="submit-fund-btn" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold text-lg transition-all flex justify-center items-center gap-2 shadow-lg shadow-brand-500/30">
-                                <i class="fa-solid fa-bolt"></i> Pay securely with CashMaal
-                            </button>
-                        </div>
-                    </form>
+                    <div>
+                        <button type="submit" id="submit-fund-btn" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-extrabold text-base transition-all flex justify-center items-center gap-2 shadow-lg shadow-slate-900/20 active:scale-[0.99]">
+                            <i class="fa-solid fa-paper-plane text-brand-400"></i> Submit Deposit Proof
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Deposit History Table Card -->
+            <div class="bg-white rounded-[24px] border border-slate-200/80 shadow-sm overflow-hidden p-6 sm:p-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Deposit Verification History
+                    </h3>
+                    <span class="text-xs font-semibold text-slate-500">Live Status Updates</span>
                 </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-extrabold text-[11px] tracking-wider border-b border-slate-100">
+                            <tr>
+                                <th class="py-3.5 px-4">Date</th>
+                                <th class="py-3.5 px-4">Method</th>
+                                <th class="py-3.5 px-4">TID / Ref #</th>
+                                <th class="py-3.5 px-4">Amount</th>
+                                <th class="py-3.5 px-4">Proof</th>
+                                <th class="py-3.5 px-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deposit-history-tbody" class="divide-y divide-slate-100 font-medium">
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-slate-400">
+                                    <i class="fa-solid fa-spinner fa-spin mr-1"></i> Loading transaction history...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Modal Preview -->
+        <div id="image-modal" class="fixed inset-0 z-[300] bg-slate-900/80 backdrop-blur-md hidden items-center justify-center p-4">
+            <div class="relative bg-white rounded-3xl p-4 max-w-2xl w-full shadow-2xl space-y-4">
+                <div class="flex justify-between items-center px-2">
+                    <h4 class="font-extrabold text-slate-900 text-sm">Receipt Screenshot Preview</h4>
+                    <button type="button" onclick="document.getElementById('image-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <img id="modal-image-target" class="w-full max-h-[70vh] object-contain rounded-2xl border border-slate-100">
             </div>
         </div>
     `;
 
-    const methodSelect = document.getElementById('fund-method');
     const screenshotInput = document.getElementById('fund-screenshot');
-
-    // Dynamic UI toggling based on selected method
-    methodSelect.addEventListener('change', (e) => {
-        updateGatewayInfoBox(e.target.value);
-    });
-
     document.getElementById('add-funds-form').addEventListener('submit', handleFundSubmit);
     
-    // Image Preview Logic
+    // Screenshot Image Preview logic
     screenshotInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
@@ -140,11 +211,33 @@ function renderAddFundsUI() {
             previewImg.src = URL.createObjectURL(file);
             document.getElementById('screenshot-placeholder').classList.add('hidden');
             document.getElementById('screenshot-preview-container').classList.remove('hidden');
-            document.getElementById('screenshot-upload-area').classList.remove('border-dashed', 'border-gray-300', 'bg-gray-50');
-            document.getElementById('screenshot-upload-area').classList.add('border-solid', 'border-brand-200', 'bg-white');
+            document.getElementById('screenshot-upload-area').classList.remove('border-dashed', 'border-slate-200', 'bg-slate-50/60');
+            document.getElementById('screenshot-upload-area').classList.add('border-solid', 'border-brand-300', 'bg-emerald-50/30');
         }
     });
 }
+
+window.setPresetAmount = (val) => {
+    const input = document.getElementById('fund-amount');
+    if (input) input.value = val;
+};
+
+window.copyToClipboard = (text) => {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    const notif = document.getElementById('fund-notification');
+    if (notif) {
+        notif.className = "text-sm px-4 py-3 rounded-xl text-center font-bold mt-4 block bg-emerald-50 text-emerald-800 border border-emerald-200";
+        notif.innerText = `Account number copied to clipboard: ${text}`;
+        notif.classList.remove('hidden');
+        setTimeout(() => notif.classList.add('hidden'), 3500);
+    }
+};
 
 function fetchActiveGateways() {
     const gatewaysRef = collection(db, 'artifacts', appId, 'public', 'data', 'gateways');
@@ -159,115 +252,112 @@ function fetchActiveGateways() {
         });
 
         activeGateways.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-        
-        populateMethodDropdown();
+        renderGatewaysGrid();
     }, (error) => {
-        console.error("Error loading gateways: ", error);
+        console.error("Error loading gateways:", error);
     });
 }
 
-function populateMethodDropdown() {
-    const select = document.getElementById('fund-method');
-    if (!select) return;
+function renderGatewaysGrid() {
+    const grid = document.getElementById('gateways-grid');
+    if (!grid) return;
 
-    const currentVal = select.value;
-    
-    // Reset but keep CashMaal
-    select.innerHTML = '<option value="cashmaal_auto" class="font-bold text-brand-600">⚡ CashMaal (Auto & Instant)</option>';
-    
-    activeGateways.forEach(gateway => {
-        const option = document.createElement('option');
-        option.value = gateway.name;
-        option.textContent = `Manual: ${gateway.name}`;
-        select.appendChild(option);
-    });
-
-    if (currentVal) {
-        select.value = currentVal;
+    if (activeGateways.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full py-8 text-center text-slate-500 bg-amber-50 rounded-2xl border border-amber-200">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-2xl mb-1"></i>
+                <p class="text-sm font-bold">No active payment gateways available.</p>
+                <p class="text-xs text-slate-500 mt-1">Please contact Admin to enable manual payment methods.</p>
+            </div>
+        `;
+        return;
     }
+
+    grid.innerHTML = '';
     
-    // Trigger initial render of the info box
-    updateGatewayInfoBox(select.value);
+    activeGateways.forEach((gw, idx) => {
+        const card = document.createElement('div');
+        card.className = `gateway-card p-4 rounded-2xl border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 group ${idx === 0 ? 'border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/20' : 'border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-white'}`;
+        card.dataset.id = gw.id;
+
+        card.innerHTML = `
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-sm border border-slate-100 shrink-0 group-hover:scale-105 transition-transform">
+                ${gw.logoUrl ? `<img src="${gw.logoUrl}" class="w-full h-full object-contain">` : `<i class="fa-solid fa-building-columns text-slate-400 text-xl"></i>`}
+            </div>
+            <div>
+                <p class="font-extrabold text-slate-900 text-xs truncate max-w-[120px]">${gw.name}</p>
+                <p class="text-[10px] text-slate-500 font-medium">Manual Deposit</p>
+            </div>
+        `;
+
+        card.addEventListener('click', () => selectGateway(gw));
+        grid.appendChild(card);
+    });
+
+    // Auto-select first gateway
+    if (activeGateways.length > 0) {
+        selectGateway(activeGateways[0]);
+    }
 }
 
-// Function attached to window for inline onclick execution (clipboard)
-window.copyToClipboard = (text) => {
-    const el = document.createElement('textarea');
-    el.value = text;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    alert('Account number copied to clipboard!');
-};
+function selectGateway(gw) {
+    selectedGateway = gw;
+    
+    // Highlight Card
+    document.querySelectorAll('.gateway-card').forEach(card => {
+        if (card.dataset.id === gw.id) {
+            card.className = "gateway-card p-4 rounded-2xl border border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/20 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 shadow-sm";
+        } else {
+            card.className = "gateway-card p-4 rounded-2xl border border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-white transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2";
+        }
+    });
 
-function updateGatewayInfoBox(methodValue) {
+    // Render Gateway Details Box
     const infoBox = document.getElementById('dynamic-gateway-info');
-    const manualSection = document.getElementById('manual-proof-section');
-    const submitBtn = document.getElementById('submit-fund-btn');
-    const tidInput = document.getElementById('fund-tid');
-    const screenshotInput = document.getElementById('fund-screenshot');
-
     if (!infoBox) return;
 
-    if (methodValue === 'cashmaal_auto') {
-        manualSection.classList.add('hidden');
-        tidInput.required = false;
-        screenshotInput.required = false;
-        
-        submitBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Pay securely with CashMaal';
-        submitBtn.className = "w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold text-lg transition-all flex justify-center items-center gap-2 shadow-lg shadow-brand-500/30";
-        
-        infoBox.className = "bg-brand-50 rounded-2xl p-6 border border-brand-200 transition-all shadow-inner";
-        infoBox.innerHTML = `
-            <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
-                <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center text-brand-500 text-2xl shrink-0 shadow-sm border border-brand-200"><i class="fa-solid fa-bolt"></i></div>
+    infoBox.classList.remove('hidden');
+    infoBox.className = "bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md relative overflow-hidden border border-slate-700";
+    infoBox.innerHTML = `
+        <div class="flex flex-col sm:flex-row items-start justify-between gap-6 relative z-10">
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur border border-white/10 flex items-center justify-center p-2 shrink-0">
+                    ${gw.logoUrl ? `<img src="${gw.logoUrl}" class="w-full h-full object-contain">` : `<i class="fa-solid fa-building-columns text-2xl text-emerald-400"></i>`}
+                </div>
                 <div>
-                    <h4 class="font-bold text-brand-900 text-xl mb-1">Instant Automated Deposit</h4>
-                    <p class="text-sm text-brand-800 leading-relaxed max-w-xl">Pay directly through the secure CashMaal portal using EasyPaisa, JazzCash, or Bank Transfer. Your account balance will be credited automatically and instantly.</p>
+                    <h4 class="font-extrabold text-white text-lg">${gw.name} Payment Details</h4>
+                    <p class="text-xs text-slate-300 mt-0.5 font-medium">Send exact payment to account details below before submitting TID.</p>
                 </div>
             </div>
-        `;
-    } else {
-        const gateway = activeGateways.find(g => g.name === methodValue);
-        if(!gateway) return;
 
-        manualSection.classList.remove('hidden');
-        tidInput.required = true;
-        screenshotInput.required = true;
-        
-        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Manual Proof';
-        submitBtn.className = "w-full py-4 bg-gray-900 hover:bg-black text-white rounded-xl font-bold text-lg transition-all flex justify-center items-center gap-2 shadow-lg shadow-gray-900/30";
-        
-        infoBox.className = "bg-blue-50 rounded-2xl p-6 border border-blue-200 transition-all shadow-inner";
-        infoBox.innerHTML = `
-            <div class="flex flex-col sm:flex-row items-start gap-6">
-                ${gateway.logoUrl ? `<img src="${gateway.logoUrl}" class="w-16 h-16 object-contain rounded-xl bg-white p-2 border border-blue-200 shrink-0 shadow-sm">` : `<div class="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-blue-500 text-3xl shrink-0 border border-blue-200 shadow-sm"><i class="fa-solid fa-building-columns"></i></div>`}
-                <div class="flex-1 w-full min-w-0">
-                    <h4 class="font-bold text-blue-900 text-xl mb-4">Send Funds to ${gateway.name}</h4>
-                    
-                    <div class="bg-white rounded-xl p-4 sm:p-5 border border-blue-200 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4 shadow-sm relative overflow-hidden">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-blue-500"></div>
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Account Title</p>
-                            <p class="font-bold text-gray-800 text-base truncate" title="${gateway.accountTitle || 'N/A'}">${gateway.accountTitle || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Account Number</p>
-                            <div class="flex items-center gap-3">
-                                <p class="font-mono font-black text-blue-700 text-lg select-all">${gateway.accountNumber || 'N/A'}</p>
-                                <button type="button" onclick="window.copyToClipboard('${gateway.accountNumber || ''}')" class="text-gray-400 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 w-8 h-8 rounded-lg flex items-center justify-center transition-colors border border-gray-100" title="Copy Account Number">
-                                    <i class="fa-regular fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${gateway.instructions ? `<div class="text-sm text-blue-800 bg-white/60 p-4 rounded-xl border border-blue-100 flex gap-3"><i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i><p class="leading-relaxed font-medium">${gateway.instructions}</p></div>` : ''}
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold shrink-0">
+                <i class="fa-solid fa-circle-check mr-1"></i> Active Merchant Account
+            </span>
+        </div>
+
+        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/5 backdrop-blur rounded-xl p-4 border border-white/10">
+            <div>
+                <p class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider mb-1">Account Title</p>
+                <p class="font-bold text-white text-base truncate select-all">${gw.accountTitle || 'N/A'}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider mb-1">Account Number / IBAN</p>
+                <div class="flex items-center gap-2">
+                    <p class="font-mono font-black text-emerald-400 text-lg select-all">${gw.accountNumber || 'N/A'}</p>
+                    <button type="button" onclick="window.copyToClipboard('${gw.accountNumber || ''}')" class="text-slate-300 hover:text-white bg-white/10 hover:bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center transition-colors border border-white/10" title="Copy Number">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
                 </div>
             </div>
-        `;
-    }
+        </div>
+
+        ${gw.instructions ? `
+            <div class="mt-4 p-3.5 bg-brand-500/10 border border-brand-500/30 rounded-xl text-xs text-emerald-200 flex gap-2.5 items-start">
+                <i class="fa-solid fa-circle-info text-emerald-400 mt-0.5 shrink-0"></i>
+                <p class="leading-relaxed font-medium">${gw.instructions}</p>
+            </div>
+        ` : ''}
+    `;
 }
 
 async function uploadScreenshotToCloudinary(file) {
@@ -286,82 +376,37 @@ async function handleFundSubmit(e) {
     e.preventDefault();
     if (!currentUser) return;
 
-    const method = document.getElementById('fund-method').value;
-    const amount = parseFloat(document.getElementById('fund-amount').value);
-
-    // --- 1. AUTOMATIC CASHMAAL ROUTING ---
-    if (method === 'cashmaal_auto') {
-        if (!amount || amount < 1) {
-            showNotification("Minimum deposit is Rs 1", "error");
-            return;
-        }
-
-        // Generate dynamic CashMaal Form and submit to their portal
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://cmaal.com/Pay/';
-        
-        // IMPORTANT: Add your actual CashMaal Web ID here!
-        const CASHMAAL_WEB_ID = "11191"; 
-        
-        // Build clean URL for Netlify routing compatibility
-        let basePath = window.location.pathname;
-        if (basePath.endsWith('/index.html')) {
-            basePath = basePath.replace(/\/index\.html$/, '/');
-        } else if (!basePath.endsWith('/')) {
-            basePath += '/';
-        }
-        const originUrl = window.location.origin + basePath;
-        const successUrl = originUrl + '?payment=success#transactions';
-        const cancelUrl = originUrl + '?payment=cancelled#addfunds';
-
-        const fields = {
-            'pay_method': '',
-            'amount': amount,
-            'currency': 'PKR',
-            'succes_url': successUrl,
-            'success_url': successUrl,
-            'cancel_url': cancelUrl,
-            'client_email': currentUser.email,
-            'web_id': CASHMAAL_WEB_ID,
-            'order_id': currentUser.uid, // We pass the UID so the Webhook knows whose balance to increase
-            'addi_info': 'Account Deposit'
-        };
-
-        for (const key in fields) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = fields[key];
-            form.appendChild(input);
-        }
-        
-        document.body.appendChild(form);
-        form.submit();
+    if (!selectedGateway) {
+        showNotification("Please select a payment method.", "error");
         return;
     }
 
-    // --- 2. MANUAL SUBMISSION ROUTING ---
+    const amount = parseFloat(document.getElementById('fund-amount').value);
     const tid = document.getElementById('fund-tid').value.trim();
     const fileInput = document.getElementById('fund-screenshot');
     const btn = document.getElementById('submit-fund-btn');
-    
-    if (!amount || amount < 1 || !tid || fileInput.files.length === 0) {
-        showNotification("Please fill all required fields and ensure the minimum deposit is Rs 1.", "error");
+
+    if (!amount || amount < 10) {
+        showNotification("Minimum deposit amount is Rs 10.", "error");
+        return;
+    }
+
+    if (!tid || fileInput.files.length === 0) {
+        showNotification("Please provide both the Transaction ID and payment screenshot.", "error");
         return;
     }
 
     btn.disabled = true;
     
     try {
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Image...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Screenshot...';
         const screenshotUrl = await uploadScreenshotToCloudinary(fileInput.files[0]);
 
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting Verification...';
         
         const transactionData = {
             type: 'Deposit',
-            method: method,
+            method: selectedGateway.name,
             amount: amount,
             tid: tid,
             screenshotUrl: screenshotUrl,
@@ -375,30 +420,96 @@ async function handleFundSubmit(e) {
         e.target.reset();
         document.getElementById('screenshot-placeholder').classList.remove('hidden');
         document.getElementById('screenshot-preview-container').classList.add('hidden');
-        document.getElementById('screenshot-upload-area').classList.remove('border-solid', 'border-brand-200', 'bg-white');
-        document.getElementById('screenshot-upload-area').classList.add('border-dashed', 'border-gray-300', 'bg-gray-50');
+        document.getElementById('screenshot-upload-area').classList.remove('border-solid', 'border-brand-300', 'bg-emerald-50/30');
+        document.getElementById('screenshot-upload-area').classList.add('border-dashed', 'border-slate-200', 'bg-slate-50/60');
         
-        showNotification("Deposit submitted! Admin will review it shortly.", "success");
+        showNotification("Deposit proof submitted! Admin will verify and approve your funds shortly.", "success");
         
     } catch (error) {
-        console.error("Deposit Error:", error);
-        showNotification("An error occurred while submitting.", "error");
+        console.error("Deposit Submission Error:", error);
+        showNotification("An error occurred while submitting. Please try again.", "error");
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Manual Proof';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane text-brand-400"></i> Submit Deposit Proof';
     }
 }
 
+function listenDepositHistory() {
+    const tbody = document.getElementById('deposit-history-tbody');
+    if (!tbody || !currentUser) return;
+
+    const txRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions');
+    const q = query(txRef, orderBy('createdAt', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="py-8 text-center text-slate-400">
+                        No payment history found.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const dateStr = data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : 'Just now';
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50/80 transition-colors";
+
+            let statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">Pending</span>`;
+            if (data.status === 'Completed' || data.status === 'Approved') {
+                statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">Approved</span>`;
+            } else if (data.status === 'Rejected' || data.status === 'Cancelled') {
+                statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">Rejected</span>`;
+            }
+
+            tr.innerHTML = `
+                <td class="py-3 px-4 text-slate-500 whitespace-nowrap">${dateStr}</td>
+                <td class="py-3 px-4 font-bold text-slate-900">${data.method || 'Manual'}</td>
+                <td class="py-3 px-4 font-mono font-bold text-slate-700">${data.tid || 'N/A'}</td>
+                <td class="py-3 px-4 font-black text-slate-900">${window.formatMoney(data.amount)}</td>
+                <td class="py-3 px-4">
+                    ${data.screenshotUrl ? `
+                        <button type="button" onclick="window.previewScreenshot('${data.screenshotUrl}')" class="text-brand-600 hover:text-brand-700 font-bold inline-flex items-center gap-1">
+                            <i class="fa-solid fa-image"></i> View
+                        </button>
+                    ` : '<span class="text-slate-400">N/A</span>'}
+                </td>
+                <td class="py-3 px-4 whitespace-nowrap">${statusBadge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }, (error) => {
+        console.error("Deposit History Error:", error);
+    });
+}
+
+window.previewScreenshot = (url) => {
+    const modal = document.getElementById('image-modal');
+    const target = document.getElementById('modal-image-target');
+    if (modal && target) {
+        target.src = url;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+};
+
 function showNotification(message, type) {
     const notif = document.getElementById('fund-notification');
+    if (!notif) return;
+
     notif.innerText = message;
-    notif.className = "text-sm px-4 py-3 rounded-xl text-center font-bold mt-4 block border";
+    notif.className = "text-sm px-4 py-3.5 rounded-xl text-center font-bold mt-4 block border animate-fade-in-down";
     
     if (type === 'success') {
-        notif.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
+        notif.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
     } else {
-        notif.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+        notif.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
     }
     
-    setTimeout(() => { notif.classList.add('hidden'); }, 5000);
+    setTimeout(() => { notif.classList.add('hidden'); }, 6000);
 }
