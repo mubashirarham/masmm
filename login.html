@@ -338,7 +338,7 @@
         // Dynamic Tenant Routing
         let __currentHost = window.location.hostname;
         let panelAppId = "masmmpanel-default";
-        if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app')) {
+        if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app') && !__currentHost.includes('digitalmarketplace.store')) {
             panelAppId = __currentHost.replace(/\./g, '-');
         } 
 
