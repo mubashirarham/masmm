@@ -23,7 +23,7 @@ export function initDynamicTheme(app) {
     const db = getFirestore(app);
     let __currentHost = window.location.hostname;
     let appId = "masmmpanel-default";
-    if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app')) {
+    if (__currentHost !== 'localhost' && __currentHost !== '127.0.0.1' && !__currentHost.includes('masmmpanel') && !__currentHost.includes('netlify.app') && !__currentHost.includes('digitalmarketplace.store')) {
         appId = __currentHost.replace(/\./g, '-');
     }
 
