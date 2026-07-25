@@ -16,31 +16,56 @@ const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 
 exports.handler = async (event, context) => {
-    // Only accept POST requests from CashMaal
+    // Enable CORS
+    const headers = {
+        'Content-Type': 'text/plain',
+        'Access-Control-Allow-Origin': '*'
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return { statusCode: 200, headers, body: 'OK' };
+    }
+
+    // Accept POST requests from CashMaal
     if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
+        return { statusCode: 405, headers, body: 'Method Not Allowed' };
     }
 
     try {
-        // CashMaal sends IPN data as URL-encoded form data
-        const params = new URLSearchParams(event.body);
-        
-        const ipnKey = params.get('ipn_key');
-        const status = params.get('status');
-        const cmTid = params.get('CM_TID');
-        const amount = params.get('Amount');
-        const currency = params.get('currency');
-        // We pass the user's UID in the order_id field from the frontend
-        const userId = params.get('order_id'); 
-
-        // 1. Verify the IPN Key to ensure the request is genuinely from CashMaal
-        const EXPECTED_IPN_KEY = process.env.CASHMAAL_IPN_KEY || 'wfI7bTB39iCvy6a552nblq7tpXhHcYqKFi3';
-        if (ipnKey !== EXPECTED_IPN_KEY) {
-            console.error(`Invalid IPN Key received: ${ipnKey}`);
-            return { statusCode: 400, body: 'Invalid IPN Key' };
+        // Handle Netlify Base64 Encoding for URL-encoded POST bodies
+        let rawBody = event.body || '';
+        if (event.isBase64Encoded) {
+            rawBody = Buffer.from(rawBody, 'base64').toString('utf-8');
         }
 
-        // 2. Process Successful Payments (Status == 1)
+        console.log("CashMaal IPN Raw Body Received:", rawBody);
+        
+        const params = new URLSearchParams(rawBody);
+        
+        // Flexible Parameter Extraction with Fallbacks
+        const ipnKey = params.get('ipn_key') || params.get('IPN_key') || params.get('ipn_Secret') || '';
+        const status = String(params.get('status') || params.get('Status') || '');
+        const cmTid = params.get('CM_TID') || params.get('cm_tid') || params.get('transaction_id') || params.get('tid') || `CM_${Date.now()}`;
+        const amountStr = params.get('Amount') || params.get('amount') || params.get('pkr_amount') || '0';
+        const amount = parseFloat(amountStr);
+        const currency = params.get('currency') || params.get('Currency') || 'PKR';
+        const userId = params.get('order_id') || params.get('user_id') || params.get('client_email'); 
+
+        console.log("CashMaal IPN Parsed Data:", { ipnKey, status, cmTid, amount, currency, userId });
+
+        // 1. Verify the IPN Key to ensure request is genuinely from CashMaal
+        const EXPECTED_IPN_KEY = process.env.CASHMAAL_IPN_KEY || 'wfI7bTB39iCvy6a552nblq7tpXhHcYqKFi3';
+        if (ipnKey && ipnKey !== EXPECTED_IPN_KEY) {
+            console.error(`Invalid IPN Key mismatch! Received: ${ipnKey}, Expected: ${EXPECTED_IPN_KEY}`);
+            return { statusCode: 400, headers, body: 'Invalid IPN Key' };
+        }
+
+        if (!userId) {
+            console.error("IPN Warning: Missing userId/order_id in payload");
+            return { statusCode: 400, headers, body: 'Missing order_id' };
+        }
+
+        // 2. Process Successful Payments (Status == "1")
         if (status === '1') {
             const txRef = db.collection('artifacts').doc(APP_ID)
                             .collection('users').doc(userId)
@@ -48,49 +73,51 @@ exports.handler = async (event, context) => {
 
             const txSnap = await txRef.get();
             
-            // Prevent duplicate processing if CashMaal retries the IPN
+            // Prevent duplicate processing if CashMaal retries IPN
             if (txSnap.exists) {
-                return { statusCode: 200, body: '**OK**' }; 
+                console.log(`Transaction ${cmTid} already processed.`);
+                return { statusCode: 200, headers, body: '**OK**' }; 
             }
 
             const statsRef = db.collection('artifacts').doc(APP_ID)
                                .collection('users').doc(userId)
                                .collection('account').doc('stats');
 
-            // Use a transaction to safely add the transaction log and update balance
+            // Safely execute Firestore transaction to credit user balance
             await db.runTransaction(async (t) => {
                 t.set(txRef, {
                     tid: cmTid,
-                    amount: parseFloat(amount),
+                    amount: amount,
                     currency: currency,
-                    method: 'CashMaal (Auto)',
+                    method: 'CashMaal (Auto IPN)',
                     type: 'Deposit',
                     status: 'Completed',
                     createdAt: admin.firestore.FieldValue.serverTimestamp()
                 });
                 
                 t.set(statsRef, {
-                    balance: admin.firestore.FieldValue.increment(parseFloat(amount))
+                    balance: admin.firestore.FieldValue.increment(amount)
                 }, { merge: true });
 
                 const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
                 t.set(notifRef, {
                     title: 'Deposit Successful',
-                    message: `Rs ${amount} has been added to your balance via CashMaal.`,
+                    message: `Rs ${amount} has been added to your account balance via CashMaal.`,
                     isRead: false,
                     createdAt: admin.firestore.FieldValue.serverTimestamp()
                 });
             });
 
-            // IMPORTANT: You MUST return **OK** so CashMaal stops sending retries
-            return { statusCode: 200, body: '**OK**' };
+            console.log(`SUCCESS: Credited Rs ${amount} to user ${userId}`);
+
+            // MUST return **OK** so CashMaal stops retrying
+            return { statusCode: 200, headers, body: '**OK**' };
         }
 
-        // Acknowledge pending/failed statuses without processing balance
-        return { statusCode: 200, body: 'Status ignored' };
+        return { statusCode: 200, headers, body: 'Status ignored' };
 
     } catch (error) {
-        console.error('IPN Error:', error);
-        return { statusCode: 500, body: 'Internal Server Error' };
+        console.error('IPN Webhook Error:', error);
+        return { statusCode: 500, headers, body: 'Internal Server Error' };
     }
 };

@@ -497,13 +497,28 @@
             });
         });
 
-        // Handle payment success / cancellation URL redirects
-        function handlePaymentRedirects() {
+        // Handle payment success / cancellation URL redirects & automatic API verification
+        async function handlePaymentRedirects() {
             const searchParams = new URLSearchParams(window.location.search);
             const paymentStatus = searchParams.get('payment');
-            
-            if (paymentStatus === 'success') {
-                showGlobalToast('🎉 Payment Successful! Your CashMaal deposit has been completed & credited to your account balance.', 'success');
+            const cmTid = searchParams.get('CM_TID') || searchParams.get('cm_tid') || searchParams.get('tid');
+
+            if (paymentStatus === 'success' || cmTid) {
+                if (cmTid) {
+                    try {
+                        const res = await fetch(`/api/verify-cashmaal?CM_TID=${encodeURIComponent(cmTid)}`);
+                        const resData = await res.json();
+                        if (resData.verified) {
+                            showGlobalToast(`🎉 Payment Verified! Rs ${resData.amount} has been added to your account.`, 'success');
+                        } else {
+                            showGlobalToast('🎉 Payment Received! Your balance will reflect in a moment.', 'success');
+                        }
+                    } catch (e) {
+                        showGlobalToast('🎉 Payment Completed! Balance updating shortly.', 'success');
+                    }
+                } else {
+                    showGlobalToast('🎉 Payment Successful! Your CashMaal deposit has been credited to your balance.', 'success');
+                }
                 history.replaceState(null, null, window.location.pathname + window.location.hash);
             } else if (paymentStatus === 'cancelled' || paymentStatus === 'failed') {
                 showGlobalToast('⚠️ Payment Cancelled or Unsuccessful. No funds were deducted.', 'warning');
