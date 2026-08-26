@@ -84,6 +84,12 @@
   to = "/admin/index.html"
   status = 200
 
+# Fallback Custom 404
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
 # ==============================================================================
 # NETLIFY SCHEDULED SERVERLESS CRON JOBS (Full Automation Engine)
 # ==============================================================================
@@ -123,6 +129,11 @@
     Access-Control-Allow-Origin = "*"
 
 [[headers]]
+  for = "/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
   for = "/assets/css/*"
   [headers.values]
     Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
@@ -131,6 +142,12 @@
   for = "/assets/js/*"
   [headers.values]
     Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Content-Type = "image/x-icon"
+    Cache-Control = "public, max-age=2592000"
 
 [[headers]]
   for = "/*.html"

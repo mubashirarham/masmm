@@ -4,8 +4,13 @@ Allow: /services.html
 Allow: /about.html
 Allow: /policies.html
 Allow: /api.html
+Allow: /assets/
+Allow: /sitemap.xml
+Allow: /favicon.ico
 Disallow: /admin/
 Disallow: /user/
+Disallow: /api/v2
+Disallow: /scratch/
 
 # AI Crawlers & Answer Engines (AIEO / AEO)
 User-agent: GPTBot
@@ -30,3 +35,4 @@ User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://digitalmarketplace.store/sitemap.xml
+Host: https://digitalmarketplace.store

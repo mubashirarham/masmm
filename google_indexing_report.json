@@ -1,0 +1,4047 @@
+{
+  "timestamp": "2026-08-26T18:00:02.385Z",
+  "serviceAccount": "google-indexing-bot-kph-stay@formal-folder-476209-h0.iam.gserviceaccount.com",
+  "totalUrls": 599,
+  "submittedCount": 205,
+  "quotaHit": true,
+  "sitemapResults": [
+    {
+      "site": "https://digitalmarketplace.store/",
+      "success": true,
+      "status": 204
+    },
+    {
+      "site": "https://digitalmarketplace.store",
+      "success": true,
+      "status": 204
+    },
+    {
+      "site": "sc-domain:digitalmarketplace.store",
+      "success": false,
+      "status": 403,
+      "error": "{\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"User does not have sufficient permission for site 'sc-domain:digitalmarketplace.store'. See also: https://support.google.com/webmasters/answer/2451999.\",\n    \"errors\": [\n      {\n        \"message\": \"User does not have sufficient permission for site 'sc-domain:digitalmarketplace.store'. See also: https://support.google.com/webmasters/answer/2451999.\",\n        \"domain\": \"global\",\n        \"reason\": \"forbidden\"\n      }\n    ]\n  }\n}\n"
+    }
+  ],
+  "results": [
+    {
+      "url": "https://digitalmarketplace.store/",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:33.333Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:33.851Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/api.html",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:34.471Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/api.html"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/about.html",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:34.934Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/about.html"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/policies.html",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:35.430Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/policies.html"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=TikTok%20%C2%BB%20Views%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:35.946Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=TikTok%20%C2%BB%20Views%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:36.333Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C%20%F0%9F%87%B5%F0%9F%87%B0",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:36.839Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C%20%F0%9F%87%B5%F0%9F%87%B0"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20Monetization",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:37.305Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20-%20Monetization"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%90%8E%F0%9D%90%AB%F0%9D%90%A0%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2%F0%9D%90%9C%20%F0%9D%90%95%F0%9D%90%A2%F0%9D%90%9E%F0%9D%90%B0%F0%9D%90%AC%20%5B%20%F0%9D%90%91%F0%9D%90%9E%F0%9D%90%9A%F0%9D%90%A5%20%F0%9D%90%85%F0%9D%90%A8%F0%9D%90%AB%20%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%20%F0%9D%90%80%F0%9D%90%9D%F0%9D%90%AC%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:37.763Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%90%8E%F0%9D%90%AB%F0%9D%90%A0%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2%F0%9D%90%9C%20%F0%9D%90%95%F0%9D%90%A2%F0%9D%90%9E%F0%9D%90%B0%F0%9D%90%AC%20%5B%20%F0%9D%90%91%F0%9D%90%9E%F0%9D%90%9A%F0%9D%90%A5%20%F0%9D%90%85%F0%9D%90%A8%F0%9D%90%AB%20%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%20%F0%9D%90%80%F0%9D%90%9D%F0%9D%90%AC%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20HQ%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:38.295Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20HQ%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Always%20Working",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:38.808Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Always%20Working"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20HQ%20Profiles",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:39.393Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20HQ%20Profiles"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Real%20Profiles",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:39.768Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Real%20Profiles"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Fast%20Speed%20%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:40.159Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20Fast%20Speed%20%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=TikTok%20%C2%BB%20Likes%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:40.617Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=TikTok%20%C2%BB%20Likes%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20%20%F0%9F%87%B5%F0%9F%87%B0%20Sponsored%20Ads",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:41.079Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20-%20%20%F0%9F%87%B5%F0%9F%87%B0%20Sponsored%20Ads"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20%F0%9F%87%B5%F0%9F%87%B0%20Pakistan%20Mixed%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:41.459Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Likes%20%F0%9F%87%B5%F0%9F%87%B0%20Pakistan%20Mixed%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%90%8B%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%9E%F0%9D%90%AC%20-%20%F0%9D%90%8F%F0%9D%90%9A%F0%9D%90%A4%F0%9D%90%A2%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2%20%F0%9F%87%B5%F0%9F%87%B0",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:41.866Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%90%8B%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%9E%F0%9D%90%AC%20-%20%F0%9D%90%8F%F0%9D%90%9A%F0%9D%90%A4%F0%9D%90%A2%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2%20%F0%9F%87%B5%F0%9F%87%B0"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:42.290Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Real%20Accounts",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:42.753Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Real%20Accounts"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Lifetime%20%E2%99%BB%EF%B8%8F",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:43.216Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Lifetime%20%E2%99%BB%EF%B8%8F"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20USA%20%F0%9F%87%BA%F0%9F%87%B8%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:43.678Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20USA%20%F0%9F%87%BA%F0%9F%87%B8%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:44.143Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20%F0%9F%87%B5%F0%9F%87%B0%20%F0%9D%90%8F%F0%9D%90%A4%20%2B%20%F0%9F%8C%8D%20%F0%9D%90%8C%F0%9D%90%A2%F0%9D%90%B1%F0%9D%90%9E%F0%9D%90%9D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:44.616Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20%F0%9F%87%B5%F0%9F%87%B0%20%F0%9D%90%8F%F0%9D%90%A4%20%2B%20%F0%9F%8C%8D%20%F0%9D%90%8C%F0%9D%90%A2%F0%9D%90%B1%F0%9D%90%9E%F0%9D%90%9D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Video%20-%20Shares%20%2F%20Favorites",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:45.076Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Video%20-%20Shares%20%2F%20Favorites"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Video%20-%20%F0%9F%87%B5%F0%9F%87%B0%20Shares%20%2F%20Favorites",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:45.591Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Video%20-%20%F0%9F%87%B5%F0%9F%87%B0%20Shares%20%2F%20Favorites"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20Fast%20Speed%20%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:46.001Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20Fast%20Speed%20%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:46.388Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20%F0%9F%87%B5%F0%9F%87%B0%20Pakistani",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:46.790Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20%F0%9F%87%B5%F0%9F%87%B0%20Pakistani"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20%F0%9F%87%B5%F0%9F%87%B0%20%F0%9D%90%8F%F0%9D%90%9A%F0%9D%90%A4%F0%9D%90%A2%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:47.189Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20-%20%F0%9F%87%B5%F0%9F%87%B0%20%F0%9D%90%8F%F0%9D%90%9A%F0%9D%90%A4%F0%9D%90%A2%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A7%F0%9D%90%A2"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Repost%2Fshare",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:47.708Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Repost%2Fshare"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Live%20Stream",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:48.107Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%A2%F0%9D%90%A4%F0%9D%90%AD%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Live%20Stream"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Bullet%20Speed%20%F0%9F%94%A5",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:48.482Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Bullet%20Speed%20%F0%9F%94%A5"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:48.908Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%97%94%F0%9D%97%BD%F0%9D%97%BD%F0%9D%98%80%20%F0%9D%97%97%F0%9D%97%AE%F0%9D%98%81%F0%9D%97%AE",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:49.292Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%97%94%F0%9D%97%BD%F0%9D%97%BD%F0%9D%98%80%20%F0%9D%97%97%F0%9D%97%AE%F0%9D%98%81%F0%9D%97%AE"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%20%C2%BB%20Followers%20-%20Fast%20Speed%20%E2%9A%A1%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:49.752Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%20%C2%BB%20Followers%20-%20Fast%20Speed%20%E2%9A%A1%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:50.208Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%90%8D%F0%9D%90%84%F0%9D%90%95%F0%9D%90%84%F0%9D%90%91%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:50.597Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%90%8D%F0%9D%90%84%F0%9D%90%95%F0%9D%90%84%F0%9D%90%91%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:50.990Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Indian%20%F0%9F%87%AE%F0%9F%87%B3",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:51.416Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20Indian%20%F0%9F%87%AE%F0%9F%87%B3"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%90%94%F0%9D%90%92%F0%9D%90%80%20%F0%9D%90%93%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%9F%F0%9D%90%9F%F0%9D%90%A2%F0%9D%90%9C%20%20%F0%9F%87%BA%F0%9F%87%B8",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:51.807Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Followers%20-%20%F0%9D%90%94%F0%9D%90%92%F0%9D%90%80%20%F0%9D%90%93%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%9F%F0%9D%90%9F%F0%9D%90%A2%F0%9D%90%9C%20%20%F0%9F%87%BA%F0%9F%87%B8"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:52.192Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20-%20LifeTime%20%E2%99%BB%EF%B8%8F",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:52.569Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20-%20LifeTime%20%E2%99%BB%EF%B8%8F"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20%5B%20For%20Photos%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:52.960Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Views%20%5B%20For%20Photos%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Video%20Views%20-%20Targeted%20%F0%9F%8C%8D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:53.427Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Video%20Views%20-%20Targeted%20%F0%9F%8C%8D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Cheapest%20%E1%B4%BA%E1%B4%B1%E1%B5%82",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:53.900Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Cheapest%20%E1%B4%BA%E1%B4%B1%E1%B5%82"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Market%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:54.296Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Market%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Fast%20Speed%20%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:54.679Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Fast%20Speed%20%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:55.091Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Indian%20%F0%9F%87%AE%F0%9F%87%B3",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:55.477Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Likes%20-%20Indian%20%F0%9F%87%AE%F0%9F%87%B3"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20Likes%20-%20USA%20%F0%9F%87%BA%F0%9F%87%B8",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:55.918Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20Likes%20-%20USA%20%F0%9F%87%BA%F0%9F%87%B8"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Share",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:56.338Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Share"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Saves%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:56.724Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Saves%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Post%20%F0%9D%90%92%F0%9D%90%A1%F0%9D%90%9A%F0%9D%90%AB%F0%9D%90%9E%F0%9D%90%AC",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:57.152Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Post%20%F0%9D%90%92%F0%9D%90%A1%F0%9D%90%9A%F0%9D%90%AB%F0%9D%90%9E%F0%9D%90%AC"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comment%20Likes%20%E2%9D%A4%EF%B8%8F%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:57.548Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comment%20Likes%20%E2%9D%A4%EF%B8%8F%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:57.930Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20English%20Names",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:58.392Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20English%20Names"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20Fast%20Speed%20%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:58.793Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Comments%20-%20Fast%20Speed%20%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20Comments%20-%20Best",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:59.240Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20Comments%20-%20Best"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Repost",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:58:59.683Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Repost"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:00.065Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Instagram%20%C2%BB%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Story%20Views",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:00.449Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Story%20Views"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Account%20Reports",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:00.957Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%88%F0%9D%90%A7%F0%9D%90%AC%F0%9D%90%AD%F0%9D%90%9A%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Account%20Reports"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Likes%20%5B%20Cheapest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:01.420Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Likes%20%5B%20Cheapest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Views%20-%20Best%20Speed",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:01.831Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Views%20-%20Best%20Speed"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Views%20%5B%20Lifetime%20-%20Cheapest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:02.222Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Views%20%5B%20Lifetime%20-%20Cheapest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Shorts%20Views",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:02.673Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Shorts%20Views"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%93%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Shorts%20%5B%20View%20%26amp%3B%20Likes%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:03.123Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%93%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Shorts%20%5B%20View%20%26amp%3B%20Likes%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Comments%20%5B%20Cheapest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:03.520Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=YouTube%20%C2%BB%20Comments%20%5B%20Cheapest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Video%20Shares%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:03.987Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Video%20Shares%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Live%20Streaming",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:04.432Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Live%20Streaming"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Channel%20Reports",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:04.817Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%98%F0%9D%90%A8%F0%9D%90%AE%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%9B%F0%9D%90%9E%20%C2%BB%20Channel%20Reports"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Cheapest",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:05.216Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20Cheapest"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20UltraFast%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:05.684Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20UltraFast%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:06.128Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20-%20%F0%9D%9F%AD%F0%9D%9F%AC%F0%9D%9F%AC%25%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%20%F0%9F%93%8C"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20%5B%20Non%20Drop%20-%20Fast%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:06.539Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Followers%20%5B%20Non%20Drop%20-%20Fast%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Page%20Likes%20%20%20Followers",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:07.065Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Page%20Likes%20%20%20Followers"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Services%20-%20%F0%9F%87%BA%F0%9F%87%B2%20%F0%9D%90%94%F0%9D%90%92%F0%9D%90%80%20%F0%9D%90%93%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%9F%F0%9D%90%9F%F0%9D%90%A2%F0%9D%90%9C%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:07.538Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Services%20-%20%F0%9F%87%BA%F0%9F%87%B2%20%F0%9D%90%94%F0%9D%90%92%F0%9D%90%80%20%F0%9D%90%93%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%9F%F0%9D%90%9F%F0%9D%90%A2%F0%9D%90%9C%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Views%20%5B%20Video%20%2F%20Reels%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:08.003Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Views%20%5B%20Video%20%2F%20Reels%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Monetize%20Views",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:08.376Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Monetize%20Views"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%20Likes%20-%20UltraFast%E2%9A%A1",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:08.775Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%20Likes%20-%20UltraFast%E2%9A%A1"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Post%20Likes%20%5B%20Cheapest%20%5D%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:09.198Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Post%20Likes%20%5B%20Cheapest%20%5D%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Post%20Reacts%20%5B%20Cheapest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:09.580Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Post%20Reacts%20%5B%20Cheapest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%97%A3%F0%9D%97%BC%F0%9D%98%80%F0%9D%98%81%20Reaction%20%5B%20Non%20Drop%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:10.013Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20%F0%9D%97%A3%F0%9D%97%BC%F0%9D%98%80%F0%9D%98%81%20Reaction%20%5B%20Non%20Drop%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20Facebook%20%C2%BB%20Comments%20%5B%20Cheapest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:10.412Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20Facebook%20%C2%BB%20Comments%20%5B%20Cheapest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20%5B%20%F0%9D%90%81%F0%9D%90%9E%F0%9D%90%AC%F0%9D%90%AD%20%F0%9D%90%92%F0%9D%90%A9%F0%9D%90%9E%F0%9D%90%9E%F0%9D%90%9D%E2%9A%A1%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:10.822Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20%5B%20%F0%9D%90%81%F0%9D%90%9E%F0%9D%90%AC%F0%9D%90%AD%20%F0%9D%90%92%F0%9D%90%A9%F0%9D%90%9E%F0%9D%90%9E%F0%9D%90%9D%E2%9A%A1%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20%5B%20Non%20Drop%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:11.206Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Comments%20%5B%20Non%20Drop%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20Facebook%20%C2%BB%20Share",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:11.586Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20Facebook%20%C2%BB%20Share"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20WatchTime%20(60k)",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:11.975Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20WatchTime%20(60k)"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Group%20Members%20%5B%20Cheapest%20%5D%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:12.380Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Facebook%20%C2%BB%20Group%20Members%20%5B%20Cheapest%20%5D%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Group%20Members%20-%20High%20Quality",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:12.786Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Group%20Members%20-%20High%20Quality"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%81%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Story%20Services%20(%20Story%20Views%20%2CStory%20Like%2C%20Story%20Reactions%20)%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:13.187Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%81%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Story%20Services%20(%20Story%20Views%20%2CStory%20Like%2C%20Story%20Reactions%20)%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20%5B%20Live%20Stream%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:13.592Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%85%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%9E%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A4%20%C2%BB%20Views%20%5B%20Live%20Stream%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Poll%20Votes%20-%20%F0%9D%97%96%F0%9D%97%B5%F0%9D%97%B2%F0%9D%97%AE%F0%9D%97%BD%F0%9D%97%B2%F0%9D%98%80%F0%9D%98%81",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:14.109Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Poll%20Votes%20-%20%F0%9D%97%96%F0%9D%97%B5%F0%9D%97%B2%F0%9D%97%AE%F0%9D%97%BD%F0%9D%97%B2%F0%9D%98%80%F0%9D%98%81"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20Whatsapp%20%C2%BB%20Poll%20Votes%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:14.531Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20Whatsapp%20%C2%BB%20Poll%20Votes%20-%20Pakistan%20%F0%9F%87%B5%F0%9F%87%B0"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Poll%20Votes%20-%20Best%20Speed",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:15.004Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Poll%20Votes%20-%20Best%20Speed"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Channel%20%7C%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC%20-%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%E1%B4%BA%E1%B5%89%CA%B7",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:15.426Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Channel%20%7C%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC%20-%20%F0%9D%90%8D%F0%9D%90%A8%F0%9D%90%A7%20%F0%9D%90%83%F0%9D%90%AB%F0%9D%90%A8%F0%9D%90%A9%E1%B4%BA%E1%B5%89%CA%B7"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Channel%20%7C%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC%20-%20%F0%9D%90%93%F0%9D%90%9A%F0%9D%90%AB%F0%9D%90%A0%F0%9D%90%9E%F0%9D%90%AD%F0%9D%90%9E%F0%9D%90%9D%20%E1%B4%BA%E1%B5%89%CA%B7",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:15.883Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Whatsapp%20%C2%BB%20Channel%20%7C%20%F0%9D%90%8C%F0%9D%90%9E%F0%9D%90%A6%F0%9D%90%9B%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC%20-%20%F0%9D%90%93%F0%9D%90%9A%F0%9D%90%AB%F0%9D%90%A0%F0%9D%90%9E%F0%9D%90%AD%F0%9D%90%9E%F0%9D%90%9D%20%E1%B4%BA%E1%B5%89%CA%B7"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20WhatsApp%20%C2%BB%20Channel%20Emoji%20Reactions",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:16.291Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20WhatsApp%20%C2%BB%20Channel%20Emoji%20Reactions"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=WhatsApp%20%C2%BB%20Channel%20Emoji%20Reactions%20%5B%20Targeted%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:16.744Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=WhatsApp%20%C2%BB%20Channel%20Emoji%20Reactions%20%5B%20Targeted%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%20WhatsApp%20%C2%BB%20Channel%20Auto%20Future%20Post%20Reactions",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:17.197Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%20WhatsApp%20%C2%BB%20Channel%20Auto%20Future%20Post%20Reactions"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Followers%20-%20%F0%9D%90%91%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%A8%F0%9D%90%A6%F0%9D%90%A6%F0%9D%90%9E%F0%9D%90%A7%F0%9D%90%9D%F0%9D%90%9E%F0%9D%90%9D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:17.665Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Followers%20-%20%F0%9D%90%91%F0%9D%90%9E%F0%9D%90%9C%F0%9D%90%A8%F0%9D%90%A6%F0%9D%90%A6%F0%9D%90%9E%F0%9D%90%A7%F0%9D%90%9D%F0%9D%90%9E%F0%9D%90%9D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Likes%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:18.118Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Likes%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Impression",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:18.586Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Impression"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Clicks%20%7C%20Views%20",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:18.996Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Twitter%20%C2%BB%20Clicks%20%7C%20Views%20"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Pinterest%20Services%20%E1%B4%BA%E1%B4%B1%E1%B5%82",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:19.444Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Pinterest%20Services%20%E1%B4%BA%E1%B4%B1%E1%B5%82"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%9E%F0%9D%90%A5%F0%9D%90%9E%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20%20Members%20%5B%20Latest%20%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:19.901Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%9E%F0%9D%90%A5%F0%9D%90%9E%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20%20Members%20%5B%20Latest%20%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%9E%F0%9D%90%A5%F0%9D%90%9E%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Reactions%20%5B%20Cheapest%5D%20%E1%B4%BA%E1%B4%B1%E1%B5%82",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:20.312Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%93%F0%9D%90%9E%F0%9D%90%A5%F0%9D%90%9E%F0%9D%90%A0%F0%9D%90%AB%F0%9D%90%9A%F0%9D%90%A6%20%C2%BB%20Reactions%20%5B%20Cheapest%5D%20%E1%B4%BA%E1%B4%B1%E1%B5%82"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Followers%20%5BOwn%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:20.777Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Followers%20%5BOwn%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20%20Video%20%5BLikes%20Views%5D%20%5BOwn%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:21.163Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20%20Video%20%5BLikes%20Views%5D%20%5BOwn%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Video%20%5BComments%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:21.606Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Video%20%5BComments%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Video%20%5Bshares%5D",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:22.000Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9D%90%92%F0%9D%90%A7%F0%9D%90%9A%F0%9D%90%9C%F0%9D%90%A4%20%C2%BB%20Video%20%5Bshares%5D"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=%F0%9F%91%BB%20Snapchat%20%C2%BB%20Followers",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:22.384Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=%F0%9F%91%BB%20Snapchat%20%C2%BB%20Followers"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Followers",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:22.797Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Followers"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Likes",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:23.257Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Likes"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Services",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:23.662Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Threads%20%C2%BB%20Services"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?category=Linkedin%20-%20Services",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:24.073Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?category=Linkedin%20-%20Services"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2536",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:24.489Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2536"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2566",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:24.950Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2566"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2827",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:25.337Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2827"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2835",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:25.860Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2835"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2862",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:26.309Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2862"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2863",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:26.727Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2863"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2711",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:27.175Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2711"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2712",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:27.586Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2712"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2713",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:27.970Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2713"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2213",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:28.443Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2213"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2214",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:28.899Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2214"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2215",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:29.333Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2215"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=15",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:29.723Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=15"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=16",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:30.130Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=16"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=17",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:30.558Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=17"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=18",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:31.029Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=18"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2030",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:31.494Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2030"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2031",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:31.948Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2031"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2891",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:32.410Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2891"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2892",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:32.877Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2892"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2811",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:33.276Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2811"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2853",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:33.667Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2853"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2854",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:34.071Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2854"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2855",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:34.455Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2855"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2616",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:34.889Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2616"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2617",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:35.354Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2617"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2618",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:35.822Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2618"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2627",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:36.213Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2627"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2628",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:36.656Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2628"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2629",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:37.128Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2629"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2206",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:37.592Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2206"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2209",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:38.042Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2209"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2796",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:38.421Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2796"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2845",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:38.844Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2845"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2910",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:39.307Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2910"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2911",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:39.763Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2911"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2912",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:40.222Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2912"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2857",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:40.739Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2857"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2858",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:41.202Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2858"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2859",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:41.614Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2859"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2943",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:42.031Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2943"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1386",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:42.499Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1386"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1496",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:42.968Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1496"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2233",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:43.432Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2233"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2234",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:43.951Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2234"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1566",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:44.350Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1566"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1576",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:44.807Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1576"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2648",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:45.213Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2648"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2650",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:45.681Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2650"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2652",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:46.068Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2652"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2724",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:46.444Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2724"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2567",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:46.910Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2567"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2568",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:47.308Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2568"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2940",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:47.772Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2940"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2941",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:48.226Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2941"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2942",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:48.688Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2942"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2340",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:49.147Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2340"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2787",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:49.608Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2787"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1577",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:50.070Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1577"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1578",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:50.489Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1578"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1580",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:50.899Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1580"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1581",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:51.361Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1581"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1597",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:51.882Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1597"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2072",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:52.346Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2072"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2286",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:52.761Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2286"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2287",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:53.188Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2287"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2288",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:53.656Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2288"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2920",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:54.060Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2920"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2921",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:54.472Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2921"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2279",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:54.860Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2279"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2632",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:55.267Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2632"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2633",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:55.705Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2633"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2634",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:56.132Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2634"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2635",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:56.524Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2635"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2636",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:56.938Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2636"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2962",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:57.336Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2962"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2963",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:57.719Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2963"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2944",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:58.178Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2944"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2945",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:58.597Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2945"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1738",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:59.017Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1738"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1739",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:59.476Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=1739"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2289",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T17:59:59.888Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2289"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2290",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T18:00:00.280Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2290"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2291",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T18:00:00.734Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2291"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2292",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T18:00:01.131Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2292"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2957",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T18:00:01.571Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2957"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2958",
+      "status": "Submitted",
+      "notifyTime": "2026-08-26T18:00:01.970Z",
+      "response": {
+        "urlNotificationMetadata": {
+          "url": "https://digitalmarketplace.store/services.html?service=2958"
+        }
+      }
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1460",
+      "status": "Quota Exceeded (429)",
+      "error": "Quota exceeded for quota metric 'Publish requests' and limit 'Publish requests per day' of service 'indexing.googleapis.com' for consumer 'project_number:857137869593'."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1569",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1711",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1720",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2679",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2681",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2683",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1979",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1982",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1983",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2114",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2115",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2116",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2117",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2118",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2006",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2809",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2104",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2558",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2559",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2560",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2561",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2842",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2843",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2844",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2322",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2323",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2324",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2325",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2326",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2327",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2839",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2840",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2841",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2869",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2870",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2871",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2872",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2873",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2874",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2875",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2876",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2877",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2878",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2794",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2795",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=785",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2823",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2824",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2825",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2826",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2309",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2310",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2311",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2363",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2364",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2365",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2366",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2367",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2368",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2550",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2551",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2552",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2553",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2554",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2555",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2544",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2545",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2546",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2547",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2548",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2549",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=811",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1160",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2361",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2362",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=812",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=814",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=815",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2959",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2960",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2961",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2922",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2923",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2924",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=850",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=851",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2773",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2347",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2348",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2349",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2350",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1595",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1596",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=816",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=817",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2656",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2657",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2659",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2358",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1178",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1180",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1181",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1182",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1183",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1122",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1123",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1303",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1304",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1305",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1306",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1701",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2782",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2783",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2784",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2727",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2728",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2729",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2879",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2880",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1102",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1103",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1104",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1114",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1115",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2421",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2422",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2423",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2424",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2425",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2426",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2427",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2411",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2412",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2413",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2414",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2415",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2416",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2417",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1116",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1117",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2456",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2768",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2769",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2770",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2893",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2894",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2895",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2937",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2938",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2939",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2463",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2464",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2467",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2469",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2470",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2929",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2930",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2931",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2932",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2933",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2478",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2479",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2480",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2762",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2896",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2897",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2898",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1773",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2488",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2846",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2847",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2848",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2850",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2851",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2852",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2498",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2499",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2500",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2501",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2502",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2503",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2776",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2778",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2506",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2510",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2489",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2490",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2518",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2519",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2520",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2521",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2522",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2523",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1854",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1855",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1856",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1857",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1858",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1859",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1224",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1225",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1226",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1796",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1058",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1059",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1060",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1061",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1062",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1063",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1064",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1065",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1066",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1067",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1068",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1069",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2946",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2947",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2948",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2949",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2950",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2951",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2952",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2953",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2954",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2955",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2664",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2665",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2666",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2667",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2668",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2669",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2670",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2671",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2672",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2673",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2674",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2675",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2676",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2677",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2678",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1947",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1948",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1949",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1950",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1951",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1952",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1953",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1954",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1955",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1956",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1957",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1965",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1966",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1967",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1968",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1969",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1927",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1928",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1929",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1930",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1931",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1932",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1933",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1934",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1935",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1936",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1937",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1938",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1939",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1940",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1941",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1942",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1943",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1944",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1945",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1946",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2906",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2907",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2908",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2909",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2583",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2584",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2590",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2591",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2592",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2594",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2595",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2596",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1263",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1264",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1265",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1588",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1589",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1590",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1591",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1592",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=940",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=941",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=942",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=943",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=944",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=945",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=946",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=947",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=948",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=949",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=950",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=951",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=952",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=953",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=954",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=955",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=956",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=957",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=958",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=959",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=960",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=961",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=962",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=963",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=964",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=965",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=966",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=967",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=968",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=969",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=970",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=971",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=972",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=973",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=974",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=975",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=976",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=977",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=978",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=979",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=980",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=981",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=982",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=983",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=984",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=985",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=986",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=987",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=988",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=989",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=990",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=991",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=992",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=993",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=994",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=995",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=996",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=997",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=998",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=999",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1000",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1001",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1002",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1003",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1004",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1005",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1006",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1007",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1008",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1009",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1010",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1011",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1371",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1372",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1373",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1374",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1375",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1376",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1377",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1378",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1379",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1380",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1381",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=1382",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2881",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2882",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2883",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2884",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2885",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2886",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2887",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2888",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2889",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2899",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2900",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2901",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    },
+    {
+      "url": "https://digitalmarketplace.store/services.html?service=2902",
+      "status": "Quota Exceeded",
+      "details": "Google Indexing API daily quota reached (200/day limit). URLs queued via sitemap."
+    }
+  ]
+}
