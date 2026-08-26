@@ -51,46 +51,12 @@
         initDynamicTheme(themeApp);
     </script>
 
+    <!-- Master UI Stylesheet -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
         
-        /* White Minimal Glassmorphism */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes sweep {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
-        }
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-blob { animation: blob 15s infinite alternate ease-in-out; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; opacity: 0; }
-
-        /* Minimal White Glass Panel & Cards */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.05);
-        }
-
         .text-glow {
             background: linear-gradient(to right, #16a34a, #0284c7, #9333ea, #16a34a);
             background-size: 200% auto;
@@ -99,44 +65,35 @@
             -webkit-text-fill-color: transparent;
             animation: sweep 4s linear infinite;
         }
-        
-        .bg-sweep {
-            background: linear-gradient(90deg, #22c55e, #06b6d4, #22c55e);
-            background-size: 200% auto;
-            animation: sweep 3s linear infinite;
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen selection:bg-brand-500 selection:text-white">
 
     <!-- Header / Navigation -->
-    <header class="fixed w-full top-0 z-50 glass-panel shadow-sm transition-all duration-300">
+    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-300 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="index.html" class="flex items-center gap-3">
-                        <div class="relative">
-                            <div class="absolute inset-0 bg-brand-500 blur-md opacity-30 animate-pulse"></div>
-                            <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-white/40">
-                                M
-                            </div>
+                        <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-brand-600">
+                            M
                         </div>
                         <span class="font-extrabold text-2xl text-slate-900 tracking-wider site-title-text">MAsmmpanel</span>
                     </a>
                 </div>
                 
                 <!-- Desktop Navigation -->
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">About</a>
-                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">Services</a>
-                    <a href="policies.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 duration-200">Policies</a>
-                    <a href="index.html#hero-login" class="px-6 py-2.5 rounded-xl font-bold bg-white text-slate-800 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm">Register</a>
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">About</a>
+                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">Services</a>
+                    <a href="policies.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">Policies</a>
+                    <a href="index.html#hero-login" class="px-5 py-2.5 rounded-xl font-bold bg-white text-slate-800 border border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-all shadow-sm text-xs uppercase tracking-wider">Register</a>
                 </nav>
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2 transition-colors">
+                    <button id="mobile-menu-btn" class="text-slate-700 hover:text-slate-900 focus:outline-none p-2 transition-colors">
                         <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -144,25 +101,19 @@
         </div>
         
         <!-- Mobile Navigation -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-2xl border-t border-slate-200 px-4 pt-4 pb-6 space-y-2 shadow-xl">
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-300 px-4 pt-4 pb-6 space-y-2 shadow-xl">
             <a href="about.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">About</a>
             <a href="services.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Services</a>
             <a href="policies.html" class="block px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors">Policies</a>
-            <a href="index.html#hero-login" class="block px-4 py-3.5 rounded-xl text-base font-bold bg-brand-500 text-white mt-4 text-center shadow-md">Register Account</a>
+            <a href="index.html#hero-login" class="block px-4 py-3 rounded-xl text-sm font-bold bg-brand-500 text-white text-center shadow-md">Register Account</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="flex-grow pt-24 flex items-center justify-center relative overflow-hidden min-h-[90vh] bg-slate-50">
-        <!-- Liquid Blobs -->
-        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-[-10%] left-[20%] w-[45vw] h-[45vw] bg-emerald-400/15 rounded-full blur-[140px] animate-blob"></div>
-            <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-sky-400/15 rounded-full blur-[140px] animate-blob animation-delay-2000"></div>
-        </div>
-
-        <div class="max-w-md w-full mx-auto px-4 py-12 relative z-10 animate-fade-in-up">
+        <div class="max-w-md w-full mx-auto px-4 py-12 relative z-10">
             <!-- Login Card -->
-            <div class="glass-card rounded-[24px] overflow-hidden relative z-10 p-6 sm:p-8 bg-white/90 border border-slate-200/80 shadow-xl">
+            <div class="rounded-[24px] overflow-hidden relative z-10 p-6 sm:p-8 bg-white border border-slate-300 shadow-xl">
                 
                 <!-- Loading Overlay -->
                 <div id="loading-overlay" class="absolute inset-0 bg-white/90 z-20 flex flex-col items-center justify-center backdrop-blur-sm">
@@ -415,6 +366,13 @@
             } else {
                 window.location.href = 'user/index.html';
             }
+        }
+
+        // Capture incoming preselect serviceId from services.html
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceIdParam = urlParams.get('serviceId');
+        if (serviceIdParam) {
+            sessionStorage.setItem('preselect_service_id', serviceIdParam);
         }
 
         // Listen to Auth State globally

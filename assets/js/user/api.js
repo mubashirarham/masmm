@@ -30,44 +30,47 @@ function renderApiUI() {
     
     contentArea.innerHTML = `
         <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">API Documentation</h2>
-            <p class="text-sm text-gray-500">Integrate our wholesale SMM services directly into your own panel or application.</p>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">API Documentation</h2>
+            <p class="text-sm text-slate-600 font-medium">Integrate our wholesale SMM services directly into your panel or application.</p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 mb-6 gap-4">
-                <h3 class="text-lg font-bold text-gray-800">Your API Key</h3>
-                <button id="generate-key-btn" class="bg-brand-100 text-brand-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-200 transition-colors flex items-center gap-2">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-4 mb-6 gap-4">
+                <div>
+                    <h3 class="text-lg font-black text-slate-900">Your API Key</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Use this token for programmatic authentication.</p>
+                </div>
+                <button id="generate-key-btn" class="bg-brand-50 text-brand-700 border border-brand-300 hover:bg-brand-100 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
                     <i class="fa-solid fa-arrows-rotate"></i> Generate New Key
                 </button>
             </div>
 
             <div class="mb-2">
-                <div class="flex relative">
-                    <input type="text" id="api-key-display" readonly value="Loading..." class="w-full px-4 py-3 rounded-l-xl border border-gray-200 bg-gray-50 text-gray-800 font-mono text-sm outline-none font-bold tracking-wide">
-                    <button id="copy-key-btn" class="bg-gray-800 hover:bg-black text-white px-6 font-semibold rounded-r-xl transition-colors flex items-center gap-2">
+                <div class="flex relative shadow-sm rounded-xl overflow-hidden border border-slate-300">
+                    <input type="text" id="api-key-display" readonly value="Loading..." class="w-full px-4 py-3 bg-slate-50 text-slate-900 font-mono text-sm outline-none font-bold tracking-wide">
+                    <button id="copy-key-btn" class="bg-brand-500 hover:bg-brand-600 text-white px-6 font-extrabold text-xs uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer shrink-0">
                         <i class="fa-regular fa-copy"></i> Copy
                     </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info text-brand-500 mr-1"></i> Keep your API key secret. Do not share it with anyone.</p>
+                <p class="text-xs text-slate-500 mt-2 font-medium"><i class="fa-solid fa-circle-info text-brand-500 mr-1"></i> Keep your API key secret. Do not share it with anyone.</p>
             </div>
         </div>
 
         <!-- API Documentation Details -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 sm:p-8 border-b border-gray-100 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-slate-300 bg-slate-50">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                     <div>
-                        <p class="text-gray-500 font-semibold mb-1 uppercase text-xs tracking-wider">HTTP Method</p>
-                        <p class="font-bold text-gray-800">POST</p>
+                        <p class="text-slate-500 font-bold mb-1 uppercase text-xs tracking-wider">HTTP Method</p>
+                        <p class="font-extrabold text-slate-900">POST</p>
                     </div>
                     <div class="lg:col-span-2">
-                        <p class="text-gray-500 font-semibold mb-1 uppercase text-xs tracking-wider">API URL</p>
-                        <code class="text-brand-600 bg-brand-50 px-2 py-1 rounded border border-brand-100 font-mono">${baseUrl}</code>
+                        <p class="text-slate-500 font-bold mb-1 uppercase text-xs tracking-wider">API URL</p>
+                        <code class="text-brand-700 bg-brand-50 px-2 py-1 rounded-lg border border-brand-300 font-mono text-xs font-bold">${baseUrl}</code>
                     </div>
                     <div>
-                        <p class="text-gray-500 font-semibold mb-1 uppercase text-xs tracking-wider">Response Format</p>
-                        <p class="font-bold text-gray-800">JSON</p>
+                        <p class="text-slate-500 font-bold mb-1 uppercase text-xs tracking-wider">Response Format</p>
+                        <p class="font-extrabold text-slate-900">JSON</p>
                     </div>
                 </div>
             </div>
@@ -76,24 +79,24 @@ function renderApiUI() {
                 
                 <!-- 1. Services List -->
                 <div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded bg-brand-100 text-brand-600 flex items-center justify-center text-xs">1</div> Services List</h4>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                        <table class="w-full text-left text-sm text-gray-600">
-                            <thead class="bg-gray-50 text-gray-700">
+                    <h4 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded-lg bg-brand-100 text-brand-700 border border-brand-300 flex items-center justify-center text-xs font-black">1</div> Services List</h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-300 mb-4">
+                        <table class="w-full text-left text-sm text-slate-700">
+                            <thead class="bg-slate-100 text-slate-800">
                                 <tr>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Parameters</th>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Description</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Parameters</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">key</td><td class="px-4 py-3">Your API Key</td></tr>
-                                <tr><td class="px-4 py-3 font-mono">action</td><td class="px-4 py-3 font-mono text-brand-600 font-semibold">services</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">key</td><td class="px-4 py-3">Your API Key</td></tr>
+                                <tr><td class="px-4 py-3 font-mono font-bold text-slate-900">action</td><td class="px-4 py-3 font-mono text-brand-600 font-bold">services</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <p class="text-xs text-gray-400 mb-2 uppercase font-semibold tracking-wider">Example Response</p>
-                        <pre class="text-green-400 font-mono text-xs leading-relaxed">
+                    <div class="bg-slate-900 rounded-xl p-4 overflow-x-auto border border-slate-800 shadow-md">
+                        <p class="text-xs text-slate-400 mb-2 uppercase font-bold tracking-wider">Example Response</p>
+                        <pre class="text-emerald-400 font-mono text-xs leading-relaxed">
 [
     {
         "service": 1,
@@ -110,27 +113,27 @@ function renderApiUI() {
 
                 <!-- 2. Add Order -->
                 <div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded bg-brand-100 text-brand-600 flex items-center justify-center text-xs">2</div> Add Order</h4>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                        <table class="w-full text-left text-sm text-gray-600">
-                            <thead class="bg-gray-50 text-gray-700">
+                    <h4 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded-lg bg-brand-100 text-brand-700 border border-brand-300 flex items-center justify-center text-xs font-black">2</div> Add Order</h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-300 mb-4">
+                        <table class="w-full text-left text-sm text-slate-700">
+                            <thead class="bg-slate-100 text-slate-800">
                                 <tr>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Parameters</th>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Description</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Parameters</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">key</td><td class="px-4 py-3">Your API Key</td></tr>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">action</td><td class="px-4 py-3 font-mono text-brand-600 font-semibold">add</td></tr>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">service</td><td class="px-4 py-3">Service ID</td></tr>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">link</td><td class="px-4 py-3">Link to page/profile</td></tr>
-                                <tr><td class="px-4 py-3 font-mono">quantity</td><td class="px-4 py-3">Needed quantity</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">key</td><td class="px-4 py-3">Your API Key</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">action</td><td class="px-4 py-3 font-mono text-brand-600 font-bold">add</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">service</td><td class="px-4 py-3">Service ID</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">link</td><td class="px-4 py-3">Link to page/profile</td></tr>
+                                <tr><td class="px-4 py-3 font-mono font-bold text-slate-900">quantity</td><td class="px-4 py-3">Needed quantity</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <p class="text-xs text-gray-400 mb-2 uppercase font-semibold tracking-wider">Example Response (Success)</p>
-                        <pre class="text-green-400 font-mono text-xs leading-relaxed">
+                    <div class="bg-slate-900 rounded-xl p-4 overflow-x-auto border border-slate-800 shadow-md">
+                        <p class="text-xs text-slate-400 mb-2 uppercase font-bold tracking-wider">Example Response (Success)</p>
+                        <pre class="text-emerald-400 font-mono text-xs leading-relaxed">
 {
     "order": 23501
 }</pre>
@@ -139,25 +142,25 @@ function renderApiUI() {
 
                 <!-- 3. Order Status -->
                 <div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded bg-brand-100 text-brand-600 flex items-center justify-center text-xs">3</div> Order Status</h4>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                        <table class="w-full text-left text-sm text-gray-600">
-                            <thead class="bg-gray-50 text-gray-700">
+                    <h4 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded-lg bg-brand-100 text-brand-700 border border-brand-300 flex items-center justify-center text-xs font-black">3</div> Order Status</h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-300 mb-4">
+                        <table class="w-full text-left text-sm text-slate-700">
+                            <thead class="bg-slate-100 text-slate-800">
                                 <tr>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Parameters</th>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Description</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Parameters</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">key</td><td class="px-4 py-3">Your API Key</td></tr>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">action</td><td class="px-4 py-3 font-mono text-brand-600 font-semibold">status</td></tr>
-                                <tr><td class="px-4 py-3 font-mono">order</td><td class="px-4 py-3">Order ID</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">key</td><td class="px-4 py-3">Your API Key</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">action</td><td class="px-4 py-3 font-mono text-brand-600 font-bold">status</td></tr>
+                                <tr><td class="px-4 py-3 font-mono font-bold text-slate-900">order</td><td class="px-4 py-3">Order ID</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <p class="text-xs text-gray-400 mb-2 uppercase font-semibold tracking-wider">Example Response</p>
-                        <pre class="text-green-400 font-mono text-xs leading-relaxed">
+                    <div class="bg-slate-900 rounded-xl p-4 overflow-x-auto border border-slate-800 shadow-md">
+                        <p class="text-xs text-slate-400 mb-2 uppercase font-bold tracking-wider">Example Response</p>
+                        <pre class="text-emerald-400 font-mono text-xs leading-relaxed">
 {
     "charge": "0.27819",
     "start_count": "3572",
@@ -170,24 +173,24 @@ function renderApiUI() {
 
                 <!-- 4. User Balance -->
                 <div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded bg-brand-100 text-brand-600 flex items-center justify-center text-xs">4</div> User Balance</h4>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                        <table class="w-full text-left text-sm text-gray-600">
-                            <thead class="bg-gray-50 text-gray-700">
+                    <h4 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2"><div class="w-6 h-6 rounded-lg bg-brand-100 text-brand-700 border border-brand-300 flex items-center justify-center text-xs font-black">4</div> User Balance</h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-300 mb-4">
+                        <table class="w-full text-left text-sm text-slate-700">
+                            <thead class="bg-slate-100 text-slate-800">
                                 <tr>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Parameters</th>
-                                    <th class="px-4 py-3 font-semibold border-b border-gray-200">Description</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Parameters</th>
+                                    <th class="px-4 py-3 font-bold text-xs uppercase tracking-wider border-b border-slate-300">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-gray-100"><td class="px-4 py-3 font-mono">key</td><td class="px-4 py-3">Your API Key</td></tr>
-                                <tr><td class="px-4 py-3 font-mono">action</td><td class="px-4 py-3 font-mono text-brand-600 font-semibold">balance</td></tr>
+                                <tr class="border-b border-slate-200"><td class="px-4 py-3 font-mono font-bold text-slate-900">key</td><td class="px-4 py-3">Your API Key</td></tr>
+                                <tr><td class="px-4 py-3 font-mono font-bold text-slate-900">action</td><td class="px-4 py-3 font-mono text-brand-600 font-bold">balance</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <p class="text-xs text-gray-400 mb-2 uppercase font-semibold tracking-wider">Example Response</p>
-                        <pre class="text-green-400 font-mono text-xs leading-relaxed">
+                    <div class="bg-slate-900 rounded-xl p-4 overflow-x-auto border border-slate-800 shadow-md">
+                        <p class="text-xs text-slate-400 mb-2 uppercase font-bold tracking-wider">Example Response</p>
+                        <pre class="text-emerald-400 font-mono text-xs leading-relaxed">
 {
     "balance": 1500.50,
     "currency": "PKR"

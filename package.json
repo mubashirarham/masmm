@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Custom SMM Panel",
   "scripts": {
-    "build": "echo 'Static site, no frontend build required.'"
+    "build": "node scripts/generate_sitemap.js"
   },
   "dependencies": {
     "firebase-admin": "^11.11.0"

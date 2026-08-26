@@ -30,38 +30,38 @@ function renderPaymentsUI() {
     contentArea.innerHTML = `
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">Payment Gateways</h2>
-                <p class="text-sm text-gray-500">Manage account details, logos, and instructions for user deposits.</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Payment Gateways</h2>
+                <p class="text-sm text-slate-600 font-medium">Manage account details, logos, and instructions for user deposits.</p>
             </div>
             <div class="w-full sm:w-auto flex gap-2">
                 <div class="relative flex-1 sm:w-64">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="admin-search-gateways" placeholder="Search gateways..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="admin-search-gateways" placeholder="Search gateways..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xs sm:text-sm font-sans bg-white shadow-sm">
                 </div>
-                <button id="open-add-gateway-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                <button id="open-add-gateway-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs shadow-md border border-brand-600 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer">
                     <i class="fa-solid fa-plus"></i> Add Gateway
                 </button>
             </div>
         </div>
 
         <!-- Gateways Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
-                    <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                <table class="w-full text-left text-sm text-slate-700 whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-800 border-b-2 border-slate-300 sticky top-0">
                         <tr>
-                            <th class="px-6 py-4 font-semibold">Gateway</th>
-                            <th class="px-6 py-4 font-semibold">Account Title</th>
-                            <th class="px-6 py-4 font-semibold">Account Number</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
-                            <th class="px-6 py-4 font-semibold text-right w-32">Actions</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Gateway</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Account Title</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Account Number</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-32">Status</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-right w-32">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-gateways-table-body">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
-                                <p>Loading payment gateways...</p>
+                                <p class="font-bold">Loading payment gateways...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -70,32 +70,32 @@ function renderPaymentsUI() {
         </div>
 
         <!-- Add/Edit Gateway Modal -->
-        <div id="manage-gateway-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 mx-4 transform transition-transform scale-95 overflow-y-auto max-h-[90vh]" id="manage-gateway-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                    <h3 class="text-lg font-bold text-gray-800" id="modal-gateway-title">Add New Gateway</h3>
-                    <button type="button" id="close-gateway-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+        <div id="manage-gateway-modal" class="fixed inset-0 bg-slate-900/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-300 transform transition-transform scale-95 overflow-y-auto max-h-[90vh]" id="manage-gateway-content">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                    <h3 class="text-lg font-black text-slate-900" id="modal-gateway-title">Add New Gateway</h3>
+                    <button type="button" id="close-gateway-modal-btn" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                 </div>
                 
                 <form id="manage-gateway-form" class="space-y-4">
                     <!-- Cloudinary Logo Upload Area -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gateway Logo (Optional)</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Gateway Logo (Optional)</label>
                         <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shrink-0 shadow-sm">
+                            <div class="w-16 h-16 rounded-xl border border-slate-300 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0 shadow-sm">
                                 <img id="gateway-logo-preview" class="w-full h-full object-cover hidden">
-                                <i id="gateway-logo-icon" class="fa-solid fa-image text-gray-400 text-2xl"></i>
+                                <i id="gateway-logo-icon" class="fa-solid fa-image text-slate-400 text-2xl"></i>
                             </div>
-                            <input type="file" id="gateway-logo-input" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-all cursor-pointer">
+                            <input type="file" id="gateway-logo-input" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200 transition-all cursor-pointer">
                         </div>
                         <input type="hidden" id="gateway-existing-logo">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gateway Name</label>
-                        <input type="text" id="gateway-name" required placeholder="e.g., EasyPaisa (Auto)" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Gateway Name</label>
+                        <input type="text" id="gateway-name" required placeholder="e.g., EasyPaisa (Auto)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-sans bg-white shadow-sm">
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

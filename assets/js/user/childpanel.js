@@ -18,39 +18,39 @@ export async function renderChildPanelUI(container) {
 
     container.innerHTML = `
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Child Panels</h1>
-            <p class="text-gray-500 text-sm">Start your own SMM business by renting a white-labeled clone of this panel.</p>
+            <h1 class="text-2xl font-black text-slate-900 mb-1 tracking-tight">Child Panels</h1>
+            <p class="text-slate-600 text-sm font-medium">Start your own SMM business by renting a white-labeled clone of this panel.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Order Form -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 sticky top-6">
-                    <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fa-solid fa-cart-plus text-brand-600"></i> Order New Panel</h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8 sticky top-6">
+                    <h2 class="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-3 border-b border-slate-200"><i class="fa-solid fa-cart-plus text-brand-600"></i> Order New Panel</h2>
                     <form id="childpanel-form" class="space-y-5">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Domain Name</label>
-                            <input type="text" id="cp-domain" placeholder="e.g., mysmmpanel.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-gray-50 focus:bg-white text-sm" required>
-                            <p class="text-xs text-gray-400 mt-1">Must point domain to <strong>Netlify DNS</strong> first (e.g. dns1.p01.nsone.net).</p>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Domain Name</label>
+                            <input type="text" id="cp-domain" placeholder="e.g., mysmmpanel.com" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-white text-slate-900 text-sm font-sans shadow-sm" required>
+                            <p class="text-[11px] text-slate-500 mt-1.5 font-medium">Must point domain to <strong>Netlify DNS</strong> first.</p>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Admin Username</label>
-                            <input type="text" id="cp-admin-user" placeholder="admin" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-gray-50 focus:bg-white text-sm" required>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Admin Username</label>
+                            <input type="text" id="cp-admin-user" placeholder="admin" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-white text-slate-900 text-sm font-sans shadow-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Admin Password</label>
-                            <input type="password" id="cp-admin-pass" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-gray-50 focus:bg-white text-sm" required>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Admin Password</label>
+                            <input type="password" id="cp-admin-pass" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-white text-slate-900 text-sm font-sans shadow-sm" required>
                         </div>
-                        <div class="pt-4 border-t border-gray-100">
+                        <div class="pt-4 border-t border-slate-200">
                             <div class="flex justify-between items-center mb-4">
-                                <span class="text-sm font-semibold text-gray-600">Monthly Price:</span>
-                                <span class="text-lg font-bold text-brand-600 price-display" data-pkr="${PANEL_PRICE}">Rs ${PANEL_PRICE}</span>
+                                <span class="text-sm font-bold text-slate-700">Monthly Price:</span>
+                                <span class="text-lg font-black text-brand-600 price-display" data-pkr="${PANEL_PRICE}">Rs ${PANEL_PRICE}</span>
                             </div>
-                            <button type="submit" id="cp-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all flex justify-center items-center gap-2">
+                            <button type="submit" id="cp-submit-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold uppercase tracking-wider text-xs py-3.5 px-4 rounded-xl shadow-md border border-brand-600 transition-all flex justify-center items-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-bolt"></i> Provision Panel
                             </button>
-                            <p id="cp-error" class="text-center text-xs text-red-500 mt-3 font-semibold hidden"></p>
-                            <p id="cp-success" class="text-center text-xs text-green-500 mt-3 font-semibold hidden"></p>
+                            <p id="cp-error" class="text-center text-xs text-rose-600 mt-3 font-bold hidden"></p>
+                            <p id="cp-success" class="text-center text-xs text-emerald-600 mt-3 font-bold hidden"></p>
                         </div>
                     </form>
                 </div>
@@ -58,29 +58,29 @@ export async function renderChildPanelUI(container) {
 
             <!-- List of Owned Panels -->
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                        <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-server mr-2 text-gray-400"></i> My Child Panels</h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-300 bg-slate-50 flex justify-between items-center">
+                        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-server text-brand-500"></i> My Child Panels</h2>
                     </div>
                     <div class="p-0">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
+                            <table class="w-full text-left border-collapse text-sm">
                                 <thead>
-                                    <tr class="bg-white border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
-                                        <th class="p-4 font-semibold">Domain</th>
-                                        <th class="p-4 font-semibold">Status</th>
-                                        <th class="p-4 font-semibold">Created</th>
-                                        <th class="p-4 font-semibold text-right">Action</th>
+                                    <tr class="bg-slate-100 border-b-2 border-slate-300 text-xs uppercase tracking-wider text-slate-800 font-bold">
+                                        <th class="p-4">Domain</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4">Created</th>
+                                        <th class="p-4 text-right">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="cp-list-body" class="divide-y divide-gray-50">
-                                    <tr><td colspan="4" class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading panels...</td></tr>
+                                <tbody id="cp-list-body" class="divide-y divide-slate-200">
+                                    <tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold"><i class="fa-solid fa-spinner fa-spin mr-2 text-brand-500"></i> Loading panels...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <div id="cp-pagination-container" class="border-t border-slate-200 bg-slate-50 p-4"></div>
                 </div>
-                <div id="cp-pagination-container" class="mt-4"></div>
             </div>
         </div>
     `;
@@ -118,7 +118,7 @@ function renderPanelsTable() {
     if(!listBody) return;
 
     if(allPanels.length === 0) {
-        listBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-sm text-gray-500 font-medium">You don't have any active child panels.</td></tr>`;
+        listBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-sm text-slate-500 font-medium">You don't have any active child panels.</td></tr>`;
         if(paginationContainer) paginationContainer.innerHTML = '';
         return;
     }
@@ -132,16 +132,16 @@ function renderPanelsTable() {
     paginated.forEach(data => {
         const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'N/A';
         const statusBadge = data.status === 'Active' 
-            ? '<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md text-xs font-bold">Active</span>'
-            : '<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-md text-xs font-bold">Suspended</span>';
+            ? '<span class="bg-emerald-50 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Active</span>'
+            : '<span class="bg-rose-50 text-rose-700 border border-rose-300 px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">Suspended</span>';
 
         html += `
-            <tr class="hover:bg-gray-50 transition-colors">
-                <td class="p-4 font-bold text-gray-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs text-gray-400"></i> ${data.domain}</a></td>
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-4 font-bold text-slate-900 text-sm"><a href="https://${data.domain}" target="_blank" class="text-brand-600 hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs text-slate-400"></i> ${data.domain}</a></td>
                 <td class="p-4">${statusBadge}</td>
-                <td class="p-4 text-xs text-gray-500 font-semibold uppercase tracking-wide">${date}</td>
+                <td class="p-4 text-xs text-slate-600 font-bold uppercase tracking-wide">${date}</td>
                 <td class="p-4 text-right">
-                    <button class="text-gray-400 hover:text-brand-600 transition-colors" title="Settings"><i class="fa-solid fa-gear"></i></button>
+                    <button class="text-slate-400 hover:text-slate-700 transition-colors cursor-pointer" title="Settings"><i class="fa-solid fa-gear"></i></button>
                 </td>
             </tr>
         `;

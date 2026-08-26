@@ -48,146 +48,142 @@
         initDynamicTheme(themeApp);
     </script>
 
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
-        
-        /* Custom Scrollbar for Sidebar & Main Content */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    <!-- Master UI Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
 
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
         /* Mobile Sidebar Overlay Transition */
         #sidebar-overlay { transition: opacity 0.3s ease-in-out; }
         #sidebar { transition: transform 0.3s ease-in-out; }
 
         /* Sidebar Nav Active State */
         .nav-link.active {
-            background-color: #1f2937;
-            color: #ffffff;
-            border-left: 4px solid #22c55e;
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+            border-left: 4px solid #22c55e !important;
+            font-weight: 700 !important;
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased overflow-hidden flex h-screen">
+<body class="text-slate-800 antialiased overflow-hidden flex h-screen bg-slate-50">
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden opacity-0 pointer-events-none"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 z-20 hidden lg:hidden opacity-0 pointer-events-none backdrop-blur-sm"></div>
 
     <!-- Sidebar Navigation (Dark Theme) -->
-    <aside id="sidebar" class="bg-gray-900 w-64 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none transition-transform duration-300">
+    <aside id="sidebar" class="bg-slate-900 w-64 border-r border-slate-800 flex flex-col z-30 fixed lg:relative h-full transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none transition-transform duration-300">
         
         <!-- Sidebar Header (Logo) -->
-        <div class="h-20 flex items-center px-6 border-b border-gray-800 bg-gray-900 shrink-0">
-            <a href="../index.html" class="flex items-center gap-2">
-                <div class="site-logo-container">
-                    <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-brand-500/20">
-                        M
-                    </div>
+        <div class="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900 shrink-0">
+            <a href="../index.html" class="flex items-center gap-3">
+                <div class="site-logo-container relative w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center text-white font-extrabold shadow-sm border border-brand-600">
+                    M
                 </div>
-                <span class="font-bold text-xl text-white tracking-tight site-title-text">MAsmmpanel</span>
+                <span class="font-extrabold text-xl text-white tracking-wider site-title-text">MAsmmpanel</span>
             </a>
-            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-gray-400 hover:text-red-400">
+            <button id="close-sidebar-btn" class="ml-auto lg:hidden text-slate-400 hover:text-white p-2">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
 
         <!-- Sidebar Links -->
         <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
+            <p class="px-2 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2">Main Menu</p>
             
-            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="dashboard">
-                <i class="fa-solid fa-chart-line w-5 text-center"></i> Dashboard
+            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="dashboard">
+                <i class="fa-solid fa-chart-line w-5 text-center text-brand-400"></i> Dashboard
             </a>
             
-            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Operations</p>
+            <p class="px-2 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-6 mb-2">Operations</p>
 
-            <a href="#orders" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="orders">
-                <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Orders
+            <a href="#orders" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="orders">
+                <i class="fa-solid fa-cart-shopping w-5 text-center text-sky-400"></i> Orders
             </a>
-            <a href="#refills" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="refills">
-                <i class="fa-solid fa-rotate w-5 text-center"></i> Refills
+            <a href="#refills" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="refills">
+                <i class="fa-solid fa-rotate w-5 text-center text-amber-400"></i> Refills
             </a>
-            <a href="#deposits" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="deposits">
-                <i class="fa-solid fa-money-bill-wave w-5 text-center"></i> Deposits
+            <a href="#deposits" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="deposits">
+                <i class="fa-solid fa-money-bill-wave w-5 text-center text-emerald-400"></i> Deposits
             </a>
-            <a href="#support" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="support">
-                <i class="fa-solid fa-headset w-5 text-center"></i> Support Tickets
-            </a>
-
-            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Management</p>
-
-            <a href="#users" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="users">
-                <i class="fa-solid fa-users w-5 text-center"></i> Users
-            </a>
-            <a href="#categories" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="categories">
-                <i class="fa-solid fa-layer-group w-5 text-center"></i> Categories
-            </a>
-            <a href="#services" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="services">
-                <i class="fa-solid fa-tags w-5 text-center"></i> Services
-            </a>
-            <a href="#childpanels" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="childpanels">
-                <i class="fa-solid fa-server w-5 text-center"></i> SaaS Tenants
-            </a>
-             <a href="#blogs" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="blogs">
-                <i class="fa-regular fa-newspaper w-5 text-center"></i> Feature Blogs
+            <a href="#support" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="support">
+                <i class="fa-solid fa-headset w-5 text-center text-purple-400"></i> Support Tickets
             </a>
 
-            <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">System</p>
+            <p class="px-2 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-6 mb-2">Management</p>
 
-            <a href="#api" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="api">
-                <i class="fa-solid fa-network-wired w-5 text-center"></i> API Providers
+            <a href="#users" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="users">
+                <i class="fa-solid fa-users w-5 text-center text-indigo-400"></i> Users
             </a>
-            <a href="#payments" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="payments">
-                <i class="fa-solid fa-building-columns w-5 text-center"></i> Payment Gateways
+            <a href="#categories" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="categories">
+                <i class="fa-solid fa-layer-group w-5 text-center text-teal-400"></i> Categories
             </a>
-            <a href="#automation" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="automation">
-                <i class="fa-solid fa-robot w-5 text-center"></i> System Automation
+            <a href="#services" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="services">
+                <i class="fa-solid fa-tags w-5 text-center text-rose-400"></i> Services
             </a>
-            <a href="#mabot" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-400 hover:bg-gray-800 hover:text-blue-300 font-bold transition-colors shadow-[0_0_15px_rgba(59,130,246,0.15)]" data-target="mabot" style="background: linear-gradient(90deg, rgba(30,58,138,0.2) 0%, transparent 100%); border-left: 2px solid #3b82f6;">
+            <a href="#childpanels" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="childpanels">
+                <i class="fa-solid fa-server w-5 text-center text-cyan-400"></i> SaaS Tenants
+            </a>
+             <a href="#blogs" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="blogs">
+                <i class="fa-regular fa-newspaper w-5 text-center text-amber-300"></i> Feature Blogs
+            </a>
+
+            <p class="px-2 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-6 mb-2">System</p>
+
+            <a href="#api" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="api">
+                <i class="fa-solid fa-network-wired w-5 text-center text-blue-400"></i> API Providers
+            </a>
+            <a href="#payments" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="payments">
+                <i class="fa-solid fa-building-columns w-5 text-center text-emerald-400"></i> Payment Gateways
+            </a>
+            <a href="#automation" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="automation">
+                <i class="fa-solid fa-robot w-5 text-center text-purple-400"></i> System Automation
+            </a>
+            <a href="#mabot" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-blue-400 hover:bg-slate-800 hover:text-blue-300 font-bold transition-colors" data-target="mabot" style="background: rgba(30,58,138,0.25); border-left: 2px solid #3b82f6;">
                 <i class="fa-solid fa-microchip w-5 text-center text-blue-400"></i> AI Control Hub
             </a>
-            <a href="#settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="settings">
-                <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+            <a href="#settings" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="settings">
+                <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i> Settings
             </a>
-            <a href="#branding" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white font-medium transition-colors" data-target="branding">
-                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center"></i> Appearance
+            <a href="#branding" class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-semibold transition-colors" data-target="branding">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center text-pink-400"></i> Appearance
             </a>
         </div>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-gray-800 bg-gray-900 shrink-0">
-            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-red-400 font-medium transition-colors">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Sign Out
+        <div class="p-4 border-t border-slate-800 bg-slate-900 shrink-0">
+            <button id="logout-btn" class="w-full flex items-center justify-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-950/40 hover:text-red-300 border border-red-900/40 font-bold text-xs uppercase tracking-wider transition-colors">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
             </button>
         </div>
     </aside>
 
     <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         
         <!-- Loading Overlay -->
         <div id="page-loader" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
-            <i class="fa-solid fa-spinner fa-spin text-4xl text-brand-500 mb-4"></i>
-            <p class="text-gray-500 font-medium">Verifying Admin Access...</p>
+            <div class="w-12 h-12 border-4 border-slate-300 border-t-brand-500 rounded-full animate-spin mb-3"></div>
+            <p class="text-slate-600 font-bold text-sm">Verifying Admin Access...</p>
         </div>
 
         <!-- Top Header -->
-        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 z-10">
+        <header class="h-20 bg-white border-b border-slate-300 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 z-20 shadow-sm relative">
             <div class="flex items-center">
-                <button id="open-sidebar-btn" class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none p-2 mr-3">
+                <button id="open-sidebar-btn" class="lg:hidden text-slate-700 hover:text-brand-600 focus:outline-none p-2 mr-3 transition-colors">
                     <i class="fa-solid fa-bars text-2xl"></i>
                 </button>
-                <h1 id="page-title" class="text-xl font-bold text-gray-800">Dashboard</h1>
+                <h1 id="page-title" class="text-xl font-extrabold text-slate-900 tracking-tight">Dashboard</h1>
             </div>
 
             <div class="flex items-center gap-4 sm:gap-6">
-                <div class="flex items-center gap-3 pl-4 sm:pl-6 border-l border-gray-200">
+                <div class="flex items-center gap-3 pl-4 sm:pl-6 border-l border-slate-300">
                     <div class="hidden md:block text-right">
-                        <p class="text-sm font-bold text-gray-800">Administrator</p>
-                        <p class="text-xs text-brand-600 font-semibold" id="header-admin-email">Loading...</p>
+                        <p class="text-sm font-extrabold text-slate-900">Administrator</p>
+                        <p class="text-xs text-brand-600 font-bold" id="header-admin-email">Loading...</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shadow-md">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white font-bold shadow-sm border border-brand-600">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                 </div>
@@ -195,10 +191,10 @@
         </header>
 
         <!-- Dynamic Content Area -->
-        <main class="flex-1 flex flex-col relative overflow-hidden bg-gray-50">
+        <main class="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 relative flex flex-col scroll-smooth">
             <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
             
-            <div id="admin-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+            <div id="admin-content" class="flex-1 p-4 sm:p-6 lg:p-8 pb-32 max-w-7xl w-full mx-auto relative">
                 <!-- Content injected by JS Modules -->
             </div>
         </main>

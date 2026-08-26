@@ -45,75 +45,73 @@ function renderAffiliatesUI() {
     
     contentArea.innerHTML = `
         <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Affiliate Program</h2>
-            <p class="text-sm text-gray-500">Earn passive income by referring active users to our platform.</p>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Affiliate Program</h2>
+            <p class="text-sm text-slate-600 font-medium">Earn passive income by referring active users to our platform.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <!-- Referral Link Card -->
-            <div class="lg:col-span-2 bg-gradient-to-br from-brand-600 to-brand-800 p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm text-white border border-slate-700 relative overflow-hidden">
+                <h3 class="text-lg font-black mb-2 flex items-center gap-2 text-white"><i class="fa-solid fa-link text-brand-400"></i> Your Unique Referral Code</h3>
+                <p class="text-slate-300 text-xs sm:text-sm mb-6 max-w-lg font-medium leading-relaxed">Share this link across your networks. When users sign up via this link, they are attached to your account and you receive a commission on their deposits.</p>
                 
-                <h3 class="text-lg font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-link"></i> Your Unique Referral Code</h3>
-                <p class="text-brand-100 text-sm mb-6 max-w-lg">Share this link across your networks. When users sign up via this link, they are permanently attached to your account and you receive a commission on their deposits.</p>
-                
-                <div class="flex items-center bg-white/10 rounded-xl border border-white/20 overflow-hidden relative z-10">
-                    <input type="text" id="ref-link-input" class="w-full bg-transparent border-none text-white px-4 py-3 text-sm font-mono outline-none" readonly value="Loading...">
-                    <button id="copy-ref-btn" class="bg-white text-brand-700 px-5 py-3 font-bold hover:bg-gray-100 transition-colors shrink-0 flex items-center gap-2">
+                <div class="flex items-center bg-slate-950/80 rounded-xl border border-slate-700 overflow-hidden relative z-10 shadow-inner">
+                    <input type="text" id="ref-link-input" class="w-full bg-transparent border-none text-white px-4 py-3 text-xs sm:text-sm font-mono outline-none" readonly value="Loading...">
+                    <button id="copy-ref-btn" class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-3 font-extrabold uppercase tracking-wider text-xs transition-colors shrink-0 flex items-center gap-2 cursor-pointer">
                         <i class="fa-regular fa-copy"></i> Copy
                     </button>
                 </div>
                 
-                <div class="mt-4 flex items-center gap-4 text-sm text-brand-100">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-check"></i> Permanent Tracking</span>
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-check"></i> Auto-Deposited</span>
+                <div class="mt-4 flex flex-wrap items-center gap-4 text-xs font-bold text-slate-400">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> Permanent Tracking</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> Auto-Deposited</span>
                 </div>
             </div>
 
             <!-- Commission Info Card -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center relative">
-                <div class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center text-center relative">
+                <div class="w-14 h-14 mx-auto bg-brand-50 text-brand-600 border border-brand-200 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm">
                     <i class="fa-solid fa-percent"></i>
                 </div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1" id="commission-rate">Loading...</h3>
-                <p class="text-gray-500 text-sm font-medium">Commission Rate</p>
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 bg-brand-50 text-brand-600 rounded shadow-sm">Active</div>
+                <h3 class="text-3xl font-black text-slate-900 mb-1" id="commission-rate">Loading...</h3>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Commission Rate</p>
+                <div class="absolute top-4 right-4 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-full shadow-sm">Active</div>
             </div>
         </div>
 
         <!-- Global Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-users"></i></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-users"></i></div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-500 mb-0.5">Total Signups</p>
-                    <p class="text-2xl font-bold text-gray-900" id="stat-signups">0</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Total Signups</p>
+                    <p class="text-2xl font-black text-slate-900" id="stat-signups">0</p>
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-arrow-pointer"></i></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-arrow-pointer"></i></div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-500 mb-0.5">Total Visits (Hits)</p>
-                    <p class="text-2xl font-bold text-gray-900" id="stat-hits">0</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Total Visits (Hits)</p>
+                    <p class="text-2xl font-black text-slate-900" id="stat-hits">0</p>
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-brand-500">
-                <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-500 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-sack-dollar"></i></div>
                 <div>
-                    <p class="text-sm font-semibold text-gray-500 mb-0.5">Total Earnings</p>
-                    <p class="text-2xl font-bold text-brand-600" id="stat-earnings">Rs 0.00</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Total Earnings</p>
+                    <p class="text-2xl font-black text-brand-600" id="stat-earnings">Rs 0.00</p>
                 </div>
             </div>
         </div>
 
         <!-- Explainer -->
-        <div class="bg-blue-50/50 rounded-xl border border-blue-100 p-6 flex items-start gap-4">
-            <i class="fa-solid fa-circle-info text-blue-500 text-xl mt-0.5"></i>
+        <div class="bg-slate-50 rounded-2xl border border-slate-300 p-6 flex items-start gap-4 shadow-sm">
+            <i class="fa-solid fa-circle-info text-brand-600 text-xl mt-0.5"></i>
             <div>
-                <h4 class="font-bold text-blue-900 mb-1">How it works</h4>
-                <p class="text-sm text-blue-800 leading-relaxed">
+                <h4 class="font-black text-slate-900 text-sm mb-1">How it works</h4>
+                <p class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
                     Whenever an invited user successfully adds funds to their account, your commission is automatically calculated and injected directly into your main balance as a standard deposit entry marking it as "Referral Bonus". No minimum thresholds or manual claiming is required.
                 </p>
             </div>

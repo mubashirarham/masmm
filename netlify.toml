@@ -3,16 +3,15 @@
   publish = "."
   # The directory where your serverless functions are located
   functions = "netlify/functions"
-  # The command Netlify runs to install backend dependencies
-  command = "npm install"
+  # The build command runs sitemap generator and prepares deployment
+  command = "npm run build"
 
 [functions]
-  # Set the Node.js version for your serverless functions
+  # Set the Node.js bundler and bundle data files for Lambda execution
   node_bundler = "esbuild"
+  included_files = ["assets/data/**"]
 
-# Clean URL Redirects for your APIs
-# This allows users to hit /api/v2 instead of /.netlify/functions/userapi
-
+# Clean URL Redirects for APIs
 [[redirects]]
   from = "/api/v2"
   to = "/.netlify/functions/userapi"
@@ -28,24 +27,30 @@
   to = "/.netlify/functions/sync-provider"
   status = 200
 
+# Pretty / Clean URL Rewrites for Public Pages
 [[redirects]]
-  from = "/api/cashmaal-ipn"
-  to = "/.netlify/functions/cashmaal-ipn"
+  from = "/services"
+  to = "/services.html"
   status = 200
 
 [[redirects]]
-  from = "/api/verify-cashmaal"
-  to = "/.netlify/functions/verify-cashmaal"
+  from = "/api"
+  to = "/api.html"
   status = 200
 
 [[redirects]]
-  from = "/api/cashmaal-payout"
-  to = "/.netlify/functions/cashmaal-payout"
+  from = "/about"
+  to = "/about.html"
   status = 200
 
 [[redirects]]
-  from = "/api/cashmaal-utils"
-  to = "/.netlify/functions/cashmaal-utils"
+  from = "/policies"
+  to = "/policies.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
   status = 200
 
 # Clean URL & SPA Redirects for User and Admin Portals
@@ -79,6 +84,67 @@
   to = "/admin/index.html"
   status = 200
 
-# Activate the 100% Automated Background Worker (Runs Every 5 Minutes)
+# ==============================================================================
+# NETLIFY SCHEDULED SERVERLESS CRON JOBS (Full Automation Engine)
+# ==============================================================================
+
+# 1. Automated Order Dispatch & Live Status Sync + Partial/Cancel Auto-Refunds (Every 1 Minute)
+[functions."cron-order-sync"]
+  schedule = "* * * * *"
+
+# 2. Automated Refill Sync & Status Checker (Every 5 Minutes)
+[functions."cron-refill-sync"]
+  schedule = "*/5 * * * *"
+
+# 3. Automated Wholesale Catalog & 50% PKR Rate Synchronizer (Every 4 Hours)
+[functions."cron-catalog-sync"]
+  schedule = "0 */4 * * *"
+
+# 4. Upstream Provider API Balance & Low Balance Monitor (Every 1 Hour)
+[functions."cron-provider-balance"]
+  schedule = "0 * * * *"
+
+# 5. Daily Database Cleanup, Log Purge & Maintenance (Daily at Midnight)
+[functions."cron-database-cleanup"]
+  schedule = "0 0 * * *"
+
+# 6. Master Network Heartbeat & SaaS Subscriptions (Every 5 Minutes)
 [functions."worker"]
   schedule = "*/5 * * * *"
+
+# ==============================================================================
+# PERFORMANCE, SECURITY & BROWSER CACHING HEADERS
+# ==============================================================================
+
+[[headers]]
+  for = "/assets/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=UTF-8"
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=UTF-8"
+    Cache-Control = "public, max-age=86400"

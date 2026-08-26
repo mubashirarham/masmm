@@ -28,45 +28,45 @@ function renderProfileUI() {
     
     contentArea.innerHTML = `
         <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Profile Settings</h2>
-            <p class="text-sm text-gray-500">Manage your personal details and account security.</p>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Profile Settings</h2>
+            <p class="text-sm text-slate-600 font-medium">Manage your personal details and account security.</p>
         </div>
 
         <div class="max-w-3xl mx-auto space-y-6">
             
             <!-- Personal Information Form -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-                <div class="flex items-center gap-6 mb-8 border-b border-gray-100 pb-8">
-                    <div class="w-20 h-20 rounded-full bg-brand-100 border-2 border-brand-200 flex items-center justify-center text-brand-700 font-bold text-3xl shadow-sm relative overflow-hidden group">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8">
+                <div class="flex items-center gap-6 mb-8 border-b border-slate-200 pb-8">
+                    <div class="w-20 h-20 rounded-2xl bg-brand-50 border-2 border-brand-300 flex items-center justify-center text-brand-700 font-black text-3xl shadow-sm relative overflow-hidden group">
                         <i class="fa-solid fa-user" id="profile-avatar-icon"></i>
                         <img id="profile-avatar-img" class="hidden w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center cursor-pointer transition-all" onclick="document.getElementById('pfp-upload-input').click()">
+                        <div class="absolute inset-0 bg-slate-900/60 hidden group-hover:flex items-center justify-center cursor-pointer transition-all" onclick="document.getElementById('pfp-upload-input').click()">
                             <i class="fa-camera fa-solid text-white text-xl"></i>
                         </div>
                     </div>
                     <div>
-                        <p id="profile-email-display" class="text-lg font-bold text-gray-900">Loading...</p>
-                        <span class="inline-block mt-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full uppercase tracking-wider">Active Account</span>
+                        <p id="profile-email-display" class="text-lg font-black text-slate-900">Loading...</p>
+                        <span class="inline-block mt-1 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-extrabold border border-emerald-300 rounded-full uppercase tracking-wider">Active Account</span>
                         <input type="file" id="pfp-upload-input" accept="image/*" class="hidden">
-                        <p id="pfp-upload-status" class="text-xs text-brand-500 font-semibold mt-2 hidden"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</p>
+                        <p id="pfp-upload-status" class="text-xs text-brand-600 font-bold mt-2 hidden"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</p>
                     </div>
                 </div>
 
                 <form id="profile-form" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                            <input type="text" id="profile-fname" placeholder="Enter first name" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">First Name</label>
+                            <input type="text" id="profile-fname" placeholder="Enter first name" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-slate-900 text-sm font-sans bg-white shadow-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                            <input type="text" id="profile-lname" placeholder="Enter last name" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Last Name</label>
+                            <input type="text" id="profile-lname" placeholder="Enter last name" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-slate-900 text-sm font-sans bg-white shadow-sm">
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Timezone</label>
-                        <select id="profile-timezone" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none bg-white transition-all">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Timezone</label>
+                        <select id="profile-timezone" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none bg-white text-slate-900 text-sm font-bold shadow-sm transition-all">
                             <option value="Asia/Karachi">Asia/Karachi (PKT)</option>
                             <option value="UTC">UTC (GMT 0)</option>
                             <option value="America/New_York">America/New_York (EST)</option>
@@ -74,10 +74,10 @@ function renderProfileUI() {
                         </select>
                     </div>
 
-                    <div id="profile-notification" class="hidden text-sm px-4 py-3 rounded-lg font-semibold transition-all"></div>
+                    <div id="profile-notification" class="hidden text-sm px-4 py-3 rounded-xl font-bold transition-all border"></div>
 
-                    <div class="pt-4 border-t border-gray-100 flex justify-end">
-                        <button type="submit" id="save-profile-btn" class="bg-gray-900 hover:bg-black text-white font-bold py-3.5 px-8 rounded-xl transition-all flex items-center gap-2 shadow-md">
+                    <div class="pt-4 border-t border-slate-200 flex justify-end">
+                        <button type="submit" id="save-profile-btn" class="bg-brand-500 hover:bg-brand-600 text-white font-extrabold uppercase tracking-wider text-xs py-3.5 px-8 rounded-xl transition-all flex items-center gap-2 shadow-md border border-brand-600 cursor-pointer">
                             <i class="fa-solid fa-floppy-disk"></i> Save Changes
                         </button>
                     </div>
@@ -85,22 +85,22 @@ function renderProfileUI() {
             </div>
 
             <!-- Security Section -->
-            <div class="bg-white rounded-2xl shadow-sm border border-red-100 p-6 sm:p-8">
-                <h2 class="text-xl font-bold text-red-600 mb-2 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Security</h2>
-                <p class="text-sm text-gray-600 mb-6">Manage your password to keep your account secure. A secure link will be sent to your email.</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8">
+                <h2 class="text-xl font-black text-rose-600 mb-2 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Security</h2>
+                <p class="text-sm text-slate-600 mb-6 font-medium">Manage your password to keep your account secure. A secure link will be sent to your email.</p>
                 
-                <div id="security-notification" class="hidden text-sm px-4 py-3 rounded-lg font-semibold transition-all mb-4"></div>
+                <div id="security-notification" class="hidden text-sm px-4 py-3 rounded-xl font-bold transition-all mb-4 border"></div>
 
-                <button type="button" id="reset-password-btn" class="bg-white border-2 border-gray-200 hover:border-gray-800 hover:bg-gray-50 text-gray-800 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-key"></i> Send Password Reset Email
+                <button type="button" id="reset-password-btn" class="bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-800 font-extrabold uppercase tracking-wider text-xs py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-key text-brand-600"></i> Send Password Reset Email
                 </button>
             </div>
 
             <!-- 2FA Security Section -->
-            <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 sm:p-8 mt-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-lock text-indigo-600"></i> Two-Factor Auth (2FA)</h2>
-                <div id="mfa-section" class="text-sm text-gray-600 mt-4">
-                     <p><i class="fa-solid fa-spinner fa-spin"></i> Checking 2FA Status...</p>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8 mt-6">
+                <h2 class="text-xl font-black text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-lock text-brand-600"></i> Two-Factor Auth (2FA)</h2>
+                <div id="mfa-section" class="text-sm text-slate-600 mt-4">
+                     <p class="font-medium"><i class="fa-solid fa-spinner fa-spin text-brand-500"></i> Checking 2FA Status...</p>
                 </div>
             </div>
         </div>

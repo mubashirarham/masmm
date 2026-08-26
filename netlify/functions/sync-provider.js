@@ -155,12 +155,45 @@ exports.handler = async (event) => {
                 };
             }
 
-            if (action === 'import_all_categories') {
+            if (action === 'wipe_and_import_all' || action === 'import_all_categories') {
                 const markupPercentage = parseFloat(payload.markupPercentage) || 150;
                 const markupMultiplier = markupPercentage / 100;
                 
-                // 1. Fetch existing local categories to avoid duplicates
                 const catsRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('categories');
+                const servicesRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services');
+
+                // If wipe requested, clean out all old services and categories first
+                if (action === 'wipe_and_import_all') {
+                    const oldServices = await servicesRef.get();
+                    let wipeBatch = db.batch();
+                    let wipeOps = 0;
+                    for (const sDoc of oldServices.docs) {
+                        wipeBatch.delete(sDoc.ref);
+                        wipeOps++;
+                        if (wipeOps >= 400) {
+                            await wipeBatch.commit();
+                            wipeBatch = db.batch();
+                            wipeOps = 0;
+                        }
+                    }
+                    if (wipeOps > 0) await wipeBatch.commit();
+
+                    const oldCats = await catsRef.get();
+                    wipeBatch = db.batch();
+                    wipeOps = 0;
+                    for (const cDoc of oldCats.docs) {
+                        wipeBatch.delete(cDoc.ref);
+                        wipeOps++;
+                        if (wipeOps >= 400) {
+                            await wipeBatch.commit();
+                            wipeBatch = db.batch();
+                            wipeOps = 0;
+                        }
+                    }
+                    if (wipeOps > 0) await wipeBatch.commit();
+                }
+
+                // 1. Fetch existing local categories to avoid duplicates
                 const localCatsSnap = await catsRef.get();
                 const categoryNameToId = {};
                 localCatsSnap.forEach(doc => {
@@ -169,16 +202,18 @@ exports.handler = async (event) => {
                 });
 
                 // 2. Identify Unique Remote Categories and Create Missing Ones
-                const uniqueRemoteCats = [...new Set(convertedServices.map(s => s.category).filter(Boolean))];
+                const uniqueRemoteCats = [...new Set(convertedServices.map(s => (s.category || 'Other Services')).filter(Boolean))];
                 let createdCatsCount = 0;
+                let sortIndex = 1;
                 for (const catName of uniqueRemoteCats) {
                     const normalized = catName.toLowerCase().trim();
                     if (!categoryNameToId[normalized]) {
                         const newCatRef = await catsRef.add({
                             name: catName,
-                            sort: 99,
+                            sort: sortIndex++,
                             status: 'Active',
-                            createdAt: admin.firestore.FieldValue.serverTimestamp()
+                            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: admin.firestore.FieldValue.serverTimestamp()
                         });
                         categoryNameToId[normalized] = newCatRef.id;
                         createdCatsCount++;
@@ -186,14 +221,14 @@ exports.handler = async (event) => {
                 }
 
                 // 3. Batch insert all services
-                const servicesRef = db.collection('artifacts').doc(APP_ID).collection('public').doc('data').collection('services');
                 let importedCount = 0;
                 let currentBatch = db.batch();
                 let batchOpsCount = 0;
                 let batchPromises = [];
 
                 for (const service of convertedServices) {
-                    const targetCategoryId = categoryNameToId[(service.category || '').toLowerCase().trim()];
+                    const catName = (service.category || 'Other Services').trim();
+                    const targetCategoryId = categoryNameToId[catName.toLowerCase().trim()];
                     if (!targetCategoryId) continue;
                     
                     const docId = `imported_${providerId}_${service.service}`;
@@ -203,18 +238,29 @@ exports.handler = async (event) => {
                     const finalSellingRate = (basePkrRate * markupMultiplier).toFixed(4);
 
                     currentBatch.set(docRef, {
-                        serviceId: service.service,
+                        serviceId: String(service.service),
                         name: service.name,
                         categoryId: targetCategoryId,
+                        categoryName: catName,
                         rate: finalSellingRate,
-                        min: service.min,
-                        max: service.max,
-                        description: service.desc || 'Imported Service',
+                        originalRate: service._original_rate || 0,
+                        providerRate: Number(basePkrRate.toFixed(4)),
+                        min: parseInt(service.min) || 1,
+                        max: parseInt(service.max) || 10000000,
+                        description: service.description || service.desc || '',
+                        desc: service.description || service.desc || '',
+                        average_time: service.average_time != null ? service.average_time : null,
+                        type: service.type || 'Default',
                         providerId: providerId,
+                        providerName: 'PakSMMPanels',
                         status: 'Active',
                         metadata_markup: markupMultiplier,
+                        dripfeed: !!service.dripfeed,
                         refill: !!service.refill || service.refill === '1' || service.refill === true,
                         cancel: !!service.cancel || service.cancel === '1' || service.cancel === true,
+                        _original_currency: service._original_currency || 'USD',
+                        _pkr_exchange_rate: exchangeRateToPKR,
+                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
                         updatedAt: admin.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
                     
@@ -238,7 +284,7 @@ exports.handler = async (event) => {
                     statusCode: 200,
                     body: JSON.stringify({ 
                         success: true, 
-                        message: `Imported ${importedCount} services across ${uniqueRemoteCats.length} categories (${createdCatsCount} new).` 
+                        message: `Successfully processed ${importedCount} services across ${uniqueRemoteCats.length} categories (${createdCatsCount} created).` 
                     })
                 };
             }

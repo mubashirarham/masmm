@@ -32,118 +32,118 @@ function renderUsersUI() {
     contentArea.innerHTML = `
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
-                <p class="text-sm text-gray-500">View and manage client accounts, balances, and roles.</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">User Management</h2>
+                <p class="text-sm text-slate-600 font-medium">View and manage client accounts, balances, and roles.</p>
             </div>
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="admin-search-users" placeholder="Search by email or ID..." class="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="admin-search-users" placeholder="Search email or ID..." class="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xs sm:text-sm font-sans bg-white shadow-sm">
                 </div>
             </div>
         </div>
 
         <!-- Bulk Action Bar -->
-        <div id="users-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-            <div class="flex items-center gap-3 text-sm font-bold text-brand-900">
-                <i class="fa-solid fa-check-double text-brand-600 text-base"></i>
+        <div id="users-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-300 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3 text-xs font-black text-brand-900 uppercase tracking-wider">
+                <i class="fa-solid fa-check-double text-brand-600 text-sm"></i>
                 <span id="users-selected-count">0 users selected</span>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
-                <button id="bulk-users-delete-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                <button id="bulk-users-delete-btn" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-trash"></i> Delete Selected
                 </button>
-                <button id="bulk-users-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-shield"></i> Toggle Active/Banned
+                <button id="bulk-users-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-user-shield"></i> Toggle Status
                 </button>
             </div>
         </div>
 
         <!-- Users Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                <table class="w-full text-left text-sm text-slate-700 whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-800 border-b-2 border-slate-300 sticky top-0">
                         <tr>
                             <th class="px-4 py-4 w-12 text-center">
-                                <input type="checkbox" id="users-select-all" class="w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer">
+                                <input type="checkbox" id="users-select-all" class="w-4 h-4 text-brand-500 rounded border-slate-300 cursor-pointer">
                             </th>
-                            <th class="px-6 py-4 font-semibold w-24">User ID</th>
-                            <th class="px-6 py-4 font-semibold">Email / User</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Role</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Actions</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider w-24">User ID</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Email / User</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-32">Role</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-32">Status</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-32">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-users-table-body">
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
-                                <p>Loading users database...</p>
+                                <p class="font-bold">Loading users database...</p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div id="admin-users-pagination-container"></div>
+            <div id="admin-users-pagination-container" class="border-t border-slate-200 bg-slate-50 p-4"></div>
         </div>
 
         <!-- Manage User Modal -->
-        <div id="manage-user-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform transition-transform scale-95" id="manage-user-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                    <h3 class="text-lg font-bold text-gray-800">Manage User Account</h3>
-                    <button id="close-user-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+        <div id="manage-user-modal" class="fixed inset-0 bg-slate-900/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-300 transform transition-transform scale-95" id="manage-user-content">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                    <h3 class="text-lg font-black text-slate-900">Manage User Account</h3>
+                    <button id="close-user-modal-btn" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                 </div>
                 
-                <div class="mb-6">
-                    <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Target Account</p>
-                    <p id="modal-user-email" class="text-gray-900 font-bold truncate">user@example.com</p>
-                    <p id="modal-user-id" class="text-xs text-gray-400 font-mono mt-1">UID: ---</p>
+                <div class="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Target Account</p>
+                    <p id="modal-user-email" class="text-slate-900 font-bold truncate text-sm">user@example.com</p>
+                    <p id="modal-user-id" class="text-xs text-slate-400 font-mono mt-1 font-semibold">UID: ---</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <p class="text-xs text-gray-500 font-semibold mb-1">Current Balance</p>
-                        <h4 id="modal-user-balance" class="text-lg font-bold text-brand-600"><i class="fa-solid fa-spinner fa-spin text-xs"></i></h4>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Current Balance</p>
+                        <h4 id="modal-user-balance" class="text-lg font-black text-brand-600"><i class="fa-solid fa-spinner fa-spin text-xs"></i></h4>
                     </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <p class="text-xs text-gray-500 font-semibold mb-1">Total Spent</p>
-                        <h4 id="modal-user-spent" class="text-lg font-bold text-gray-700"><i class="fa-solid fa-spinner fa-spin text-xs"></i></h4>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Total Spent</p>
+                        <h4 id="modal-user-spent" class="text-lg font-black text-slate-800"><i class="fa-solid fa-spinner fa-spin text-xs"></i></h4>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Adjust Balance (Add or Deduct)</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Adjust Balance (Add or Deduct)</label>
                         <div class="flex gap-2">
-                            <input type="number" id="balance-adjustment-amount" placeholder="e.g. 500 or -500" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                            <button id="apply-balance-btn" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap">
+                            <input type="number" id="balance-adjustment-amount" placeholder="e.g. 500 or -500" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-sans bg-white shadow-sm">
+                            <button id="apply-balance-btn" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors whitespace-nowrap shadow-md border border-brand-600 cursor-pointer">
                                 Apply
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">Use positive numbers to add funds, negative numbers to deduct.</p>
+                        <p class="text-xs text-slate-500 mt-1.5 font-medium">Use positive numbers to credit funds, negative numbers to deduct.</p>
                     </div>
                     
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Global Discount % (VIP Pricing)</label>
+                    <div class="mt-4 pt-4 border-t border-slate-200">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Global Discount % (VIP Pricing)</label>
                         <div class="flex gap-2">
-                            <input type="number" id="user-discount-amount" placeholder="e.g. 5, 10, 15" min="0" max="100" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                            <button id="apply-discount-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap flex items-center gap-2">
-                                <i class="fa-solid fa-percent text-sm"></i> Set
+                            <input type="number" id="user-discount-amount" placeholder="e.g. 5, 10, 15" min="0" max="100" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-sans bg-white shadow-sm">
+                            <button id="apply-discount-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors whitespace-nowrap flex items-center gap-1.5 shadow-md border border-blue-700 cursor-pointer">
+                                <i class="fa-solid fa-percent text-xs"></i> Set
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">Discount given to this user natively on all service purchases.</p>
+                        <p class="text-xs text-slate-500 mt-1.5 font-medium">Discount applied to all service purchases for this user.</p>
                     </div>
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2 justify-end">
-                    <button id="toggle-api-ban-btn" data-action="block" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-bold transition-colors text-sm flex items-center gap-2 shadow-sm mr-auto">
+                <div class="mt-6 pt-4 border-t border-slate-200 flex gap-2 justify-end">
+                    <button id="toggle-api-ban-btn" data-action="block" class="px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-300 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors flex items-center gap-2 shadow-sm mr-auto cursor-pointer">
                         <i class="fa-solid fa-ban"></i> Block API Access
                     </button>
-                    <button id="close-user-modal-footer" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Close</button>
+                    <button id="close-user-modal-footer" class="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-xl font-bold transition-colors cursor-pointer text-xs uppercase tracking-wider">Close</button>
                 </div>
             </div>
         </div>

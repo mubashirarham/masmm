@@ -66,6 +66,28 @@ function renderBrandingUI() {
 
                         <input type="text" id="logo-url" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm font-mono text-brand-600" placeholder="https://example.com/logo.png or uploaded image URL">
                         
+                        <!-- DigitalMarketplace Brand Logo Suite (Short, Long, Detailed) -->
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">DigitalMarketplace Consistent Brand Logo Suite</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div onclick="window.selectLogoPreset('../assets/images/brand_logo_short.png')" class="p-3 rounded-xl border border-gray-200 hover:border-brand-500 bg-gray-50 hover:bg-white transition-all cursor-pointer text-center group shadow-sm">
+                                    <img src="../assets/images/brand_logo_short.png" class="h-12 mx-auto object-contain mb-1.5 group-hover:scale-105 transition-transform">
+                                    <p class="text-[11px] font-extrabold text-gray-900">Short Mark</p>
+                                    <p class="text-[9px] text-gray-500 font-medium">Favicon & App Icon</p>
+                                </div>
+                                <div onclick="window.selectLogoPreset('../assets/images/brand_logo_long.png')" class="p-3 rounded-xl border border-gray-200 hover:border-brand-500 bg-gray-50 hover:bg-white transition-all cursor-pointer text-center group shadow-sm">
+                                    <img src="../assets/images/brand_logo_long.png" class="h-12 mx-auto object-contain mb-1.5 group-hover:scale-105 transition-transform">
+                                    <p class="text-[11px] font-extrabold text-gray-900">Long Logo</p>
+                                    <p class="text-[9px] text-gray-500 font-medium">Navbar & Header</p>
+                                </div>
+                                <div onclick="window.selectLogoPreset('../assets/images/brand_logo_detailed.png')" class="p-3 rounded-xl border border-gray-200 hover:border-brand-500 bg-gray-50 hover:bg-white transition-all cursor-pointer text-center group shadow-sm">
+                                    <img src="../assets/images/brand_logo_detailed.png" class="h-12 mx-auto object-contain mb-1.5 group-hover:scale-105 transition-transform">
+                                    <p class="text-[11px] font-extrabold text-gray-900">Detailed Logo</p>
+                                    <p class="text-[9px] text-gray-500 font-medium">Footer & Splash</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="logo-preview-box" class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hidden flex items-center gap-3">
                             <span class="text-xs font-semibold text-gray-500">Logo Preview:</span>
                             <img id="logo-preview-img" class="h-10 max-w-[180px] object-contain" alt="Logo Preview">

@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+Allow: /services.html
+Allow: /about.html
+Allow: /policies.html
+Allow: /api.html
+Disallow: /admin/
+Disallow: /user/
+
+# AI Crawlers & Answer Engines (AIEO / AEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://digitalmarketplace.store/sitemap.xml

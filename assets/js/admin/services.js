@@ -35,77 +35,80 @@ function renderServicesUI() {
     contentArea.innerHTML = `
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">Service Management</h2>
-                <p class="text-sm text-gray-500">Create and manage SMM services, rates, and descriptions.</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Service Management</h2>
+                <p class="text-sm text-slate-600 font-medium">Create and manage SMM services, rates, and descriptions.</p>
             </div>
             <div class="w-full sm:w-auto flex flex-wrap gap-2">
                 <div class="relative flex-1 sm:w-64">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="admin-search-services" placeholder="Search services..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="admin-search-services" placeholder="Search services..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xs sm:text-sm font-sans bg-white shadow-sm">
                 </div>
-                <button id="trigger-update-prices-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-sm">
-                    <i class="fa-solid fa-arrows-rotate"></i> Update Prices Manually
+                <a href="clean-import.html" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs shadow-md border border-emerald-700 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Wipe & Import PakSMMPanels (+50% PKR)
+                </a>
+                <button id="trigger-update-prices-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-all flex items-center gap-2 whitespace-nowrap shadow-sm border border-emerald-700 cursor-pointer">
+                    <i class="fa-solid fa-arrows-rotate"></i> Update Prices
                 </button>
-                <button id="open-bulk-pricing-modal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
-                    <i class="fa-solid fa-percent"></i> Global Markup
+                <button id="open-bulk-pricing-modal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm border border-blue-700 cursor-pointer">
+                    <i class="fa-solid fa-percent"></i> Markup
                 </button>
-                <button id="open-smart-sort-modal" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                <button id="open-smart-sort-modal" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm border border-purple-700 cursor-pointer">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Sort
                 </button>
-                <button id="open-add-service-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                <button id="open-add-service-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm border border-brand-600 cursor-pointer">
                     <i class="fa-solid fa-plus"></i> Add Service
                 </button>
             </div>
         </div>
 
         <!-- Bulk Action Bar -->
-        <div id="services-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-            <div class="flex items-center gap-3 text-sm font-bold text-brand-900">
-                <i class="fa-solid fa-check-double text-brand-600 text-base"></i>
+        <div id="services-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-300 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3 text-xs font-black text-brand-900 uppercase tracking-wider">
+                <i class="fa-solid fa-check-double text-brand-600 text-sm"></i>
                 <span id="services-selected-count">0 services selected</span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <button id="bulk-services-delete-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                <button id="bulk-services-delete-btn" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-trash"></i> Delete Selected
                 </button>
-                <button id="bulk-services-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                <button id="bulk-services-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-eye-slash"></i> Enable/Disable
                 </button>
-                <button id="bulk-services-price-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                <button id="bulk-services-price-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-calculator"></i> Bulk Update Prices
                 </button>
             </div>
         </div>
 
         <!-- Services Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
-                    <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                <table class="w-full text-left text-sm text-slate-700 whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-800 border-b-2 border-slate-300 sticky top-0">
                         <tr>
                             <th class="px-4 py-4 w-12 text-center">
-                                <input type="checkbox" id="services-select-all" class="w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer">
+                                <input type="checkbox" id="services-select-all" class="w-4 h-4 text-brand-500 rounded border-slate-300 cursor-pointer">
                             </th>
-                            <th class="px-6 py-4 font-semibold w-20">ID</th>
-                            <th class="px-6 py-4 font-semibold">Service Name</th>
-                            <th class="px-6 py-4 font-semibold">Category</th>
-                            <th class="px-6 py-4 font-semibold text-center w-24">Rate/1k</th>
-                            <th class="px-6 py-4 font-semibold text-center w-20">Min</th>
-                            <th class="px-6 py-4 font-semibold text-center w-20">Max</th>
-                            <th class="px-6 py-4 font-semibold text-right w-24">Actions</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider w-20">ID</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Service Name</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-24">Rate/1k</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-20">Min</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-20">Max</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-right w-24">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-services-table-body">
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="8" class="px-6 py-12 text-center text-slate-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
-                                <p>Loading services...</p>
+                                <p class="font-bold">Loading services...</p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div id="admin-services-pagination-container"></div>
+            <div id="admin-services-pagination-container" class="border-t border-slate-200 bg-slate-50 p-4"></div>
         </div>
 
         <!-- Add Service Modal -->

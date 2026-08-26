@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PakSMMPanels Migration & Import Engine | Admin Panel</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Master Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-start p-4 sm:p-8">
+
+    <div class="max-w-4xl w-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-700">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-black text-white flex items-center gap-2">
+                        <i class="fa-solid fa-database text-brand-500"></i> PakSMMPanels Migration Engine
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Clean wipe all categories & services and import with accurate PKR rates (50% commission)</p>
+                </div>
+            </div>
+            <div id="auth-status-badge" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold text-slate-400">
+                Checking Auth...
+            </div>
+        </div>
+
+        <!-- Auth Login Form (Shown if not authenticated) -->
+        <div id="admin-login-card" class="hidden mb-8 bg-slate-800/90 border border-slate-700 rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4 text-amber-400">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+                <h3 class="text-base font-bold text-white">Admin Authentication Required</h3>
+            </div>
+            <p class="text-xs text-slate-300 mb-4">Please log in with the administrator account to execute database wipe and batch import operations.</p>
+            <form id="admin-login-form" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input type="email" id="login-email" value="mubashirarham12@gmail.com" readonly class="px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 font-mono outline-none">
+                <input type="password" id="login-password" required placeholder="Enter Admin Password" class="px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 outline-none focus:border-brand-500">
+                <button type="submit" id="login-btn" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Authenticate
+                </button>
+            </form>
+            <div id="login-error" class="hidden mt-3 text-xs text-rose-400 font-medium"></div>
+        </div>
+
+        <!-- Metric Parameters Card -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Upstream Provider</div>
+                <div class="text-sm font-extrabold text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-server text-brand-500"></i> PakSMMPanels
+                </div>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Services</div>
+                <div class="text-sm font-extrabold text-white" id="stat-total-services">481 Services</div>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">USD to PKR Rate</div>
+                <div class="text-sm font-extrabold text-brand-400" id="stat-exchange-rate">1 USD = 275.81 PKR</div>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Profit Markup</div>
+                <div class="text-sm font-extrabold text-emerald-400">+50% Commission</div>
+            </div>
+        </div>
+
+        <!-- Action & Progress Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl mb-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-white">Database Wipe & Sync Execution</h2>
+                    <p class="text-xs text-slate-400">Deletes existing database items, registers provider, creates categories, and imports services.</p>
+                </div>
+                <button id="start-migration-btn" class="w-full sm:w-auto px-6 py-3 bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg border border-brand-400 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Start Full Wipe & Import
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-4">
+                <div class="flex justify-between text-xs font-bold mb-1.5">
+                    <span id="progress-status-text" class="text-slate-300">Ready to start</span>
+                    <span id="progress-percent-text" class="text-brand-400">0%</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-700">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-brand-600 to-emerald-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Console Log Window -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-slate-300 max-h-72 overflow-y-auto space-y-1.5" id="migration-log">
+                <div class="text-slate-500">[System] Initializing migration tool...</div>
+                <div class="text-slate-500">[System] Catalog pre-loaded from PakSMMPanels (481 services ready).</div>
+            </div>
+        </div>
+
+        <!-- Live Preview / Verification Table -->
+        <div id="preview-section" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-brand-500"></i> Sample Imported Services in PKR
+                </h3>
+                <span class="text-xs text-slate-400 font-mono" id="sample-count-badge"></span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono text-slate-300">
+                    <thead class="bg-slate-900 text-slate-400 border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Service Name</th>
+                            <th class="p-3">Category</th>
+                            <th class="p-3 text-right">USD Cost</th>
+                            <th class="p-3 text-right">PKR Cost</th>
+                            <th class="p-3 text-right text-brand-400">Selling Price (+50%)</th>
+                            <th class="p-3 text-center">Avg Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-tbody" class="divide-y divide-slate-700/50"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDocs, 
+            setDoc, 
+            writeBatch, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1Oq5z1O7qEIzDgfgfqlTOjVoM3WDF-qQ",
+            authDomain: "masmmpanel-7af8c.firebaseapp.com",
+            projectId: "masmmpanel-7af8c",
+            storageBucket: "masmmpanel-7af8c.firebasestorage.app",
+            messagingSenderId: "954223775870",
+            appId: "1:954223775870:web:faf21552d7478a53ff082f",
+            measurementId: "G-WYKEH349PW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = "masmmpanel-default";
+
+        let currentUser = null;
+        let catalogData = null;
+        let usdPkrRate = 275.81067;
+        const markupMultiplier = 1.50; // 50% commission
+
+        const logContainer = document.getElementById('migration-log');
+        const progressBar = document.getElementById('progress-bar-fill');
+        const progressPercent = document.getElementById('progress-percent-text');
+        const progressStatus = document.getElementById('progress-status-text');
+        const startBtn = document.getElementById('start-migration-btn');
+        const authBadge = document.getElementById('auth-status-badge');
+        const loginCard = document.getElementById('admin-login-card');
+        const loginForm = document.getElementById('admin-login-form');
+        const loginError = document.getElementById('login-error');
+
+        function addLog(msg, type = 'info') {
+            const el = document.createElement('div');
+            const time = new Date().toLocaleTimeString();
+            let color = 'text-slate-300';
+            if (type === 'success') color = 'text-emerald-400 font-bold';
+            if (type === 'error') color = 'text-rose-400 font-bold';
+            if (type === 'warn') color = 'text-amber-400';
+            if (type === 'step') color = 'text-cyan-400 font-bold';
+
+            el.className = `${color}`;
+            el.innerHTML = `[${time}] ${msg}`;
+            logContainer.appendChild(el);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function setProgress(percent, status) {
+            progressBar.style.width = `${percent}%`;
+            progressPercent.innerText = `${percent}%`;
+            if (status) progressStatus.innerText = status;
+        }
+
+        // 1. Auth Monitoring
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email === 'mubashirarham12@gmail.com') {
+                currentUser = user;
+                authBadge.innerHTML = `<i class="fa-solid fa-shield-check text-brand-400"></i> Authenticated Admin (${user.email})`;
+                authBadge.className = "px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-700 text-xs font-bold text-emerald-400";
+                loginCard.classList.add('hidden');
+                addLog(`Admin authenticated successfully: ${user.email}`, 'success');
+            } else {
+                currentUser = null;
+                authBadge.innerHTML = `<i class="fa-solid fa-lock text-amber-400"></i> Not Authenticated`;
+                authBadge.className = "px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-700 text-xs font-bold text-amber-400";
+                loginCard.classList.remove('hidden');
+                addLog(`Authentication required. Please enter admin password above.`, 'warn');
+            }
+        });
+
+        // 2. Login Form
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('login-password').value;
+            loginError.classList.add('hidden');
+            const submitBtn = document.getElementById('login-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+
+            try {
+                await signInWithEmailAndPassword(auth, 'mubashirarham12@gmail.com', password);
+                loginCard.classList.add('hidden');
+            } catch(err) {
+                console.error(err);
+                loginError.innerText = `Login failed: ${err.message}`;
+                loginError.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Authenticate';
+            }
+        });
+
+        // 3. Preload Local Catalog
+        async function loadCatalog() {
+            try {
+                const res = await fetch('../assets/data/paksmmpanels_services.json');
+                if (res.ok) {
+                    catalogData = await res.json();
+                    if (catalogData.exchangeRateToPKR) {
+                        usdPkrRate = catalogData.exchangeRateToPKR;
+                    }
+                    document.getElementById('stat-total-services').innerText = `${catalogData.services.length} Services`;
+                    document.getElementById('stat-exchange-rate').innerText = `1 USD = ${usdPkrRate.toFixed(2)} PKR`;
+                    addLog(`Loaded ${catalogData.services.length} services from local catalog with FX rate ${usdPkrRate.toFixed(2)} PKR.`, 'info');
+                }
+            } catch(e) {
+                addLog(`Could not load local catalog file: ${e.message}`, 'warn');
+            }
+        }
+        loadCatalog();
+
+        // 4. Live Exchange Rate Fetcher
+        async function refreshLiveExchangeRate() {
+            try {
+                const res = await fetch("https://economia.awesomeapi.com.br/json/last/USD-PKR");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.USDPKR && data.USDPKR.bid) {
+                        usdPkrRate = parseFloat(data.USDPKR.bid);
+                        document.getElementById('stat-exchange-rate').innerText = `1 USD = ${usdPkrRate.toFixed(2)} PKR`;
+                        addLog(`Live market USD/PKR rate updated: ${usdPkrRate.toFixed(4)} PKR`, 'success');
+                    }
+                }
+            } catch(e) {
+                addLog(`Using standard market exchange rate: ${usdPkrRate.toFixed(4)} PKR`, 'info');
+            }
+        }
+
+        // 5. Full Wipe and Batch Import Engine
+        async function runMigration() {
+            if (!currentUser) {
+                alert("Please log in with the admin account first.");
+                document.getElementById('login-password').focus();
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to completely WIPE all services & categories and import 481 services from PakSMMPanels with 50% commission in PKR?`)) {
+                return;
+            }
+
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Migrating...';
+            setProgress(5, "Refreshing exchange rate...");
+            await refreshLiveExchangeRate();
+
+            try {
+                // Ensure catalog is ready
+                if (!catalogData || !catalogData.services) {
+                    setProgress(10, "Fetching services catalog...");
+                    addLog("Fetching fresh services catalog from PakSMMPanels...", "step");
+                    const res = await fetch('../assets/data/paksmmpanels_services.json');
+                    catalogData = await res.json();
+                }
+
+                const servicesList = catalogData.services;
+                addLog(`Ready to process ${servicesList.length} services.`, "info");
+
+                // ==========================================
+                // STEP 1: WIPE EXISTING SERVICES
+                // ==========================================
+                setProgress(15, "Deleting existing services...");
+                addLog("STEP 1: Fetching and deleting all existing services...", "step");
+                const servicesRef = collection(db, 'artifacts', appId, 'public', 'data', 'services');
+                const servicesSnap = await getDocs(servicesRef);
+                
+                let deletedServicesCount = 0;
+                let batch = writeBatch(db);
+                let opCount = 0;
+
+                for (const docSnap of servicesSnap.docs) {
+                    batch.delete(docSnap.ref);
+                    opCount++;
+                    deletedServicesCount++;
+
+                    if (opCount >= 400) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                        addLog(`Deleted ${deletedServicesCount} old services...`);
+                    }
+                }
+                if (opCount > 0) {
+                    await batch.commit();
+                }
+                addLog(`Finished wiping services. Total deleted: ${deletedServicesCount}`, "success");
+
+                // ==========================================
+                // STEP 2: WIPE EXISTING CATEGORIES
+                // ==========================================
+                setProgress(30, "Deleting existing categories...");
+                addLog("STEP 2: Fetching and deleting all existing categories...", "step");
+                const categoriesRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+                const categoriesSnap = await getDocs(categoriesRef);
+
+                let deletedCategoriesCount = 0;
+                batch = writeBatch(db);
+                opCount = 0;
+
+                for (const docSnap of categoriesSnap.docs) {
+                    batch.delete(docSnap.ref);
+                    opCount++;
+                    deletedCategoriesCount++;
+
+                    if (opCount >= 400) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                        addLog(`Deleted ${deletedCategoriesCount} old categories...`);
+                    }
+                }
+                if (opCount > 0) {
+                    await batch.commit();
+                }
+                addLog(`Finished wiping categories. Total deleted: ${deletedCategoriesCount}`, "success");
+
+                // ==========================================
+                // STEP 3: REGISTER/UPDATE API PROVIDER
+                // ==========================================
+                setProgress(45, "Registering API provider...");
+                addLog("STEP 3: Registering PakSMMPanels provider in api_providers...", "step");
+                const providerDocRef = doc(db, 'artifacts', appId, 'api_providers', 'paksmmpanels');
+                await setDoc(providerDocRef, {
+                    name: "PakSMMPanels",
+                    url: "https://paksmmpanals.com/api/v2",
+                    apiKey: "46b597a2aeb6cf28362dadc92c67b8544df49f33",
+                    currency: "USD",
+                    status: "Active",
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                addLog("Provider 'PakSMMPanels' registered successfully.", "success");
+
+                // ==========================================
+                // STEP 4: CREATE UNIQUE CATEGORIES
+                // ==========================================
+                setProgress(55, "Creating categories...");
+                addLog("STEP 4: Identifying unique categories and creating in Firestore...", "step");
+                
+                // Preserve category order as they appear in upstream
+                const categoryNames = [];
+                servicesList.forEach(s => {
+                    const cName = (s.category || 'Other Services').trim();
+                    if (!categoryNames.includes(cName)) {
+                        categoryNames.push(cName);
+                    }
+                });
+
+                addLog(`Found ${categoryNames.length} unique categories. Writing to database...`);
+                const categoryNameToId = {};
+                batch = writeBatch(db);
+                opCount = 0;
+
+                categoryNames.forEach((catName, index) => {
+                    const catDocRef = doc(categoriesRef);
+                    categoryNameToId[catName] = catDocRef.id;
+
+                    batch.set(catDocRef, {
+                        name: catName,
+                        sort: index + 1,
+                        status: "Active",
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+
+                    opCount++;
+                    if (opCount >= 400) {
+                        batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                    }
+                });
+
+                if (opCount > 0) {
+                    await batch.commit();
+                }
+                addLog(`Created ${categoryNames.length} categories successfully!`, "success");
+
+                // ==========================================
+                // STEP 5: IMPORT ALL SERVICES WITH 50% PKR PRICING
+                // ==========================================
+                setProgress(70, "Importing services with 50% PKR rates...");
+                addLog(`STEP 5: Importing ${servicesList.length} services (FX: ${usdPkrRate.toFixed(4)}, Markup: +50%)...`, "step");
+
+                let importedCount = 0;
+                batch = writeBatch(db);
+                opCount = 0;
+                const previewItems = [];
+
+                for (const s of servicesList) {
+                    const catName = (s.category || 'Other Services').trim();
+                    const categoryId = categoryNameToId[catName] || null;
+
+                    const originalRateUSD = parseFloat(s.rate) || 0;
+                    const baseCostPKR = originalRateUSD * usdPkrRate;
+                    const sellingRatePKR = (baseCostPKR * markupMultiplier).toFixed(4);
+
+                    const docId = `imported_paksmmpanels_${s.service}`;
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'services', docId);
+
+                    const servicePayload = {
+                        serviceId: String(s.service),
+                        name: s.name || `Service ${s.service}`,
+                        categoryId: categoryId,
+                        categoryName: catName,
+                        rate: sellingRatePKR,
+                        originalRate: originalRateUSD,
+                        providerRate: parseFloat(baseCostPKR.toFixed(4)),
+                        min: parseInt(s.min) || 1,
+                        max: parseInt(s.max) || 10000000,
+                        description: s.description || s.desc || '',
+                        desc: s.description || s.desc || '',
+                        average_time: s.average_time != null ? s.average_time : null,
+                        type: s.type || 'Default',
+                        dripfeed: !!s.dripfeed,
+                        refill: !!s.refill || s.refill === '1' || s.refill === true,
+                        cancel: !!s.cancel || s.cancel === '1' || s.cancel === true,
+                        providerId: 'paksmmpanels',
+                        providerName: 'PakSMMPanels',
+                        status: 'Active',
+                        metadata_markup: markupMultiplier,
+                        _original_currency: 'USD',
+                        _pkr_exchange_rate: usdPkrRate,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    };
+
+                    batch.set(docRef, servicePayload);
+                    opCount++;
+                    importedCount++;
+
+                    if (previewItems.length < 15) {
+                        previewItems.push({
+                            id: s.service,
+                            name: s.name,
+                            category: catName,
+                            usdCost: originalRateUSD.toFixed(4),
+                            pkrCost: baseCostPKR.toFixed(4),
+                            pkrSelling: sellingRatePKR,
+                            avgTime: s.average_time != null ? `${s.average_time}m` : '-'
+                        });
+                    }
+
+                    if (opCount >= 400) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                        const pct = Math.round(70 + (importedCount / servicesList.length) * 25);
+                        setProgress(pct, `Imported ${importedCount}/${servicesList.length} services...`);
+                        addLog(`Committed batch: ${importedCount} services imported...`);
+                    }
+                }
+
+                if (opCount > 0) {
+                    await batch.commit();
+                }
+
+                setProgress(100, "Migration Completed Successfully!");
+                addLog(`🎉 ALL DONE! Imported ${importedCount} services across ${categoryNames.length} categories!`, "success");
+
+                // ==========================================
+                // STEP 6: RENDER PREVIEW TABLE
+                // ==========================================
+                renderPreviewTable(previewItems);
+
+            } catch(error) {
+                console.error("Migration Failed:", error);
+                addLog(`ERROR DURING MIGRATION: ${error.message}`, "error");
+                setProgress(0, "Migration Failed");
+            } finally {
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> Migration Completed';
+            }
+        }
+
+        function renderPreviewTable(items) {
+            const previewSection = document.getElementById('preview-section');
+            const tbody = document.getElementById('preview-tbody');
+            const countBadge = document.getElementById('sample-count-badge');
+            
+            previewSection.classList.remove('hidden');
+            tbody.innerHTML = '';
+            countBadge.innerText = `Showing ${items.length} sample items`;
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-700/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-400">${item.id}</td>
+                    <td class="p-3 text-white max-w-xs truncate" title="${item.name}">${item.name}</td>
+                    <td class="p-3 text-slate-400 truncate max-w-[150px]">${item.category}</td>
+                    <td class="p-3 text-right text-slate-400">$${item.usdCost}</td>
+                    <td class="p-3 text-right text-slate-300">Rs. ${item.pkrCost}</td>
+                    <td class="p-3 text-right font-bold text-brand-400">Rs. ${item.pkrSelling}</td>
+                    <td class="p-3 text-center text-slate-400">${item.avgTime}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        startBtn.addEventListener('click', runMigration);
+    </script>
+</body>
+</html>

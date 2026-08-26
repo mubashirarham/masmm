@@ -24,95 +24,94 @@ function renderDashboardUI() {
     
     // Inject the HTML for the Dashboard View
     contentArea.innerHTML = `
-        <div class="mb-6 flex justify-between items-center">
+        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">System Overview</h2>
-                <p class="text-sm text-gray-500">Real-time statistics across the MAsmmpanel platform.</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">System Overview</h2>
+                <p class="text-sm text-slate-600 font-medium">Real-time statistics across the MAsmmpanel platform.</p>
             </div>
-            <button onclick="location.reload()" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
-                <i class="fa-solid fa-rotate-right mr-2"></i> Refresh Data
+            <button onclick="location.reload()" class="bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-800 px-4 py-2 rounded-xl shadow-sm text-xs font-extrabold uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right text-brand-600"></i> Refresh Data
             </button>
         </div>
 
         <!-- Top Statistics Panel -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
             <!-- Stat Card 1 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-blue-500">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Total Users</p>
-                <h3 id="stat-total-users" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-users text-blue-500 mr-1.5"></i> Total Users</p>
+                <h3 id="stat-total-users" class="text-2xl font-black text-slate-900"><i class="fa-solid fa-spinner fa-spin text-sm text-slate-300"></i></h3>
             </div>
             
             <!-- Stat Card 2 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-orange-500">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-clock-rotate-left text-orange-500 mr-2"></i>Pending Orders</p>
-                <h3 id="stat-pending-orders" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-clock-rotate-left text-amber-500 mr-1.5"></i> Pending Orders</p>
+                <h3 id="stat-pending-orders" class="text-2xl font-black text-slate-900"><i class="fa-solid fa-spinner fa-spin text-sm text-slate-300"></i></h3>
             </div>
 
             <!-- Stat Card 3 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-purple-500">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-money-bill-transfer text-purple-500 mr-2"></i>Deposits</p>
-                <h3 id="stat-pending-deposits" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-money-bill-transfer text-purple-500 mr-1.5"></i> Deposits</p>
+                <h3 id="stat-pending-deposits" class="text-2xl font-black text-slate-900"><i class="fa-solid fa-spinner fa-spin text-sm text-slate-300"></i></h3>
             </div>
             
             <!-- Stat Card 4 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-[#22c55e]">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-sack-dollar text-green-500 mr-2"></i>Total Revenue</p>
-                <h3 id="stat-total-revenue" class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-sack-dollar text-brand-600 mr-1.5"></i> Total Revenue</p>
+                <h3 id="stat-total-revenue" class="text-2xl font-black text-slate-900"><i class="fa-solid fa-spinner fa-spin text-sm text-slate-300"></i></h3>
             </div>
             
             <!-- Stat Card 5 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-red-500">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-bolt text-red-500 mr-2"></i>API Liability</p>
-                <h3 id="stat-upstream-cost" class="text-lg font-bold text-gray-900 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-gray-300"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-bolt text-rose-500 mr-1.5"></i> API Liability</p>
+                <h3 id="stat-upstream-cost" class="text-lg font-black text-slate-900 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-slate-300"></i></h3>
             </div>
 
             <!-- Stat Card 6 -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center gap-2 border-t-4 border-t-emerald-600">
-                <p class="text-sm text-gray-500 font-medium whitespace-nowrap"><i class="fa-solid fa-chart-line text-emerald-600 mr-2"></i>Net Profit <span class="text-[10px] text-gray-400 font-normal">(Est)</span></p>
-                <h3 id="stat-net-profit" class="text-xl font-bold text-emerald-600 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-emerald-200"></i></h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-300 flex flex-col justify-center gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap"><i class="fa-solid fa-chart-line text-emerald-600 mr-1.5"></i> Net Profit</p>
+                <h3 id="stat-net-profit" class="text-xl font-black text-emerald-600 truncate"><i class="fa-solid fa-spinner fa-spin text-sm text-emerald-200"></i></h3>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Quick Actions -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6">
+                <h3 class="text-lg font-black text-slate-900 mb-4 pb-3 border-b border-slate-200">Quick Actions</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="window.loadSection('services')" class="p-4 rounded-lg bg-gray-50 hover:bg-brand-50 border border-gray-100 hover:border-brand-200 text-left transition-all group">
-                        <i class="fa-solid fa-plus text-brand-500 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="font-semibold text-gray-800">Add Service</h4>
-                        <p class="text-xs text-gray-500 mt-1">Create a new SMM service</p>
+                    <button onclick="window.loadSection('services')" class="p-4 rounded-xl bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-left transition-all group cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-plus text-brand-600 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-slate-900 text-sm">Add Service</h4>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">Create a new SMM service</p>
                     </button>
-                    <button onclick="window.loadSection('deposits')" class="p-4 rounded-lg bg-gray-50 hover:bg-brand-50 border border-gray-100 hover:border-brand-200 text-left transition-all group">
-                        <i class="fa-solid fa-check-double text-blue-500 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="font-semibold text-gray-800">Review Deposits</h4>
-                        <p class="text-xs text-gray-500 mt-1">Approve user funds</p>
+                    <button onclick="window.loadSection('deposits')" class="p-4 rounded-xl bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-left transition-all group cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-check-double text-blue-600 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-slate-900 text-sm">Review Deposits</h4>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">Approve user funds</p>
                     </button>
-                    <button onclick="window.loadSection('orders')" class="p-4 rounded-lg bg-gray-50 hover:bg-brand-50 border border-gray-100 hover:border-brand-200 text-left transition-all group">
-                        <i class="fa-solid fa-list-check text-orange-500 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="font-semibold text-gray-800">Process Orders</h4>
-                        <p class="text-xs text-gray-500 mt-1">Manage pending tasks</p>
+                    <button onclick="window.loadSection('orders')" class="p-4 rounded-xl bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-left transition-all group cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-list-check text-amber-600 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-slate-900 text-sm">Process Orders</h4>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">Manage pending tasks</p>
                     </button>
-                    <button onclick="window.loadSection('users')" class="p-4 rounded-lg bg-gray-50 hover:bg-brand-50 border border-gray-100 hover:border-brand-200 text-left transition-all group">
-                        <i class="fa-solid fa-user-magnifying-glass text-purple-500 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="font-semibold text-gray-800">Manage Users</h4>
-                        <p class="text-xs text-gray-500 mt-1">View user accounts</p>
+                    <button onclick="window.loadSection('users')" class="p-4 rounded-xl bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-left transition-all group cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-user-magnifying-glass text-purple-600 mb-2 text-xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-slate-900 text-sm">Manage Users</h4>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">View user accounts</p>
                     </button>
                 </div>
             </div>
 
             <!-- System Alerts -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">System Notifications</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-300 p-6">
+                <h3 class="text-lg font-black text-slate-900 mb-4 pb-3 border-b border-slate-200">System Notifications</h3>
                 <div class="space-y-3" id="system-notifications">
-                    <div class="p-4 rounded-lg bg-blue-50 border border-blue-100 flex gap-3 text-sm">
-                        <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                    <div class="p-4 rounded-xl bg-brand-50 border border-brand-200 flex gap-3 text-sm">
+                        <i class="fa-solid fa-circle-info text-brand-600 mt-0.5"></i>
                         <div>
-                            <p class="font-semibold text-blue-900">Dashboard Initialized</p>
-                            <p class="text-blue-700">The MAsmmpanel admin command center is fully operational and tracking metrics securely.</p>
+                            <p class="font-bold text-brand-900">Dashboard Initialized</p>
+                            <p class="text-xs text-brand-700 font-medium mt-0.5">The MAsmmpanel admin command center is fully operational and tracking metrics securely.</p>
                         </div>
                     </div>
-                    <!-- Additional alerts will be populated dynamically -->
                 </div>
             </div>
         </div>

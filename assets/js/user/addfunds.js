@@ -41,36 +41,36 @@ function renderAddFundsUI() {
     const contentArea = document.getElementById('user-content');
     
     contentArea.innerHTML = `
-        <div class="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
+        <div class="max-w-5xl mx-auto space-y-8">
             
             <!-- Page Header -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-[24px] border border-slate-200/80 shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-brand-500 to-emerald-600"></div>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-300 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-brand-500"></div>
                 <div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Manual Payment Deposit</h2>
-                    <p class="text-slate-500 text-sm mt-1 font-medium">Transfer funds directly via EasyPaisa, JazzCash, or Bank Transfer and submit your verification receipt.</p>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Manual Payment Deposit</h2>
+                    <p class="text-slate-600 text-sm mt-1 font-medium">Transfer funds directly via EasyPaisa, JazzCash, or Bank Transfer and submit your verification receipt.</p>
                 </div>
-                <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold border border-emerald-100 shrink-0">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold border border-emerald-300 shrink-0">
                     <i class="fa-solid fa-shield-check text-base"></i> 100% Safe & Verified
                 </div>
             </div>
 
             <!-- Main Form Card -->
-            <div class="bg-white rounded-[24px] border border-slate-200/80 shadow-sm overflow-hidden p-6 sm:p-10 relative">
+            <div class="bg-white rounded-2xl border border-slate-300 shadow-sm overflow-hidden p-6 sm:p-8 relative">
                 <form id="add-funds-form" class="space-y-8">
                     
                     <!-- Step 1: Select Payment Gateway -->
                     <div>
-                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 mb-3 flex items-center gap-2">
+                        <label class="block text-xs font-black tracking-wider uppercase text-slate-800 mb-3 flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">1</span>
                             Select Payment Method <span class="text-red-500">*</span>
                         </label>
 
                         <!-- Gateways Grid / Selector -->
                         <div id="gateways-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
-                            <div class="col-span-full py-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <div class="col-span-full py-8 text-center text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
                                 <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-brand-500"></i>
-                                <p class="text-sm font-semibold">Loading active payment gateways...</p>
+                                <p class="text-sm font-bold">Loading active payment gateways...</p>
                             </div>
                         </div>
                     </div>
@@ -81,90 +81,90 @@ function renderAddFundsUI() {
                     </div>
 
                     <!-- Step 3: Amount & Quick Chips -->
-                    <div class="space-y-4 pt-4 border-t border-slate-100">
-                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 flex items-center gap-2">
+                    <div class="space-y-4 pt-4 border-t border-slate-200">
+                        <label class="block text-xs font-black tracking-wider uppercase text-slate-800 flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">2</span>
                             Enter Deposit Amount (PKR) <span class="text-red-500">*</span>
                         </label>
 
                         <div class="relative max-w-md">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-extrabold text-base">Rs</span>
-                            <input type="number" id="fund-amount" min="10" step="1" required placeholder="1000" class="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xl font-black">
+                            <input type="number" id="fund-amount" min="10" step="1" required placeholder="1000" class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xl font-black shadow-sm">
                         </div>
 
                         <!-- Quick Presets -->
                         <div class="flex flex-wrap gap-2 pt-1">
-                            <button type="button" onclick="window.setPresetAmount(500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 500</button>
-                            <button type="button" onclick="window.setPresetAmount(1000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 1,000</button>
-                            <button type="button" onclick="window.setPresetAmount(2500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 2,500</button>
-                            <button type="button" onclick="window.setPresetAmount(5000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 5,000</button>
-                            <button type="button" onclick="window.setPresetAmount(10000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-700 text-xs font-bold transition-all border border-slate-200 hover:border-brand-500">+ Rs 10,000</button>
+                            <button type="button" onclick="window.setPresetAmount(500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-800 text-xs font-bold transition-all border border-slate-300 hover:border-brand-600 shadow-sm cursor-pointer">+ Rs 500</button>
+                            <button type="button" onclick="window.setPresetAmount(1000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-800 text-xs font-bold transition-all border border-slate-300 hover:border-brand-600 shadow-sm cursor-pointer">+ Rs 1,000</button>
+                            <button type="button" onclick="window.setPresetAmount(2500)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-800 text-xs font-bold transition-all border border-slate-300 hover:border-brand-600 shadow-sm cursor-pointer">+ Rs 2,500</button>
+                            <button type="button" onclick="window.setPresetAmount(5000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-800 text-xs font-bold transition-all border border-slate-300 hover:border-brand-600 shadow-sm cursor-pointer">+ Rs 5,000</button>
+                            <button type="button" onclick="window.setPresetAmount(10000)" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-800 text-xs font-bold transition-all border border-slate-300 hover:border-brand-600 shadow-sm cursor-pointer">+ Rs 10,000</button>
                         </div>
                     </div>
 
                     <!-- Step 4: Verification Details (TID & Screenshot) -->
-                    <div id="manual-proof-section" class="space-y-6 pt-4 border-t border-slate-100">
-                        <label class="block text-xs font-extrabold tracking-wider uppercase text-slate-700 flex items-center gap-2">
+                    <div id="manual-proof-section" class="space-y-6 pt-4 border-t border-slate-200">
+                        <label class="block text-xs font-black tracking-wider uppercase text-slate-800 flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-black">3</span>
                             Payment Receipt & Proof <span class="text-red-500">*</span>
                         </label>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-2">Transaction ID (TID / Ref #) <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-slate-800 mb-2">Transaction ID (TID / Ref #) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <i class="fa-solid fa-receipt absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                    <input type="text" id="fund-tid" required placeholder="e.g. 034591823901" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-mono font-bold">
+                                    <input type="text" id="fund-tid" required placeholder="e.g. 034591823901" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-mono font-bold shadow-sm">
                                 </div>
                                 <p class="text-[11px] text-slate-500 mt-2 font-medium">Find the Transaction ID in your banking app or confirmation SMS.</p>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-2">Upload Payment Screenshot <span class="text-red-500">*</span></label>
-                                <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-5 hover:border-brand-500 hover:bg-brand-50/40 transition-all text-center group cursor-pointer bg-slate-50/60 shadow-sm" id="screenshot-upload-area">
+                                <label class="block text-xs font-bold text-slate-800 mb-2">Upload Payment Screenshot <span class="text-red-500">*</span></label>
+                                <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-5 hover:border-brand-500 hover:bg-brand-50/40 transition-all text-center group cursor-pointer bg-slate-50 shadow-sm" id="screenshot-upload-area">
                                     <input type="file" id="fund-screenshot" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                                     
                                     <div id="screenshot-preview-container" class="hidden relative z-20">
-                                        <img id="screenshot-preview" class="max-h-28 mx-auto rounded-lg shadow border border-slate-200">
+                                        <img id="screenshot-preview" class="max-h-28 mx-auto rounded-lg shadow border border-slate-300">
                                         <p class="text-xs text-brand-600 mt-2 font-bold flex items-center justify-center gap-1">
                                             <i class="fa-solid fa-arrows-rotate"></i> Click or drag to replace image
                                         </p>
                                     </div>
                                     
                                     <div id="screenshot-placeholder">
-                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-sm border border-slate-200 group-hover:border-brand-300 group-hover:text-brand-500 text-slate-400 transition-colors">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-sm border border-slate-300 group-hover:border-brand-300 group-hover:text-brand-500 text-slate-500 transition-colors">
                                             <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                                         </div>
                                         <p class="text-xs font-extrabold text-slate-800">Upload Receipt Screenshot</p>
-                                        <p class="text-[11px] text-slate-400 mt-0.5">JPEG, PNG or WEBP (Max 5MB)</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">JPEG, PNG or WEBP (Max 5MB)</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="fund-notification" class="hidden text-sm px-4 py-3.5 rounded-xl text-center font-bold transition-all"></div>
+                    <div id="fund-notification" class="hidden text-sm px-4 py-3.5 rounded-xl text-center font-bold transition-all border"></div>
 
                     <div>
-                        <button type="submit" id="submit-fund-btn" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-extrabold text-base transition-all flex justify-center items-center gap-2 shadow-lg shadow-slate-900/20 active:scale-[0.99]">
-                            <i class="fa-solid fa-paper-plane text-brand-400"></i> Submit Deposit Proof
+                        <button type="submit" id="submit-fund-btn" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all flex justify-center items-center gap-2 shadow-md border border-brand-600 cursor-pointer">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Deposit Proof
                         </button>
                     </div>
                 </form>
             </div>
 
             <!-- Deposit History Table Card -->
-            <div class="bg-white rounded-[24px] border border-slate-200/80 shadow-sm overflow-hidden p-6 sm:p-8 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <div class="bg-white rounded-2xl border border-slate-300 shadow-sm overflow-hidden p-6 sm:p-8 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Deposit Verification History
                     </h3>
-                    <span class="text-xs font-semibold text-slate-500">Live Status Updates</span>
+                    <span class="text-xs font-bold text-slate-500">Live Updates</span>
                 </div>
 
-                <div class="overflow-x-auto rounded-2xl border border-slate-100">
-                    <table class="w-full text-left text-xs text-slate-600">
-                        <thead class="bg-slate-50 text-slate-700 uppercase font-extrabold text-[11px] tracking-wider border-b border-slate-100">
+                <div class="overflow-x-auto rounded-xl border border-slate-300">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-100 text-slate-800 uppercase font-bold text-[11px] tracking-wider border-b-2 border-slate-300 sticky top-0">
                             <tr>
                                 <th class="py-3.5 px-4">Date</th>
                                 <th class="py-3.5 px-4">Method</th>
@@ -174,9 +174,9 @@ function renderAddFundsUI() {
                                 <th class="py-3.5 px-4">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="deposit-history-tbody" class="divide-y divide-slate-100 font-medium">
+                        <tbody id="deposit-history-tbody" class="divide-y divide-slate-200 font-medium bg-white">
                             <tr>
-                                <td colspan="6" class="py-8 text-center text-slate-400">
+                                <td colspan="6" class="py-8 text-center text-slate-500 font-bold">
                                     <i class="fa-solid fa-spinner fa-spin mr-1"></i> Loading transaction history...
                                 </td>
                             </tr>
@@ -187,15 +187,15 @@ function renderAddFundsUI() {
         </div>
 
         <!-- Image Modal Preview -->
-        <div id="image-modal" class="fixed inset-0 z-[300] bg-slate-900/80 backdrop-blur-md hidden items-center justify-center p-4">
-            <div class="relative bg-white rounded-3xl p-4 max-w-2xl w-full shadow-2xl space-y-4">
-                <div class="flex justify-between items-center px-2">
-                    <h4 class="font-extrabold text-slate-900 text-sm">Receipt Screenshot Preview</h4>
-                    <button type="button" onclick="document.getElementById('image-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
-                        <i class="fa-solid fa-xmark"></i>
+        <div id="image-modal" class="fixed inset-0 z-[300] bg-slate-900/70 backdrop-blur-md hidden items-center justify-center p-4">
+            <div class="relative bg-white rounded-2xl p-6 max-w-2xl w-full shadow-2xl space-y-4 border border-slate-300">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                    <h4 class="font-black text-slate-900 text-sm">Receipt Screenshot Preview</h4>
+                    <button type="button" onclick="document.getElementById('image-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer">
+                        <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                 </div>
-                <img id="modal-image-target" class="w-full max-h-[70vh] object-contain rounded-2xl border border-slate-100">
+                <img id="modal-image-target" class="w-full max-h-[70vh] object-contain rounded-xl border border-slate-300">
             </div>
         </div>
     `;
@@ -277,11 +277,11 @@ function renderGatewaysGrid() {
     
     activeGateways.forEach((gw, idx) => {
         const card = document.createElement('div');
-        card.className = `gateway-card p-4 rounded-2xl border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 group ${idx === 0 ? 'border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/20' : 'border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-white'}`;
+        card.className = `gateway-card p-4 rounded-2xl border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 group ${idx === 0 ? 'border-brand-500 bg-brand-50/50 ring-2 ring-brand-500/20 shadow-sm' : 'border-slate-300 bg-white hover:border-slate-400'}`;
         card.dataset.id = gw.id;
 
         card.innerHTML = `
-            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-sm border border-slate-100 shrink-0 group-hover:scale-105 transition-transform">
+            <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center p-1.5 shadow-sm border border-slate-200 shrink-0 group-hover:scale-105 transition-transform">
                 ${gw.logoUrl ? `<img src="${gw.logoUrl}" class="w-full h-full object-contain">` : `<i class="fa-solid fa-building-columns text-slate-400 text-xl"></i>`}
             </div>
             <div>
@@ -306,9 +306,9 @@ function selectGateway(gw) {
     // Highlight Card
     document.querySelectorAll('.gateway-card').forEach(card => {
         if (card.dataset.id === gw.id) {
-            card.className = "gateway-card p-4 rounded-2xl border border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/20 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 shadow-sm";
+            card.className = "gateway-card p-4 rounded-2xl border border-brand-500 bg-brand-50/50 ring-2 ring-brand-500/20 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 shadow-sm";
         } else {
-            card.className = "gateway-card p-4 rounded-2xl border border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-white transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2";
+            card.className = "gateway-card p-4 rounded-2xl border border-slate-300 bg-white hover:border-slate-400 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 shadow-sm";
         }
     });
 

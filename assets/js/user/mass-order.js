@@ -52,39 +52,37 @@ function renderMassOrderUI() {
     
     contentArea.innerHTML = `
         <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">Mass Order</h2>
-            <p class="text-sm text-gray-500">Place multiple orders at once using a specific format.</p>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Mass Order</h2>
+            <p class="text-sm text-slate-600 font-medium">Place multiple orders at once using the bulk format.</p>
         </div>
 
         <div class="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-brand-500"></div>
-
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-300 p-6 sm:p-8 relative">
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Order Format: <span class="text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded">service_id | link | quantity</span></label>
-                    <textarea id="mass-order-input" rows="12" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition-colors font-mono text-sm shadow-inner" placeholder="102 | https://instagram.com/p/123 | 1000&#10;105 | https://youtube.com/watch?v=123 | 500"></textarea>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Order Format: <span class="text-brand-700 font-mono bg-brand-50 border border-brand-200 px-2 py-0.5 rounded text-xs">service_id | link | quantity</span></label>
+                    <textarea id="mass-order-input" rows="12" class="w-full p-4 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-colors font-mono text-sm shadow-sm text-slate-900" placeholder="102 | https://instagram.com/p/123 | 1000&#10;105 | https://youtube.com/watch?v=123 | 500"></textarea>
                 </div>
 
-                <div id="mass-notification" class="hidden mb-4 p-4 rounded-xl text-sm font-semibold shadow-sm border"></div>
+                <div id="mass-notification" class="hidden mb-4 p-4 rounded-xl text-sm font-bold shadow-sm border"></div>
 
-                <button id="mass-order-btn" class="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-xl font-bold transition-all shadow-lg flex justify-center items-center gap-2">
+                <button id="mass-order-btn" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-extrabold uppercase tracking-wider text-xs border border-brand-600 transition-all shadow-md flex justify-center items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-layer-group"></i> Submit Mass Order
                 </button>
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 shadow-sm h-fit">
-                <h3 class="font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2"><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Instructions</h3>
-                <ul class="text-sm text-gray-600 space-y-3 list-disc pl-4 mb-6">
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-300 shadow-sm h-fit">
+                <h3 class="font-black text-slate-900 text-sm mb-4 border-b border-slate-200 pb-2 flex items-center gap-2"><i class="fa-solid fa-circle-info text-brand-500"></i> Instructions</h3>
+                <ul class="text-xs text-slate-700 space-y-3 list-disc pl-4 mb-6 leading-relaxed font-medium">
                     <li>Enter one order per line.</li>
-                    <li>Use the pipe character <code class="font-bold bg-gray-200 px-1 rounded">|</code> as a separator.</li>
+                    <li>Use the pipe character <code class="font-bold bg-slate-200 px-1 py-0.5 rounded border border-slate-300">|</code> as a separator.</li>
                     <li>Ensure the <code class="font-bold">service_id</code> exists in the Services list.</li>
-                    <li>Make sure the quantity respects the minimum and maximum limits of the service.</li>
-                    <li>If any single line is invalid, the entire batch will be rejected to prevent partial drops.</li>
+                    <li>Make sure the quantity respects the minimum and maximum limits.</li>
+                    <li>If any single line is invalid, the entire batch will be rejected safely.</li>
                 </ul>
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <h4 class="font-bold text-blue-800 text-xs uppercase tracking-wider mb-2">Example</h4>
-                    <p class="font-mono text-xs text-blue-700 whitespace-pre-wrap leading-relaxed">201 | https://inst.com/p/123 | 2000
+                <div class="bg-brand-50 p-4 rounded-xl border border-brand-200">
+                    <h4 class="font-bold text-brand-800 text-xs uppercase tracking-wider mb-2">Example</h4>
+                    <p class="font-mono text-xs text-brand-700 whitespace-pre-wrap leading-relaxed">201 | https://inst.com/p/123 | 2000
 344 | https://youtu.be/123 | 500</p>
                 </div>
             </div>

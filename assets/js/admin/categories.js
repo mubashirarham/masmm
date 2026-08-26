@@ -35,93 +35,92 @@ function renderCategoriesUI() {
     contentArea.innerHTML = `
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">Category Management</h2>
-                <p class="text-sm text-gray-500">Organize and manage service categories for the platform.</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Category Management</h2>
+                <p class="text-sm text-slate-600 font-medium">Organize and manage service categories for the platform.</p>
             </div>
             <div class="w-full sm:w-auto flex gap-2">
                 <div class="relative flex-1 sm:w-64">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="admin-search-categories" placeholder="Search categories..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="admin-search-categories" placeholder="Search categories..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-xs sm:text-sm font-sans bg-white shadow-sm">
                 </div>
-                <button id="open-add-category-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 whitespace-nowrap">
+                <button id="open-add-category-modal" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-xl font-extrabold uppercase tracking-wider text-xs shadow-md border border-brand-600 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer">
                     <i class="fa-solid fa-plus"></i> Add New
                 </button>
             </div>
         </div>
 
         <!-- Bulk Action Bar -->
-        <div id="categories-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-            <div class="flex items-center gap-3 text-sm font-bold text-brand-900">
-                <i class="fa-solid fa-check-double text-brand-600 text-base"></i>
+        <div id="categories-bulk-bar" class="hidden mb-4 p-3 bg-brand-50 border border-brand-300 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3 text-xs font-black text-brand-900 uppercase tracking-wider">
+                <i class="fa-solid fa-check-double text-brand-600 text-sm"></i>
                 <span id="categories-selected-count">0 categories selected</span>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
-                <button id="bulk-categories-delete-btn" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
+                <button id="bulk-categories-delete-btn" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-trash"></i> Delete Selected
                 </button>
-                <button id="bulk-categories-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-eye-slash"></i> Toggle Active/Disabled
+                <button id="bulk-categories-status-btn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-extrabold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-eye-slash"></i> Toggle Status
                 </button>
             </div>
         </div>
 
         <!-- Categories Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-300 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                <table class="w-full text-left text-sm text-slate-700 whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-800 border-b-2 border-slate-300 sticky top-0">
                         <tr>
                             <th class="px-4 py-4 w-12 text-center">
-                                <input type="checkbox" id="categories-select-all" class="w-4 h-4 text-brand-500 rounded border-gray-300 cursor-pointer">
+                                <input type="checkbox" id="categories-select-all" class="w-4 h-4 text-brand-500 rounded border-slate-300 cursor-pointer">
                             </th>
-                            <th class="px-6 py-4 font-semibold w-16 text-center">Sort</th>
-                            <th class="px-6 py-4 font-semibold">Category Name</th>
-                            <th class="px-6 py-4 font-semibold text-center w-32">Status</th>
-                            <th class="px-6 py-4 font-semibold text-right w-32">Actions</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider w-16 text-center">Sort</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider">Category Name</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-center w-32">Status</th>
+                            <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-right w-32">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-categories-table-body">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
                                 <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-brand-500"></i>
-                                <p>Loading categories...</p>
+                                <p class="font-bold">Loading categories...</p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div id="admin-categories-pagination-container"></div>
+            <div id="admin-categories-pagination-container" class="border-t border-slate-200 bg-slate-50 p-4"></div>
         </div>
 
         <!-- Add/Edit Category Modal -->
-        <div id="manage-category-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 mx-4 transform transition-transform scale-95" id="manage-category-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                    <h3 class="text-lg font-bold text-gray-800" id="modal-category-title">Add New Category</h3>
-                    <button id="close-category-modal-btn" class="text-gray-400 hover:text-red-500 transition-colors">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+        <div id="manage-category-modal" class="fixed inset-0 bg-slate-900/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm transition-opacity p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-300 transform transition-transform scale-95" id="manage-category-content">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                    <h3 class="text-lg font-black text-slate-900" id="modal-category-title">Add New Category</h3>
+                    <button id="close-category-modal-btn" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                 </div>
                 
                 <form id="manage-category-form" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Category Name</label>
-                        <input type="text" id="manage-category-name" required placeholder="e.g., TikTok Views - Cheapest" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Category Name</label>
+                        <input type="text" id="manage-category-name" required placeholder="e.g., TikTok Views - Cheapest" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-sans bg-white shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Sort Order (Number)</label>
-                        <input type="number" id="manage-category-sort" value="1" min="1" required class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                        <p class="text-xs text-gray-500 mt-1">Lower numbers appear first in the dropdown.</p>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Sort Order (Number)</label>
+                        <input type="number" id="manage-category-sort" value="1" min="1" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-sans bg-white shadow-sm">
+                        <p class="text-[11px] text-slate-500 mt-1 font-medium">Lower numbers appear first in the dropdown.</p>
                     </div>
-                    <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                        <button type="button" id="cancel-category-btn" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Cancel</button>
-                        <button type="submit" id="submit-category-btn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2">
+                    <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+                        <button type="button" id="cancel-category-btn" class="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-xl font-bold transition-colors cursor-pointer text-xs uppercase tracking-wider">Cancel</button>
+                        <button type="submit" id="submit-category-btn" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-extrabold uppercase tracking-wider text-xs shadow-md border border-brand-600 transition-colors flex items-center gap-2 cursor-pointer">
                             <span>Save Category</span>
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
     `;
 
     // Attach Search Listener

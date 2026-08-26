@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseller API Documentation | MAsmmpanel | Automated SMM Panel API v2</title>
+    <meta name="title" content="Reseller API Documentation | MAsmmpanel | Automated SMM Panel API v2">
+    <meta name="description" content="Official MAsmmpanel API v2 documentation. Easily connect your website, RentalPanel, or SmartPanel to automate orders, balance checks, service lists, and refills.">
+    <meta name="keywords" content="SMM API Pakistan, SMM Panel API v2, Automated SMM API, buy smm api, reseller smm api, perfectpanel api, smartpanel api">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://digitalmarketplace.store/api.html">
+
+    <!-- Schema.org TechArticle / API Reference Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "MAsmmpanel SMM API v2 Developer Reference",
+      "description": "Standard REST API v2 specification for automated order placement, balance synchronization, and service catalog querying.",
+      "author": {
+        "@type": "Organization",
+        "name": "MAsmmpanel",
+        "url": "https://digitalmarketplace.store/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "MAsmmpanel",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://digitalmarketplace.store/assets/images/logo.png"
+        }
+      },
+      "mainEntityOfPage": "https://digitalmarketplace.store/api.html"
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Master UI Stylesheet -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-300 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <div class="site-logo-container relative w-10 h-10 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-sm border border-brand-600">M</div>
+                        <span class="font-extrabold text-2xl text-slate-900 tracking-wider">MAsmmpanel</span>
+                    </a>
+                </div>
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="index.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">Home</a>
+                    <a href="services.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">Services</a>
+                    <a href="api.html" class="text-brand-600 font-extrabold text-sm transition-colors">API Docs</a>
+                    <a href="about.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">About</a>
+                    <a href="policies.html" class="text-slate-600 hover:text-slate-900 font-semibold transition-colors text-sm">Policies</a>
+                    <a href="index.html#hero-login" class="px-5 py-2.5 rounded-xl font-bold bg-brand-500 hover:bg-brand-600 text-white border border-brand-600 transition-all shadow-sm text-xs uppercase tracking-wider">Sign In</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-12 pb-20 bg-slate-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Title -->
+            <div class="mb-10 text-center sm:text-left">
+                <span class="inline-block py-1 px-3.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 font-extrabold tracking-wider uppercase text-xs mb-3 shadow-sm">Developer Reference</span>
+                <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-3">Reseller API Documentation (v2)</h1>
+                <p class="text-base text-slate-600 max-w-2xl font-normal leading-relaxed">
+                    Integrate all 480+ services into your SMM panel, application, or agency software. Standard HTTP POST JSON format.
+                </p>
+            </div>
+
+            <!-- Endpoint Overview Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-sm mb-8">
+                <h2 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-server text-brand-500"></i> API Endpoint Details
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block mb-1">HTTP METHOD</span>
+                        <span class="text-emerald-700 font-extrabold text-sm">POST</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block mb-1">API URL</span>
+                        <span class="text-slate-900 font-bold text-xs select-all">https://digitalmarketplace.store/api/v2</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block mb-1">RESPONSE FORMAT</span>
+                        <span class="text-purple-700 font-extrabold text-sm">JSON</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Actions Accordion/List -->
+            <div class="space-y-6">
+                <!-- Action 1: Add Order -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-mono font-bold">action: add</span>
+                            Place New Order
+                        </h3>
+                    </div>
+                    
+                    <div class="mb-6 overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-700">
+                            <thead class="bg-slate-100 text-slate-900 font-bold">
+                                <tr>
+                                    <th class="p-3">Parameter</th>
+                                    <th class="p-3">Type</th>
+                                    <th class="p-3">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 font-mono">
+                                <tr><td class="p-3 font-bold text-slate-900">key</td><td class="p-3 text-slate-500">string</td><td class="p-3 font-sans">Your secret API key obtained from your account settings</td></tr>
+                                <tr><td class="p-3 font-bold text-slate-900">action</td><td class="p-3 text-slate-500">string</td><td class="p-3 font-sans">Must be set to <code class="bg-slate-100 px-1 py-0.5 rounded">add</code></td></tr>
+                                <tr><td class="p-3 font-bold text-slate-900">service</td><td class="p-3 text-slate-500">integer</td><td class="p-3 font-sans">The numerical ID of the service from the catalog</td></tr>
+                                <tr><td class="p-3 font-bold text-slate-900">link</td><td class="p-3 text-slate-500">string</td><td class="p-3 font-sans">Target post or public profile URL</td></tr>
+                                <tr><td class="p-3 font-bold text-slate-900">quantity</td><td class="p-3 text-slate-500">integer</td><td class="p-3 font-sans">Quantity to deliver (must be within Min and Max)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto">
+<span class="text-slate-500">// Response Success Example:</span>
+{
+  <span class="text-sky-300">"status"</span>: <span class="text-amber-300">"success"</span>,
+  <span class="text-sky-300">"order"</span>: <span class="text-purple-300">928410</span>
+}
+                    </div>
+                </div>
+
+                <!-- Action 2: Check Order Status -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs font-mono font-bold">action: status</span>
+                            Check Order Status
+                        </h3>
+                    </div>
+                    
+                    <div class="bg-slate-950 p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto">
+<span class="text-slate-500">// Response Example:</span>
+{
+  <span class="text-sky-300">"charge"</span>: <span class="text-purple-300">12.50</span>,
+  <span class="text-sky-300">"start_count"</span>: <span class="text-purple-300">1420</span>,
+  <span class="text-sky-300">"status"</span>: <span class="text-amber-300">"Completed"</span>,
+  <span class="text-sky-300">"remains"</span>: <span class="text-purple-300">0</span>,
+  <span class="text-sky-300">"currency"</span>: <span class="text-amber-300">"PKR"</span>
+}
+                    </div>
+                </div>
+
+                <!-- Action 3: Services List -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span class="px-2.5 py-1 bg-purple-100 text-purple-800 rounded-lg text-xs font-mono font-bold">action: services</span>
+                            Fetch Full Services Catalog
+                        </h3>
+                    </div>
+                    
+                    <div class="bg-slate-950 p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto">
+<span class="text-slate-500">// Response Example:</span>
+[
+  {
+    <span class="text-sky-300">"service"</span>: <span class="text-purple-300">1000</span>,
+    <span class="text-sky-300">"name"</span>: <span class="text-amber-300">"TikTok Views [ 100% Non-Drop ] | Instant | Speed 1M/Day"</span>,
+    <span class="text-sky-300">"type"</span>: <span class="text-amber-300">"Default"</span>,
+    <span class="text-sky-300">"category"</span>: <span class="text-amber-300">"TikTok » Views - Cheapest"</span>,
+    <span class="text-sky-300">"rate"</span>: <span class="text-purple-300">0.05</span>,
+    <span class="text-sky-300">"min"</span>: <span class="text-purple-300">100</span>,
+    <span class="text-sky-300">"max"</span>: <span class="text-purple-300">10000000</span>,
+    <span class="text-sky-300">"refill"</span>: <span class="text-purple-300">true</span>,
+    <span class="text-sky-300">"cancel"</span>: <span class="text-purple-300">false</span>
+  }
+]
+                    </div>
+                </div>
+
+                <!-- Action 4: User Balance -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-mono font-bold">action: balance</span>
+                            Get User Balance
+                        </h3>
+                    </div>
+                    
+                    <div class="bg-slate-950 p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto">
+<span class="text-slate-500">// Response Example:</span>
+{
+  <span class="text-sky-300">"balance"</span>: <span class="text-purple-300">2540.85</span>,
+  <span class="text-sky-300">"currency"</span>: <span class="text-amber-300">"PKR"</span>
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs text-center">
+        <p>&copy; 2026 MAsmmpanel. All rights reserved. Developer API v2.</p>
+    </footer>
+</body>
+</html>

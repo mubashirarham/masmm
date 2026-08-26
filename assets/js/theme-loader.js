@@ -52,15 +52,15 @@ export function initDynamicTheme(app) {
             });
         }
 
-        if (data.theme && data.theme.logoUrl && data.theme.logoUrl.trim() !== '') {
-            document.querySelectorAll('.site-logo-container').forEach(el => {
-                if (el.tagName === 'IMG') {
-                    el.src = data.theme.logoUrl;
-                } else {
-                    el.innerHTML = `<img src="${data.theme.logoUrl}" class="h-9 object-contain drop-shadow-sm max-h-[36px]" alt="Logo">`;
-                }
-            });
-        }
+        const activeLogoUrl = (data.theme && data.theme.logoUrl && data.theme.logoUrl.trim() !== '') ? data.theme.logoUrl : '../assets/images/brand_logo_long.png';
+        
+        document.querySelectorAll('.site-logo-container').forEach(el => {
+            if (el.tagName === 'IMG') {
+                el.src = activeLogoUrl;
+            } else {
+                el.innerHTML = `<img src="${activeLogoUrl}" class="h-9 object-contain drop-shadow-sm max-h-[36px]" alt="Logo">`;
+            }
+        });
 
         // 3. REALTIME DYNAMIC SOCIAL PLATFORMS & STYLE PRESET
         if (data.socialIconsConfig) {
