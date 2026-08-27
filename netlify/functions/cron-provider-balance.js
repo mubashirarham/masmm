@@ -26,66 +26,71 @@ const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.c
 const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
 const LOW_BALANCE_THRESHOLD_USD = 15.0; // Alert if balance < $15
 
-function getStealthHeaders(targetUrl) {
-    try {
-        const origin = new URL(targetUrl).origin;
-        return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-            'Accept': 'application/json, text/javascript, */*; q=0.01',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Origin': origin,
-            'Referer': origin + '/'
-        };
-    } catch (e) {
-        return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-            'Accept': 'application/json, text/javascript, */*; q=0.01'
-        };
-    }
-}
-
+/**
+ * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
+ * Tries standard SMM API headers with automatic fallback.
+ */
 async function safeFetchJson(url, params) {
-    const headers = getStealthHeaders(url);
+    const headerVariants = [
+        {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'SmartPanel/2.0 (compatible; SMM-API/1.0)',
+            'Accept': 'application/json, text/plain, */*'
+        },
+        {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'curl/7.88.1',
+            'Accept': '*/*'
+        },
+        {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    ];
+
     const body = new URLSearchParams(params);
 
-    try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-            body: body
-        });
-
-        const rawText = await res.text();
-        let data = null;
-
+    for (let i = 0; i < headerVariants.length; i++) {
+        const headers = headerVariants[i];
         try {
-            data = JSON.parse(rawText);
-        } catch (jsonErr) {
-            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
-            return {
-                ok: false,
-                isHtml: true,
-                httpStatus: res.status,
-                raw: rawText,
-                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
-            };
-        }
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: headers,
+                body: body
+            });
 
-        return {
-            ok: res.ok,
-            isHtml: false,
-            httpStatus: res.status,
-            data: data
-        };
-    } catch (networkErr) {
-        return {
-            ok: false,
-            isHtml: false,
-            httpStatus: 0,
-            error: `Network error: ${networkErr.message}`
-        };
+            const rawText = await res.text();
+            let data = null;
+
+            try {
+                data = JSON.parse(rawText);
+                return {
+                    ok: res.ok,
+                    isHtml: false,
+                    httpStatus: res.status,
+                    data: data
+                };
+            } catch (jsonErr) {
+                if (i === headerVariants.length - 1) {
+                    const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+                    return {
+                        ok: false,
+                        isHtml: true,
+                        httpStatus: res.status,
+                        raw: rawText,
+                        error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+                    };
+                }
+            }
+        } catch (networkErr) {
+            if (i === headerVariants.length - 1) {
+                return {
+                    ok: false,
+                    isHtml: false,
+                    httpStatus: 0,
+                    error: `Network error: ${networkErr.message}`
+                };
+            }
+        }
     }
 }
 
