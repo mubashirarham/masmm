@@ -22,9 +22,17 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
-const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.com/api/v2';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanals.com/api/v2';
 const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
 const LOW_BALANCE_THRESHOLD_USD = 15.0; // Alert if balance < $15
+
+function normalizeProviderUrl(url) {
+    if (!url) return DEFAULT_PROVIDER_URL;
+    if (url.includes('paksmmpanels.com')) {
+        return url.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    }
+    return url;
+}
 
 /**
  * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
@@ -119,7 +127,7 @@ exports.handler = async (event, context) => {
             console.warn("[Cron Provider Balance] Could not load providers from DB:", e.message);
         }
 
-        const result = await safeFetchJson(apiUrl, {
+        const result = await safeFetchJson(normalizeProviderUrl(apiUrl), {
             key: apiKey,
             action: 'balance'
         });

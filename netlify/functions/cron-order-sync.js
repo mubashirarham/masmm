@@ -22,8 +22,17 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
-const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.com/api/v2';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanals.com/api/v2';
 const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+
+function normalizeProviderUrl(url) {
+    if (!url) return DEFAULT_PROVIDER_URL;
+    // Auto-fix typo if entered as paksmmpanels instead of paksmmpanals
+    if (url.includes('paksmmpanels.com')) {
+        return url.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    }
+    return url;
+}
 
 /**
  * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
@@ -123,12 +132,12 @@ async function getProvidersMap() {
 function resolveProviderForOrder(order, providersMap) {
     if (order.providerId && providersMap.has(order.providerId)) {
         const p = providersMap.get(order.providerId);
-        return { url: p.url, apiKey: p.apiKey, providerId: order.providerId };
+        return { url: normalizeProviderUrl(p.url), apiKey: p.apiKey, providerId: order.providerId };
     }
     // Fallback to first active provider in map
     for (const [pId, p] of providersMap.entries()) {
         if (p.status === 'Active') {
-            return { url: p.url, apiKey: p.apiKey, providerId: pId };
+            return { url: normalizeProviderUrl(p.url), apiKey: p.apiKey, providerId: pId };
         }
     }
     // Final fallback to defaults

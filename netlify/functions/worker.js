@@ -23,6 +23,14 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 
+function normalizeProviderUrl(url) {
+    if (!url) return 'https://paksmmpanals.com/api/v2';
+    if (url.includes('paksmmpanels.com')) {
+        return url.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    }
+    return url;
+}
+
 /**
  * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
  * Tries standard SMM API headers with automatic fallback.
@@ -133,7 +141,7 @@ async function processPendingOrders() {
         if (!provider || provider.status !== 'Active') continue;
 
         try {
-            const result = await safeFetchJson(provider.url, {
+            const result = await safeFetchJson(normalizeProviderUrl(provider.url), {
                 key: provider.apiKey,
                 action: 'add',
                 service: order.upstreamServiceId || order.serviceId,
@@ -179,7 +187,7 @@ async function syncActiveStatuses() {
         if (!provider || !order.externalOrderId) continue;
 
         try {
-            const result = await safeFetchJson(provider.url, {
+            const result = await safeFetchJson(normalizeProviderUrl(provider.url), {
                 key: provider.apiKey,
                 action: 'status',
                 order: String(order.externalOrderId)
