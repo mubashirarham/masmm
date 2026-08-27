@@ -24,10 +24,73 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
-const PROVIDER_URL = 'https://paksmmpanels.com/api/v2';
-const PROVIDER_KEY = '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.com/api/v2';
+const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
 const DEFAULT_FX_RATE = 275.81;
 const MARKUP_MULTIPLIER = 1.50; // 50% commission
+
+function getStealthHeaders(targetUrl) {
+    try {
+        const origin = new URL(targetUrl).origin;
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    } catch (e) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01'
+        };
+    }
+}
+
+async function safeFetchJson(url, params) {
+    const headers = getStealthHeaders(url);
+    const body = new URLSearchParams(params);
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        const rawText = await res.text();
+        let data = null;
+
+        try {
+            data = JSON.parse(rawText);
+        } catch (jsonErr) {
+            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+            return {
+                ok: false,
+                isHtml: true,
+                httpStatus: res.status,
+                raw: rawText,
+                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+            };
+        }
+
+        return {
+            ok: res.ok,
+            isHtml: false,
+            httpStatus: res.status,
+            data: data
+        };
+    } catch (networkErr) {
+        return {
+            ok: false,
+            isHtml: false,
+            httpStatus: 0,
+            error: `Network error: ${networkErr.message}`
+        };
+    }
+}
 
 /**
  * Netlify Scheduled Cron: Runs Every 4 Hours
@@ -37,20 +100,34 @@ exports.handler = async (event, context) => {
     console.log("[Cron Catalog Sync] Checking upstream catalog updates...");
 
     try {
-        const res = await fetch(PROVIDER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                key: PROVIDER_KEY,
-                action: 'services'
-            })
+        let apiUrl = DEFAULT_PROVIDER_URL;
+        let apiKey = DEFAULT_PROVIDER_KEY;
+
+        // Try to fetch active provider from Firestore
+        try {
+            const providersSnap = await db.collection('artifacts').doc(APP_ID).collection('api_providers').get();
+            if (!providersSnap.empty) {
+                const activeDoc = providersSnap.docs.find(d => d.data()?.status === 'Active') || providersSnap.docs[0];
+                if (activeDoc && activeDoc.data()?.url && activeDoc.data()?.apiKey) {
+                    apiUrl = activeDoc.data().url;
+                    apiKey = activeDoc.data().apiKey;
+                }
+            }
+        } catch (e) {
+            console.warn("[Cron Catalog Sync] Could not load providers from DB:", e.message);
+        }
+
+        const result = await safeFetchJson(apiUrl, {
+            key: apiKey,
+            action: 'services'
         });
 
-        const upstreamServices = await res.json();
+        const upstreamServices = result.data;
 
         if (!Array.isArray(upstreamServices) || upstreamServices.length === 0) {
-            console.warn("[Cron Catalog Sync] Upstream services returned empty or invalid.");
-            return { statusCode: 200, body: JSON.stringify({ success: false, reason: "Empty upstream list" }) };
+            const reason = result.isHtml ? "Provider returned Cloudflare/HTML response" : (upstreamServices?.error || result.error || "Empty upstream list");
+            console.warn("[Cron Catalog Sync] Upstream services returned empty or invalid:", reason);
+            return { statusCode: 200, body: JSON.stringify({ success: false, reason }) };
         }
 
         console.log(`[Cron Catalog Sync] Fetched ${upstreamServices.length} services from provider.`);

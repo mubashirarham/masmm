@@ -1,18 +1,94 @@
 const admin = require('firebase-admin');
 
+function getServiceAccount() {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!raw) return null;
+    try {
+        if (raw.startsWith('{')) return JSON.parse(raw);
+        return JSON.parse(Buffer.from(raw, 'base64').toString('utf8'));
+    } catch (e) {
+        try { return JSON.parse(raw); } catch (e2) { return null; }
+    }
+}
+
 if (!admin.apps.length) {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+    const sa = getServiceAccount();
+    if (sa) {
+        admin.initializeApp({ credential: admin.credential.cert(sa) });
+    } else {
+        admin.initializeApp();
+    }
 }
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 
+function getStealthHeaders(targetUrl) {
+    try {
+        const origin = new URL(targetUrl).origin;
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    } catch (e) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01'
+        };
+    }
+}
+
+async function safeFetchJson(url, params) {
+    const headers = getStealthHeaders(url);
+    const body = new URLSearchParams(params);
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        const rawText = await res.text();
+        let data = null;
+
+        try {
+            data = JSON.parse(rawText);
+        } catch (jsonErr) {
+            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+            return {
+                ok: false,
+                isHtml: true,
+                httpStatus: res.status,
+                raw: rawText,
+                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+            };
+        }
+
+        return {
+            ok: res.ok,
+            isHtml: false,
+            httpStatus: res.status,
+            data: data
+        };
+    } catch (networkErr) {
+        return {
+            ok: false,
+            isHtml: false,
+            httpStatus: 0,
+            error: `Network error: ${networkErr.message}`
+        };
+    }
+}
+
 /**
  * Netlify Scheduled Function (Cron Engine)
- * This runs automatically every 1 minute if configured in netlify.toml
+ * This runs automatically every 5 minutes if configured in netlify.toml
  */
 exports.handler = async (event, context) => {
     console.log("Worker Pulse Started");
@@ -36,7 +112,7 @@ exports.handler = async (event, context) => {
 
 // --- Task 1: Forward Pending Orders to Upstream Providers ---
 async function processPendingOrders() {
-    const ordersQuery = await db.collectionGroup('orders').where('status', '==', 'Pending').get();
+    const ordersQuery = await db.collectionGroup('orders').where('status', '==', 'Pending').limit(50).get();
     
     if (ordersQuery.empty) return;
 
@@ -52,30 +128,25 @@ async function processPendingOrders() {
         if (!provider || provider.status !== 'Active') continue;
 
         try {
-            // Send request to upstream API
-            const response = await fetch(provider.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    key: provider.apiKey,
-                    action: 'add',
-                    service: order.upstreamServiceId,
-                    link: order.link,
-                    quantity: order.quantity
-                })
+            const result = await safeFetchJson(provider.url, {
+                key: provider.apiKey,
+                action: 'add',
+                service: order.upstreamServiceId || order.serviceId,
+                link: order.link,
+                quantity: order.quantity
             });
 
-            const result = await response.json();
-
-            if (result.order) {
-                // Success: Move to Processing and save external Order ID
+            if (result.data && result.data.order) {
+                // Success: Move to In progress / Processing and save external Order ID
                 await doc.ref.update({
-                    status: 'Processing',
-                    externalOrderId: result.order,
+                    status: 'In progress',
+                    externalOrderId: String(result.data.order),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
-            } else {
-                console.error(`Upstream Provider Error for Order ${doc.id}:`, result.error);
+            } else if (result.data && result.data.error) {
+                console.error(`Upstream Provider Error for Order ${doc.id}:`, result.data.error);
+            } else if (result.isHtml) {
+                console.warn(`Upstream Provider returned HTML for Order ${doc.id}`);
             }
         } catch (e) {
             console.error(`Network Error for Provider ${order.providerId}:`, e);
@@ -85,15 +156,13 @@ async function processPendingOrders() {
 
 // --- Task 2: Sync Statuses from Upstream Providers ---
 async function syncActiveStatuses() {
-    // Only check orders that are currently being processed
     const activeQuery = await db.collectionGroup('orders')
-        .where('status', 'in', ['Processing', 'In Progress'])
+        .where('status', 'in', ['Processing', 'In progress', 'In Progress'])
+        .limit(100)
         .get();
 
     if (activeQuery.empty) return;
 
-    // Map active orders to their providers to batch requests if the provider supports multi-status
-    // For simplicity here, we query one by one.
     const providersSnap = await db.collection('artifacts').doc(APP_ID).collection('api_providers').get();
     const providers = new Map();
     providersSnap.forEach(d => providers.set(d.id, d.data()));
@@ -105,50 +174,49 @@ async function syncActiveStatuses() {
         if (!provider || !order.externalOrderId) continue;
 
         try {
-            const response = await fetch(provider.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    key: provider.apiKey,
-                    action: 'status',
-                    order: order.externalOrderId
-                })
+            const result = await safeFetchJson(provider.url, {
+                key: provider.apiKey,
+                action: 'status',
+                order: String(order.externalOrderId)
             });
 
-            const result = await response.json();
-
-            if (result.status) {
+            if (result.data && result.data.status) {
+                let internalStatus = result.data.status;
                 if (internalStatus === 'Completed' || internalStatus === 'Done') internalStatus = 'Completed';
                 if (internalStatus === 'Canceled' || internalStatus === 'Cancelled') internalStatus = 'Canceled';
+                if (internalStatus === 'Processing') internalStatus = 'In progress';
 
                 const pathSegments = doc.ref.path.split('/');
                 const userId = pathSegments[3];
 
-                if (doc.data().status !== internalStatus) {
-                    const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
-                    await notifRef.set({
-                        title: `Order ${internalStatus}`,
-                        message: `Your order for ${doc.data().serviceName || 'service'} is now ${internalStatus}.`,
-                        isRead: false,
-                        createdAt: admin.firestore.FieldValue.serverTimestamp()
-                    });
+                if (doc.data().status !== internalStatus && userId) {
+                    try {
+                        const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
+                        await notifRef.set({
+                            title: `Order ${internalStatus}`,
+                            message: `Your order for ${doc.data().serviceName || 'service'} is now ${internalStatus}.`,
+                            isRead: false,
+                            createdAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (nErr) {}
                 }
 
                 await doc.ref.update({
                     status: internalStatus,
-                    remains: result.remains || 0,
-                    startCount: result.start_count || 0,
+                    remains: result.data.remains || 0,
+                    startCount: result.data.start_count || 0,
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
                 
-                
                 // --- Refund Logic if Canceled ---
-                if (internalStatus === 'Canceled' && doc.data().status !== 'Canceled') {
-                    const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
-                    
-                    await statsRef.update({
-                        balance: admin.firestore.FieldValue.increment(order.charge)
-                    });
+                if (internalStatus === 'Canceled' && doc.data().status !== 'Canceled' && userId && order.charge > 0) {
+                    try {
+                        const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
+                        await statsRef.update({
+                            balance: admin.firestore.FieldValue.increment(parseFloat(order.charge)),
+                            totalSpent: admin.firestore.FieldValue.increment(-parseFloat(order.charge))
+                        });
+                    } catch (rErr) {}
                 }
             }
         } catch (e) {
@@ -159,7 +227,6 @@ async function syncActiveStatuses() {
 
 // --- Task 3: Auto-Sync Provider Catalog (Runs daily) ---
 async function autoSyncCatalogIfNeeded() {
-    // 1. Check if 24 hours have passed since last sync
     const systemRef = db.collection('artifacts').doc(APP_ID).collection('system').doc('cron');
     const systemSnap = await systemRef.get();
     
@@ -171,7 +238,6 @@ async function autoSyncCatalogIfNeeded() {
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     
-    // Only run once a day to avoid rate limits
     if (now - lastSync < ONE_DAY_MS) return;
 
     console.log("Running Daily Provider Catalog Auto-Sync...");
@@ -182,26 +248,16 @@ async function autoSyncCatalogIfNeeded() {
         const provider = pDoc.data();
         
         try {
-            // Fetch upstream services
-            const response = await fetch(provider.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ key: provider.apiKey, action: 'services' })
-            });
-            const upstreamServices = await response.json();
+            const result = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'services' });
+            const upstreamServices = result.data;
             
             if (!Array.isArray(upstreamServices) || upstreamServices.error) continue;
             
-            // --- Determine Provider Currency & Exchange Rate (Copied from sync-provider) ---
             let providerCurrency = 'USD';
             let exchangeRateToPKR = 1;
             try {
-                const balRes = await fetch(provider.url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ key: provider.apiKey, action: 'balance' })
-                });
-                const balData = await balRes.json();
+                const balResult = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'balance' });
+                const balData = balResult.data;
                 if (balData && balData.currency) providerCurrency = balData.currency.toUpperCase();
                 
                 if (providerCurrency !== 'PKR') {
@@ -225,11 +281,9 @@ async function autoSyncCatalogIfNeeded() {
                 if (providerCurrency === 'INR') exchangeRateToPKR = 3.3;
             }
             
-            // Map upstream service IDs to full service objects for price checking
             const upstreamMap = new Map();
             upstreamServices.forEach(s => upstreamMap.set(String(s.service), s));
 
-            // Fetch local active services tied to this provider
             const localServicesSnap = await db.collection('artifacts').doc(APP_ID)
                 .collection('public').doc('data').collection('services')
                 .where('providerId', '==', pDoc.id)
@@ -245,7 +299,6 @@ async function autoSyncCatalogIfNeeded() {
                 const sid = String(localService.serviceId);
                 
                 if (localService.serviceId && !upstreamMap.has(sid)) {
-                    // Service completely removed upstream -> Disable it
                     batch.update(sDoc.ref, { 
                         status: 'Disabled', 
                         disabledReason: 'Auto-sync: Removed by upstream provider',
@@ -253,16 +306,13 @@ async function autoSyncCatalogIfNeeded() {
                     });
                     disabledCount++;
                 } else if (localService.serviceId && upstreamMap.has(sid)) {
-                    // Service exists. Check if price changed.
                     const upService = upstreamMap.get(sid);
                     const rawUpstreamRate = parseFloat(upService.rate) || 0;
                     const upstreamRateInPkr = rawUpstreamRate * exchangeRateToPKR;
                     
-                    // Retrieve stored markup or fallback to 1.2x (20% margin) for old services
                     const markup = parseFloat(localService.metadata_markup) || 1.2;
                     const expectedLocalRateFormatted = (upstreamRateInPkr * markup).toFixed(4);
                     
-                    // If the current local rate deviates, update it
                     if (localService.rate !== expectedLocalRateFormatted) {
                         batch.update(sDoc.ref, {
                             rate: expectedLocalRateFormatted,
@@ -283,16 +333,13 @@ async function autoSyncCatalogIfNeeded() {
         }
     }
 
-    // Update the last sync timestamp
     await systemRef.set({ lastCatalogSync: now }, { merge: true });
 }
 
 // --- Task 4: Process Child Panel Subscriptions (Runs daily) ---
 async function processSubscriptions() {
-    // Only the Master network orchestrates billing
     if (APP_ID !== 'masmmpanel-default') return;
 
-    // Run this check once every 12 hours
     const systemRef = db.collection('artifacts').doc(APP_ID).collection('system').doc('cron');
     const systemSnap = await systemRef.get();
     let lastSubCheck = 0;
@@ -309,16 +356,15 @@ async function processSubscriptions() {
     
     for (const doc of panelsQuery.docs) {
         const tenant = doc.data();
-        if (!tenant.ownerUid) continue; // Bypasses administratively gifted panels
+        if (!tenant.ownerUid) continue;
 
         const createdAt = tenant.createdAt ? tenant.createdAt.toMillis() : Date.now();
         const lastBilledAt = tenant.lastBilledAt || createdAt;
         
-        // Has it been 30 days?
         const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
         if (now - lastBilledAt >= THIRTY_DAYS) {
             try {
-                const amountDue = 4999; // Standard monthly SaaS fee
+                const amountDue = 4999;
                 const ownerRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(tenant.ownerUid).collection('account').doc('stats');
                 
                 await db.runTransaction(async (t) => {
@@ -333,7 +379,6 @@ async function processSubscriptions() {
                         t.update(doc.ref, { lastBilledAt: now });
                         console.log(`Billed 4999 PKR successfully to ${tenant.ownerUid} for tenant ${doc.id}`);
                     } else {
-                        // Suspend due to insufficient funds
                         t.update(doc.ref, { 
                             status: 'Suspended', 
                             suspendReason: 'Insufficient funds for monthly renewal' 

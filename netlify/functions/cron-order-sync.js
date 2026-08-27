@@ -22,8 +22,146 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
-const PROVIDER_URL = 'https://paksmmpanels.com/api/v2';
-const PROVIDER_KEY = '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.com/api/v2';
+const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+
+/**
+ * Generate stealth browser headers to avoid Cloudflare/WAF bot challenge (HTML 403/503)
+ */
+function getStealthHeaders(targetUrl) {
+    try {
+        const origin = new URL(targetUrl).origin;
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    } catch (e) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01'
+        };
+    }
+}
+
+/**
+ * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses
+ */
+async function safeFetchJson(url, params) {
+    const headers = getStealthHeaders(url);
+    const body = new URLSearchParams(params);
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        const rawText = await res.text();
+        let data = null;
+
+        try {
+            data = JSON.parse(rawText);
+        } catch (jsonErr) {
+            // Received HTML or non-JSON body (Cloudflare challenge, 403, 502, etc.)
+            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+            return {
+                ok: false,
+                isHtml: true,
+                httpStatus: res.status,
+                raw: rawText,
+                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+            };
+        }
+
+        return {
+            ok: res.ok,
+            isHtml: false,
+            httpStatus: res.status,
+            data: data
+        };
+    } catch (networkErr) {
+        return {
+            ok: false,
+            isHtml: false,
+            httpStatus: 0,
+            error: `Network/connection error: ${networkErr.message}`
+        };
+    }
+}
+
+/**
+ * Fetch all registered API providers from Firestore
+ */
+async function getProvidersMap() {
+    const providersMap = new Map();
+    try {
+        const providersSnap = await db.collection('artifacts').doc(APP_ID).collection('api_providers').get();
+        providersSnap.forEach(doc => {
+            const d = doc.data();
+            if (d && d.url && d.apiKey) {
+                providersMap.set(doc.id, {
+                    url: d.url,
+                    apiKey: d.apiKey,
+                    status: d.status || 'Active',
+                    name: d.name || doc.id
+                });
+            }
+        });
+    } catch (e) {
+        console.warn("[Cron Order Sync] Could not load providers collection:", e.message);
+    }
+    return providersMap;
+}
+
+/**
+ * Resolve the API URL and Key for a given order
+ */
+function resolveProviderForOrder(order, providersMap) {
+    if (order.providerId && providersMap.has(order.providerId)) {
+        const p = providersMap.get(order.providerId);
+        return { url: p.url, apiKey: p.apiKey, providerId: order.providerId };
+    }
+    // Fallback to first active provider in map
+    for (const [pId, p] of providersMap.entries()) {
+        if (p.status === 'Active') {
+            return { url: p.url, apiKey: p.apiKey, providerId: pId };
+        }
+    }
+    // Final fallback to defaults
+    return { url: DEFAULT_PROVIDER_URL, apiKey: DEFAULT_PROVIDER_KEY, providerId: 'default' };
+}
+
+/**
+ * Auto-refund user balance for failed or canceled orders
+ */
+async function refundUserBalance(orderDoc, amount, reason) {
+    if (!amount || amount <= 0) return;
+    try {
+        const pathParts = orderDoc.ref.path.split('/');
+        const userId = pathParts[3]; // artifacts/{appId}/users/{userId}/orders/{orderId}
+        if (!userId) return;
+
+        const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
+        await db.runTransaction(async (t) => {
+            const sSnap = await t.get(statsRef);
+            if (sSnap.exists) {
+                t.update(statsRef, {
+                    balance: admin.firestore.FieldValue.increment(parseFloat(amount)),
+                    totalSpent: admin.firestore.FieldValue.increment(-parseFloat(amount))
+                });
+            }
+        });
+        console.log(`[Cron Order Sync] Refunded Rs. ${amount} to user ${userId} (${reason})`);
+    } catch (err) {
+        console.error(`[Cron Order Sync] Error refunding user for order ${orderDoc.id}:`, err.message);
+    }
+}
 
 /**
  * Netlify Scheduled Cron: Runs Every 1 Minute
@@ -33,17 +171,18 @@ exports.handler = async (event, context) => {
     console.log("[Cron Order Sync] Starting automated order cycle...");
 
     try {
-        await forwardPendingOrders();
-        await syncActiveOrderStatus();
+        const providersMap = await getProvidersMap();
+        await forwardPendingOrders(providersMap);
+        await syncActiveOrderStatus(providersMap);
         return { statusCode: 200, body: JSON.stringify({ success: true, timestamp: new Date().toISOString() }) };
     } catch (err) {
-        console.error("[Cron Order Sync] Error:", err);
+        console.error("[Cron Order Sync] Global Error:", err);
         return { statusCode: 500, body: JSON.stringify({ success: false, error: err.message }) };
     }
 };
 
 // 1. Forward Pending Orders to Upstream API
-async function forwardPendingOrders() {
+async function forwardPendingOrders(providersMap) {
     const pendingSnap = await db.collectionGroup('orders')
         .where('status', '==', 'Pending')
         .limit(50)
@@ -60,49 +199,117 @@ async function forwardPendingOrders() {
         const order = orderDoc.data();
         const serviceId = order.upstreamServiceId || order.serviceId || order.service;
 
-        if (!serviceId || !order.link || !order.quantity) {
-            console.warn(`[Cron Order Sync] Skipping malformed order ${orderDoc.id}`);
+        // Skip orders already marked with fatal permanent error
+        if (order.status === 'Failed' || order.status === 'Canceled') {
             continue;
         }
 
-        try {
-            const bodyParams = new URLSearchParams({
-                key: PROVIDER_KEY,
-                action: 'add',
-                service: String(serviceId),
-                link: order.link,
-                quantity: String(order.quantity)
+        if (!serviceId || !order.link || !order.quantity) {
+            console.warn(`[Cron Order Sync] Skipping malformed order ${orderDoc.id}: Missing service, link, or quantity.`);
+            await orderDoc.ref.update({
+                status: 'Failed',
+                failReason: 'Missing required parameters (serviceId, link, or quantity)',
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
             });
+            continue;
+        }
 
-            if (order.comments) bodyParams.append('comments', order.comments);
+        const provider = resolveProviderForOrder(order, providersMap);
+        const attempts = (order.forwardAttempts || 0) + 1;
 
-            const res = await fetch(PROVIDER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: bodyParams
-            });
+        const bodyParams = {
+            key: provider.apiKey,
+            action: 'add',
+            service: String(serviceId),
+            link: order.link,
+            quantity: String(order.quantity)
+        };
 
-            const data = await res.json();
+        if (order.comments) bodyParams.comments = order.comments;
 
-            if (data && data.order) {
-                await orderDoc.ref.update({
-                    status: 'In progress',
-                    externalOrderId: String(data.order),
-                    forwardedAt: admin.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                });
-                console.log(`[Cron Order Sync] Order ${orderDoc.id} sent successfully. External ID: ${data.order}`);
-            } else {
-                console.error(`[Cron Order Sync] Provider rejected order ${orderDoc.id}:`, data ? data.error : 'Unknown error');
+        const result = await safeFetchJson(provider.url, bodyParams);
+
+        if (!result.ok && result.isHtml) {
+            // HTML / Cloudflare response received
+            console.error(`[Cron Order Sync] Order ${orderDoc.id} received HTML from provider (Attempt ${attempts}): ${result.error}`);
+            
+            const updatePayload = {
+                forwardAttempts: attempts,
+                lastForwardError: result.error,
+                lastAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+            };
+
+            // If it keeps failing after 5 attempts, fail order gracefully to stop blocking cron
+            if (attempts >= 5) {
+                updatePayload.status = 'Failed';
+                updatePayload.failReason = 'Upstream provider unavailable (Cloudflare/HTML response)';
+                console.warn(`[Cron Order Sync] Order ${orderDoc.id} marked Failed after ${attempts} failed attempts.`);
+                
+                if (!order.refunded && order.charge > 0) {
+                    await refundUserBalance(orderDoc, order.charge, 'Provider Unavailable');
+                    updatePayload.refunded = true;
+                }
             }
-        } catch (e) {
-            console.error(`[Cron Order Sync] Network error for order ${orderDoc.id}:`, e);
+
+            await orderDoc.ref.update(updatePayload);
+            continue;
+        }
+
+        if (result.error && !result.data) {
+            // Network error
+            console.error(`[Cron Order Sync] Network error for order ${orderDoc.id} (Attempt ${attempts}): ${result.error}`);
+            await orderDoc.ref.update({
+                forwardAttempts: attempts,
+                lastForwardError: result.error,
+                lastAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+            continue;
+        }
+
+        const data = result.data;
+
+        if (data && data.order) {
+            // SUCCESS: Provider accepted the order
+            await orderDoc.ref.update({
+                status: 'In progress',
+                externalOrderId: String(data.order),
+                providerId: provider.providerId,
+                forwardedAt: admin.firestore.FieldValue.serverTimestamp(),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                forwardAttempts: attempts,
+                lastForwardError: null
+            });
+            console.log(`[Cron Order Sync] Order ${orderDoc.id} sent successfully. External ID: ${data.order}`);
+        } else {
+            // Upstream provider returned an error message in JSON
+            const providerErrMsg = data ? (data.error || JSON.stringify(data)) : 'Unknown provider error';
+            console.error(`[Cron Order Sync] Provider rejected order ${orderDoc.id}: ${providerErrMsg}`);
+
+            const isFatalError = /incorrect api key|user disabled|not enough balance|service not found|bad link|invalid quantity/i.test(providerErrMsg);
+            const updatePayload = {
+                forwardAttempts: attempts,
+                lastForwardError: providerErrMsg,
+                lastAttemptAt: admin.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (isFatalError || attempts >= 3) {
+                updatePayload.status = 'Failed';
+                updatePayload.failReason = providerErrMsg;
+                console.warn(`[Cron Order Sync] Order ${orderDoc.id} permanently failed: ${providerErrMsg}`);
+
+                if (!order.refunded && order.charge > 0) {
+                    await refundUserBalance(orderDoc, order.charge, `Order Failed: ${providerErrMsg}`);
+                    updatePayload.refunded = true;
+                }
+            }
+
+            await orderDoc.ref.update(updatePayload);
         }
     }
 }
 
 // 2. Sync Active Orders & Handle Partial/Cancellation Refunds
-async function syncActiveOrderStatus() {
+async function syncActiveOrderStatus(providersMap) {
     const activeSnap = await db.collectionGroup('orders')
         .where('status', 'in', ['In progress', 'Processing', 'Pending'])
         .limit(100)
@@ -116,94 +323,65 @@ async function syncActiveOrderStatus() {
 
         if (!externalId) continue;
 
-        try {
-            const res = await fetch(PROVIDER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    key: PROVIDER_KEY,
-                    action: 'status',
-                    order: String(externalId)
-                })
-            });
+        const provider = resolveProviderForOrder(order, providersMap);
+        const result = await safeFetchJson(provider.url, {
+            key: provider.apiKey,
+            action: 'status',
+            order: String(externalId)
+        });
 
-            const data = await res.json();
-
-            if (data && data.status) {
-                const upstreamStatus = data.status;
-                let mappedStatus = upstreamStatus;
-
-                if (upstreamStatus === 'Completed') mappedStatus = 'Completed';
-                else if (upstreamStatus === 'In progress') mappedStatus = 'In progress';
-                else if (upstreamStatus === 'Processing') mappedStatus = 'In progress';
-                else if (upstreamStatus === 'Partial') mappedStatus = 'Partial';
-                else if (upstreamStatus === 'Canceled') mappedStatus = 'Canceled';
-
-                const updatePayload = {
-                    status: mappedStatus,
-                    startCount: data.start_count || order.startCount || 0,
-                    remains: data.remains !== undefined ? parseInt(data.remains) : (order.remains || 0),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Automatic Partial Refund Calculation
-                if (mappedStatus === 'Partial' && order.status !== 'Partial' && !order.partialRefunded) {
-                    const remains = parseInt(data.remains) || 0;
-                    const quantity = parseInt(order.quantity) || 1;
-                    const charge = parseFloat(order.charge) || 0;
-
-                    if (remains > 0 && quantity > 0 && charge > 0) {
-                        const refundAmount = parseFloat(((remains / quantity) * charge).toFixed(2));
-                        if (refundAmount > 0) {
-                            const pathParts = orderDoc.ref.path.split('/');
-                            const userId = pathParts[3]; // artifacts/{appId}/users/{userId}/orders/{orderId}
-                            
-                            if (userId) {
-                                const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
-                                await db.runTransaction(async (t) => {
-                                    const sSnap = await t.get(statsRef);
-                                    if (sSnap.exists) {
-                                        t.update(statsRef, {
-                                            balance: admin.firestore.FieldValue.increment(refundAmount),
-                                            totalSpent: admin.firestore.FieldValue.increment(-refundAmount)
-                                        });
-                                    }
-                                });
-                                updatePayload.partialRefunded = true;
-                                updatePayload.refundAmount = refundAmount;
-                                console.log(`[Cron Order Sync] Refunded Rs. ${refundAmount} for Partial order ${orderDoc.id}`);
-                            }
-                        }
-                    }
-                }
-
-                // Automatic Full Cancellation Refund
-                if (mappedStatus === 'Canceled' && order.status !== 'Canceled' && !order.canceledRefunded) {
-                    const charge = parseFloat(order.charge) || 0;
-                    if (charge > 0) {
-                        const pathParts = orderDoc.ref.path.split('/');
-                        const userId = pathParts[3];
-                        if (userId) {
-                            const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
-                            await db.runTransaction(async (t) => {
-                                const sSnap = await t.get(statsRef);
-                                if (sSnap.exists) {
-                                    t.update(statsRef, {
-                                        balance: admin.firestore.FieldValue.increment(charge),
-                                        totalSpent: admin.firestore.FieldValue.increment(-charge)
-                                    });
-                                }
-                            });
-                            updatePayload.canceledRefunded = true;
-                            console.log(`[Cron Order Sync] Full refund of Rs. ${charge} for Canceled order ${orderDoc.id}`);
-                        }
-                    }
-                }
-
-                await orderDoc.ref.update(updatePayload);
+        if (!result.data || result.isHtml) {
+            if (result.isHtml) {
+                console.warn(`[Cron Order Sync] Status check received HTML for order ${orderDoc.id} (External ID: ${externalId})`);
             }
-        } catch (e) {
-            console.error(`[Cron Order Sync] Status check error for order ${orderDoc.id}:`, e);
+            continue;
+        }
+
+        const data = result.data;
+
+        if (data && data.status) {
+            const upstreamStatus = data.status;
+            let mappedStatus = upstreamStatus;
+
+            if (upstreamStatus === 'Completed') mappedStatus = 'Completed';
+            else if (upstreamStatus === 'In progress') mappedStatus = 'In progress';
+            else if (upstreamStatus === 'Processing') mappedStatus = 'In progress';
+            else if (upstreamStatus === 'Partial') mappedStatus = 'Partial';
+            else if (upstreamStatus === 'Canceled' || upstreamStatus === 'Cancelled') mappedStatus = 'Canceled';
+
+            const updatePayload = {
+                status: mappedStatus,
+                startCount: data.start_count || order.startCount || 0,
+                remains: data.remains !== undefined ? parseInt(data.remains) : (order.remains || 0),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Automatic Partial Refund Calculation
+            if (mappedStatus === 'Partial' && order.status !== 'Partial' && !order.partialRefunded) {
+                const remains = parseInt(data.remains) || 0;
+                const quantity = parseInt(order.quantity) || 1;
+                const charge = parseFloat(order.charge) || 0;
+
+                if (remains > 0 && quantity > 0 && charge > 0) {
+                    const refundAmount = parseFloat(((remains / quantity) * charge).toFixed(2));
+                    if (refundAmount > 0) {
+                        await refundUserBalance(orderDoc, refundAmount, `Partial Refund (${remains}/${quantity} remains)`);
+                        updatePayload.partialRefunded = true;
+                        updatePayload.refundAmount = refundAmount;
+                    }
+                }
+            }
+
+            // Automatic Full Cancellation Refund
+            if (mappedStatus === 'Canceled' && order.status !== 'Canceled' && !order.canceledRefunded) {
+                const charge = parseFloat(order.charge) || 0;
+                if (charge > 0) {
+                    await refundUserBalance(orderDoc, charge, 'Full Refund for Canceled Order');
+                    updatePayload.canceledRefunded = true;
+                }
+            }
+
+            await orderDoc.ref.update(updatePayload);
         }
     }
 }

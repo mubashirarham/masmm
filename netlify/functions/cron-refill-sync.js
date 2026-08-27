@@ -22,8 +22,105 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
-const PROVIDER_URL = 'https://paksmmpanels.com/api/v2';
-const PROVIDER_KEY = '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanels.com/api/v2';
+const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+
+function getStealthHeaders(targetUrl) {
+    try {
+        const origin = new URL(targetUrl).origin;
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    } catch (e) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01'
+        };
+    }
+}
+
+async function safeFetchJson(url, params) {
+    const headers = getStealthHeaders(url);
+    const body = new URLSearchParams(params);
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        const rawText = await res.text();
+        let data = null;
+
+        try {
+            data = JSON.parse(rawText);
+        } catch (jsonErr) {
+            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+            return {
+                ok: false,
+                isHtml: true,
+                httpStatus: res.status,
+                raw: rawText,
+                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+            };
+        }
+
+        return {
+            ok: res.ok,
+            isHtml: false,
+            httpStatus: res.status,
+            data: data
+        };
+    } catch (networkErr) {
+        return {
+            ok: false,
+            isHtml: false,
+            httpStatus: 0,
+            error: `Network error: ${networkErr.message}`
+        };
+    }
+}
+
+async function getProvidersMap() {
+    const providersMap = new Map();
+    try {
+        const providersSnap = await db.collection('artifacts').doc(APP_ID).collection('api_providers').get();
+        providersSnap.forEach(doc => {
+            const d = doc.data();
+            if (d && d.url && d.apiKey) {
+                providersMap.set(doc.id, {
+                    url: d.url,
+                    apiKey: d.apiKey,
+                    status: d.status || 'Active',
+                    name: d.name || doc.id
+                });
+            }
+        });
+    } catch (e) {
+        console.warn("[Cron Refill Sync] Could not load providers collection:", e.message);
+    }
+    return providersMap;
+}
+
+function resolveProvider(providerId, providersMap) {
+    if (providerId && providersMap.has(providerId)) {
+        const p = providersMap.get(providerId);
+        return { url: p.url, apiKey: p.apiKey };
+    }
+    for (const [, p] of providersMap.entries()) {
+        if (p.status === 'Active') {
+            return { url: p.url, apiKey: p.apiKey };
+        }
+    }
+    return { url: DEFAULT_PROVIDER_URL, apiKey: DEFAULT_PROVIDER_KEY };
+}
 
 /**
  * Netlify Scheduled Cron: Runs Every 5 Minutes
@@ -33,6 +130,8 @@ exports.handler = async (event, context) => {
     console.log("[Cron Refill Sync] Checking active refill requests...");
 
     try {
+        const providersMap = await getProvidersMap();
+
         const refillSnap = await db.collectionGroup('refills')
             .where('status', 'in', ['Pending', 'In progress', 'Processing'])
             .limit(50)
@@ -45,27 +144,28 @@ exports.handler = async (event, context) => {
 
         for (const doc of refillSnap.docs) {
             const refill = doc.data();
+            const provider = resolveProvider(refill.providerId, providersMap);
             
             // 1. If Refill not yet forwarded, forward to provider
             if (refill.status === 'Pending' && refill.externalOrderId && !refill.refillId) {
                 try {
-                    const res = await fetch(PROVIDER_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            key: PROVIDER_KEY,
-                            action: 'refill',
-                            order: String(refill.externalOrderId)
-                        })
+                    const result = await safeFetchJson(provider.url, {
+                        key: provider.apiKey,
+                        action: 'refill',
+                        order: String(refill.externalOrderId)
                     });
-                    const data = await res.json();
-                    if (data && data.refill) {
+
+                    if (result.data && result.data.refill) {
                         await doc.ref.update({
-                            refillId: String(data.refill),
+                            refillId: String(result.data.refill),
                             status: 'In progress',
                             updatedAt: admin.firestore.FieldValue.serverTimestamp()
                         });
-                        console.log(`[Cron Refill Sync] Refill initiated for order ${refill.orderId}. Refill ID: ${data.refill}`);
+                        console.log(`[Cron Refill Sync] Refill initiated for order ${refill.orderId}. Refill ID: ${result.data.refill}`);
+                    } else if (result.data && result.data.error) {
+                        console.warn(`[Cron Refill Sync] Refill rejected for order ${refill.orderId}:`, result.data.error);
+                    } else if (result.isHtml) {
+                        console.warn(`[Cron Refill Sync] HTML response on refill forward for order ${refill.orderId}`);
                     }
                 } catch(e) {
                     console.error(`[Cron Refill Sync] Forward error for refill ${doc.id}:`, e);
@@ -75,22 +175,18 @@ exports.handler = async (event, context) => {
             // 2. If Refill has refillId, check its status
             if (refill.refillId) {
                 try {
-                    const res = await fetch(PROVIDER_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            key: PROVIDER_KEY,
-                            action: 'refill_status',
-                            refill: String(refill.refillId)
-                        })
+                    const result = await safeFetchJson(provider.url, {
+                        key: provider.apiKey,
+                        action: 'refill_status',
+                        refill: String(refill.refillId)
                     });
-                    const data = await res.json();
-                    if (data && data.status) {
+
+                    if (result.data && result.data.status) {
                         await doc.ref.update({
-                            status: data.status,
+                            status: result.data.status,
                             updatedAt: admin.firestore.FieldValue.serverTimestamp()
                         });
-                        console.log(`[Cron Refill Sync] Updated refill ${doc.id} status to ${data.status}`);
+                        console.log(`[Cron Refill Sync] Updated refill ${doc.id} status to ${result.data.status}`);
                     }
                 } catch(e) {
                     console.error(`[Cron Refill Sync] Status error for refill ${doc.id}:`, e);
