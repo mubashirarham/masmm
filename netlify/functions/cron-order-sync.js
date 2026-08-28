@@ -23,6 +23,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanals.com/api/v2';
+const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
 const GLOBAL_PROXY_RELAY = process.env.PROXY_RELAY_URL || 'https://pak-proxy.mubashirarham12.workers.dev/';
 
 /**
@@ -56,112 +57,41 @@ function normalizeProviderUrl(url) {
 /**
  * Generate real-world browser headers to bypass Cloudflare Bot Fight Mode & WAF
  */
-function buildStealthHeaders(apiUrl, variantIndex = 0) {
+function buildStealthHeaders(apiUrl) {
     let origin = 'https://paksmmpanals.com';
     try {
         const u = new URL(apiUrl);
         origin = u.origin;
     } catch (e) {}
 
-    if (variantIndex === 0) {
-        // Modern Chrome on Windows (Primary)
-        return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-            'Accept': 'application/json, text/javascript, */*; q=0.01',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Origin': origin,
-            'Referer': origin + '/',
-            'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
-            'Sec-Ch-Ua-Mobile': '?0',
-            'Sec-Ch-Ua-Platform': '"Windows"',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
-            'Cache-Control': 'no-cache'
-        };
-    } else if (variantIndex === 1) {
-        // Modern Firefox on Windows (Secondary)
-        return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Origin': origin,
-            'Referer': origin + '/',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin'
-        };
-    } else {
-        // Modern Safari on macOS (Tertiary Fallback)
-        return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Origin': origin,
-            'Referer': origin + '/'
-        };
-    }
+    return {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Origin': origin,
+        'Referer': origin + '/',
+        'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'Cache-Control': 'no-cache'
+    };
 }
 
 /**
- * Safely send a POST request with stealth header rotation and automatic proxy relay fallback.
- * If Cloudflare challenges the Netlify datacenter IP (HTTP 403 HTML), automatically routes
- * through configured proxy relay (e.g. Cloudflare Worker or Proxy gateway) to guarantee delivery.
+ * Safely send an API request via Cloudflare Worker Relay (or Direct with Stealth headers).
+ * Single execution guarantee: ensures action 'add' is never dispatched multiple times!
  */
 async function safeFetchJson(url, params, options = {}) {
     const normalizedUrl = normalizeProviderUrl(url);
     const body = new URLSearchParams(params);
     const proxyRelayUrl = (options.proxyUrl || GLOBAL_PROXY_RELAY || '').trim();
 
-    // Phase 1: Try Direct Stealth Fetch (Variants: Chrome, Firefox, Safari)
-    const variantsCount = 3;
-    let lastHtmlError = null;
-
-    for (let i = 0; i < variantsCount; i++) {
-        const headers = buildStealthHeaders(normalizedUrl, i);
-        try {
-            const res = await fetch(normalizedUrl, {
-                method: 'POST',
-                headers: headers,
-                body: body
-            });
-
-            const rawText = await res.text();
-            try {
-                const data = JSON.parse(rawText);
-                return {
-                    ok: res.ok,
-                    isHtml: false,
-                    httpStatus: res.status,
-                    data: data
-                };
-            } catch (jsonErr) {
-                lastHtmlError = {
-                    ok: false,
-                    isHtml: true,
-                    httpStatus: res.status,
-                    raw: rawText,
-                    error: `Provider returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
-                };
-            }
-        } catch (networkErr) {
-            if (i === variantsCount - 1 && !proxyRelayUrl) {
-                return {
-                    ok: false,
-                    isHtml: false,
-                    httpStatus: 0,
-                    error: `Network error: ${networkErr.message}`
-                };
-            }
-        }
-    }
-
-    // Phase 2: If Direct Fetch got 403 HTML / Cloudflare Challenge and Proxy Relay is configured
-    if (proxyRelayUrl && lastHtmlError) {
-        console.log(`[Cron Order Sync] Direct fetch blocked by Cloudflare (HTTP ${lastHtmlError.httpStatus}). Retrying via Proxy Relay...`);
+    // 1. Primary Route: If Cloudflare Proxy Relay is configured, route via Worker
+    if (proxyRelayUrl) {
         try {
             const separator = proxyRelayUrl.includes('?') ? '&' : '?';
             const relayEndpoint = `${proxyRelayUrl}${separator}target=${encodeURIComponent(normalizedUrl)}`;
@@ -187,25 +117,49 @@ async function safeFetchJson(url, params, options = {}) {
                     viaProxy: true
                 };
             } catch (jsonErr) {
-                return {
-                    ok: false,
-                    isHtml: true,
-                    httpStatus: res.status,
-                    raw: rawText,
-                    error: `Proxy relay returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
-                };
+                console.warn(`[Cron Order Sync] Proxy returned non-JSON. Falling back to direct...`);
             }
         } catch (proxyErr) {
-            console.error(`[Cron Order Sync] Proxy relay error:`, proxyErr.message);
+            console.warn(`[Cron Order Sync] Proxy error: ${proxyErr.message}. Falling back to direct...`);
         }
     }
 
-    return lastHtmlError || {
-        ok: false,
-        isHtml: false,
-        httpStatus: 0,
-        error: 'Failed to obtain JSON response from provider'
-    };
+    // 2. Direct Stealth Fetch (Single attempt)
+    const headers = buildStealthHeaders(normalizedUrl);
+    try {
+        const res = await fetch(normalizedUrl, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        const rawText = await res.text();
+        try {
+            const data = JSON.parse(rawText);
+            return {
+                ok: res.ok,
+                isHtml: false,
+                httpStatus: res.status,
+                data: data
+            };
+        } catch (jsonErr) {
+            const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
+            return {
+                ok: false,
+                isHtml: true,
+                httpStatus: res.status,
+                raw: rawText,
+                error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
+            };
+        }
+    } catch (networkErr) {
+        return {
+            ok: false,
+            isHtml: false,
+            httpStatus: 0,
+            error: `Network error: ${networkErr.message}`
+        };
+    }
 }
 
 /**
@@ -308,7 +262,7 @@ exports.handler = async (event, context) => {
     }
 };
 
-// 1. Forward Pending Orders to Upstream API with Smart Backoff, Proxy Fallback & Permanent Failure Resolution
+// 1. Forward Pending Orders to Upstream API with Idempotency Guard & Permanent Failure Resolution
 async function forwardPendingOrders(providersMap) {
     const pendingSnap = await db.collectionGroup('orders')
         .where('status', '==', 'Pending')
@@ -326,8 +280,9 @@ async function forwardPendingOrders(providersMap) {
     for (const orderDoc of pendingSnap.docs) {
         const order = orderDoc.data();
 
-        // Skip orders already finalized
-        if (order.status === 'Failed' || order.status === 'Canceled' || order.status === 'Completed') {
+        // STRICT IDEMPOTENCY GUARD:
+        // Skip orders already finalized OR already assigned an externalOrderId
+        if (order.status === 'Failed' || order.status === 'Canceled' || order.status === 'Completed' || order.externalOrderId) {
             continue;
         }
 
@@ -338,7 +293,6 @@ async function forwardPendingOrders(providersMap) {
             }
         }
 
-        forwardedCount++;
         const serviceId = order.upstreamServiceId || order.serviceId || order.service;
 
         // Malformed order check: Fail immediately and refund
@@ -357,6 +311,7 @@ async function forwardPendingOrders(providersMap) {
             continue;
         }
 
+        forwardedCount++;
         const provider = resolveProviderForOrder(order, providersMap);
         const attempts = (order.forwardAttempts || 0) + 1;
 
@@ -492,7 +447,7 @@ async function forwardPendingOrders(providersMap) {
 // 2. Sync Active Orders & Handle Partial/Cancellation Refunds
 async function syncActiveOrderStatus(providersMap) {
     const activeSnap = await db.collectionGroup('orders')
-        .where('status', 'in', ['In progress', 'Processing', 'Pending'])
+        .where('status', 'in', ['In progress', 'Processing'])
         .limit(100)
         .get();
 
@@ -525,6 +480,7 @@ async function syncActiveOrderStatus(providersMap) {
             else if (upstreamStatus === 'In progress' || upstreamStatus === 'Processing') mappedStatus = 'In progress';
             else if (upstreamStatus === 'Partial') mappedStatus = 'Partial';
             else if (upstreamStatus === 'Canceled' || upstreamStatus === 'Cancelled') mappedStatus = 'Canceled';
+            else if (upstreamStatus === 'Pending') mappedStatus = 'In progress'; // Keep as 'In progress' locally to prevent re-forwarding loops!
 
             const updatePayload = {
                 status: mappedStatus,
