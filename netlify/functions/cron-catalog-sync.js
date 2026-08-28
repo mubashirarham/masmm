@@ -26,54 +26,92 @@ const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
 const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanals.com/api/v2';
 const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+const GLOBAL_PROXY_RELAY = process.env.PROXY_RELAY_URL || 'https://pak-proxy.mubashirarham12.workers.dev/';
 const DEFAULT_FX_RATE = 275.81;
 const MARKUP_MULTIPLIER = 1.50; // 50% commission
 
 function normalizeProviderUrl(url) {
     if (!url) return DEFAULT_PROVIDER_URL;
-    if (url.includes('paksmmpanels.com')) {
-        return url.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    let clean = url.trim();
+    if (clean.startsWith('http://')) {
+        clean = 'https://' + clean.slice(7);
+    } else if (!clean.startsWith('https://')) {
+        clean = 'https://' + clean;
     }
-    return url;
+    clean = clean.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    clean = clean.replace(/\/+$/, '');
+    if (!clean.includes('/api/')) {
+        clean = clean + '/api/v2';
+    }
+    return clean;
 }
 
-/**
- * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
- * Tries standard SMM API headers with automatic fallback.
- */
-async function safeFetchJson(url, params) {
-    const headerVariants = [
-        {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'SmartPanel/2.0 (compatible; SMM-API/1.0)',
-            'Accept': 'application/json, text/plain, */*'
-        },
-        {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'curl/7.88.1',
-            'Accept': '*/*'
-        },
-        {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    ];
+function buildStealthHeaders(apiUrl, variantIndex = 0) {
+    let origin = 'https://paksmmpanals.com';
+    try {
+        const u = new URL(apiUrl);
+        origin = u.origin;
+    } catch (e) {}
 
+    if (variantIndex === 0) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/',
+            'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'Cache-Control': 'no-cache'
+        };
+    } else if (variantIndex === 1) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Origin': origin,
+            'Referer': origin + '/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin'
+        };
+    } else {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    }
+}
+
+async function safeFetchJson(url, params, options = {}) {
+    const normalizedUrl = normalizeProviderUrl(url);
     const body = new URLSearchParams(params);
+    const proxyRelayUrl = (options.proxyUrl || GLOBAL_PROXY_RELAY || '').trim();
+    const variantsCount = 3;
+    let lastHtmlError = null;
 
-    for (let i = 0; i < headerVariants.length; i++) {
-        const headers = headerVariants[i];
+    for (let i = 0; i < variantsCount; i++) {
+        const headers = buildStealthHeaders(normalizedUrl, i);
         try {
-            const res = await fetch(url, {
+            const res = await fetch(normalizedUrl, {
                 method: 'POST',
                 headers: headers,
                 body: body
             });
 
             const rawText = await res.text();
-            let data = null;
-
             try {
-                data = JSON.parse(rawText);
+                const data = JSON.parse(rawText);
                 return {
                     ok: res.ok,
                     isHtml: false,
@@ -81,19 +119,16 @@ async function safeFetchJson(url, params) {
                     data: data
                 };
             } catch (jsonErr) {
-                if (i === headerVariants.length - 1) {
-                    const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
-                    return {
-                        ok: false,
-                        isHtml: true,
-                        httpStatus: res.status,
-                        raw: rawText,
-                        error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
-                    };
-                }
+                lastHtmlError = {
+                    ok: false,
+                    isHtml: true,
+                    httpStatus: res.status,
+                    raw: rawText,
+                    error: `Provider returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
+                };
             }
         } catch (networkErr) {
-            if (i === headerVariants.length - 1) {
+            if (i === variantsCount - 1 && !proxyRelayUrl) {
                 return {
                     ok: false,
                     isHtml: false,
@@ -103,11 +138,58 @@ async function safeFetchJson(url, params) {
             }
         }
     }
+
+    // Proxy Relay Fallback
+    if (proxyRelayUrl && lastHtmlError) {
+        try {
+            const separator = proxyRelayUrl.includes('?') ? '&' : '?';
+            const relayEndpoint = `${proxyRelayUrl}${separator}target=${encodeURIComponent(normalizedUrl)}`;
+
+            const res = await fetch(relayEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: body
+            });
+
+            const rawText = await res.text();
+            try {
+                const data = JSON.parse(rawText);
+                return {
+                    ok: res.ok,
+                    isHtml: false,
+                    httpStatus: res.status,
+                    data: data,
+                    viaProxy: true
+                };
+            } catch (jsonErr) {
+                return {
+                    ok: false,
+                    isHtml: true,
+                    httpStatus: res.status,
+                    raw: rawText,
+                    error: `Proxy relay returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
+                };
+            }
+        } catch (proxyErr) {
+            console.error(`[Cron Catalog Sync] Proxy relay error:`, proxyErr.message);
+        }
+    }
+
+    return lastHtmlError || {
+        ok: false,
+        isHtml: false,
+        httpStatus: 0,
+        error: 'Failed to obtain JSON response from provider'
+    };
 }
 
 /**
  * Netlify Scheduled Cron: Runs Every 4 Hours
- * Schedule: 0 *\/4 * * *
+ * Schedule: 0 Every 4 Hours (0 * / 4 * * *)
  */
 exports.handler = async (event, context) => {
     console.log("[Cron Catalog Sync] Checking upstream catalog updates...");
@@ -115,6 +197,7 @@ exports.handler = async (event, context) => {
     try {
         let apiUrl = DEFAULT_PROVIDER_URL;
         let apiKey = DEFAULT_PROVIDER_KEY;
+        let proxyUrl = '';
 
         // Try to fetch active provider from Firestore
         try {
@@ -123,17 +206,18 @@ exports.handler = async (event, context) => {
                 const activeDoc = providersSnap.docs.find(d => d.data()?.status === 'Active') || providersSnap.docs[0];
                 if (activeDoc && activeDoc.data()?.url && activeDoc.data()?.apiKey) {
                     apiUrl = activeDoc.data().url;
-                    apiKey = activeDoc.data().apiKey;
+                    apiKey = activeDoc.data().apiKey.trim();
+                    proxyUrl = activeDoc.data().proxyUrl || '';
                 }
             }
         } catch (e) {
             console.warn("[Cron Catalog Sync] Could not load providers from DB:", e.message);
         }
 
-        const result = await safeFetchJson(normalizeProviderUrl(apiUrl), {
+        const result = await safeFetchJson(apiUrl, {
             key: apiKey,
             action: 'services'
-        });
+        }, { proxyUrl });
 
         const upstreamServices = result.data;
 

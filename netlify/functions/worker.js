@@ -22,52 +22,95 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const APP_ID = process.env.APP_ID || 'masmmpanel-default';
+const DEFAULT_PROVIDER_URL = process.env.PROVIDER_URL || 'https://paksmmpanals.com/api/v2';
+const DEFAULT_PROVIDER_KEY = process.env.PROVIDER_KEY || '46b597a2aeb6cf28362dadc92c67b8544df49f33';
+const GLOBAL_PROXY_RELAY = process.env.PROXY_RELAY_URL || 'https://pak-proxy.mubashirarham12.workers.dev/';
 
 function normalizeProviderUrl(url) {
-    if (!url) return 'https://paksmmpanals.com/api/v2';
-    if (url.includes('paksmmpanels.com')) {
-        return url.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    if (!url) return DEFAULT_PROVIDER_URL;
+    let clean = url.trim();
+    if (clean.startsWith('http://')) {
+        clean = 'https://' + clean.slice(7);
+    } else if (!clean.startsWith('https://')) {
+        clean = 'https://' + clean;
     }
-    return url;
+    clean = clean.replace(/paksmmpanels\.com/g, 'paksmmpanals.com');
+    clean = clean.replace(/\/+$/, '');
+    if (!clean.includes('/api/')) {
+        clean = clean + '/api/v2';
+    }
+    return clean;
+}
+
+function buildStealthHeaders(apiUrl, variantIndex = 0) {
+    let origin = 'https://paksmmpanals.com';
+    try {
+        const u = new URL(apiUrl);
+        origin = u.origin;
+    } catch (e) {}
+
+    if (variantIndex === 0) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/',
+            'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'Cache-Control': 'no-cache'
+        };
+    } else if (variantIndex === 1) {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Origin': origin,
+            'Referer': origin + '/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin'
+        };
+    } else {
+        return {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': origin,
+            'Referer': origin + '/'
+        };
+    }
 }
 
 /**
- * Safely send a POST request and parse JSON without crashing on HTML/Cloudflare responses.
- * Tries standard SMM API headers with automatic fallback.
+ * Safely send a POST request and parse JSON with multi-browser stealth rotation and proxy fallback.
  */
-async function safeFetchJson(url, params) {
-    const headerVariants = [
-        {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'SmartPanel/2.0 (compatible; SMM-API/1.0)',
-            'Accept': 'application/json, text/plain, */*'
-        },
-        {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'curl/7.88.1',
-            'Accept': '*/*'
-        },
-        {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    ];
-
+async function safeFetchJson(url, params, options = {}) {
+    const normalizedUrl = normalizeProviderUrl(url);
     const body = new URLSearchParams(params);
+    const proxyRelayUrl = (options.proxyUrl || GLOBAL_PROXY_RELAY || '').trim();
+    const variantsCount = 3;
+    let lastHtmlError = null;
 
-    for (let i = 0; i < headerVariants.length; i++) {
-        const headers = headerVariants[i];
+    for (let i = 0; i < variantsCount; i++) {
+        const headers = buildStealthHeaders(normalizedUrl, i);
         try {
-            const res = await fetch(url, {
+            const res = await fetch(normalizedUrl, {
                 method: 'POST',
                 headers: headers,
                 body: body
             });
 
             const rawText = await res.text();
-            let data = null;
-
             try {
-                data = JSON.parse(rawText);
+                const data = JSON.parse(rawText);
                 return {
                     ok: res.ok,
                     isHtml: false,
@@ -75,19 +118,16 @@ async function safeFetchJson(url, params) {
                     data: data
                 };
             } catch (jsonErr) {
-                if (i === headerVariants.length - 1) {
-                    const preview = rawText.replace(/\s+/g, ' ').trim().slice(0, 160);
-                    return {
-                        ok: false,
-                        isHtml: true,
-                        httpStatus: res.status,
-                        raw: rawText,
-                        error: `Provider returned non-JSON response (HTTP ${res.status}): ${preview}`
-                    };
-                }
+                lastHtmlError = {
+                    ok: false,
+                    isHtml: true,
+                    httpStatus: res.status,
+                    raw: rawText,
+                    error: `Provider returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
+                };
             }
         } catch (networkErr) {
-            if (i === headerVariants.length - 1) {
+            if (i === variantsCount - 1 && !proxyRelayUrl) {
                 return {
                     ok: false,
                     isHtml: false,
@@ -97,6 +137,53 @@ async function safeFetchJson(url, params) {
             }
         }
     }
+
+    // Proxy Relay Fallback
+    if (proxyRelayUrl && lastHtmlError) {
+        try {
+            const separator = proxyRelayUrl.includes('?') ? '&' : '?';
+            const relayEndpoint = `${proxyRelayUrl}${separator}target=${encodeURIComponent(normalizedUrl)}`;
+
+            const res = await fetch(relayEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: body
+            });
+
+            const rawText = await res.text();
+            try {
+                const data = JSON.parse(rawText);
+                return {
+                    ok: res.ok,
+                    isHtml: false,
+                    httpStatus: res.status,
+                    data: data,
+                    viaProxy: true
+                };
+            } catch (jsonErr) {
+                return {
+                    ok: false,
+                    isHtml: true,
+                    httpStatus: res.status,
+                    raw: rawText,
+                    error: `Proxy relay returned non-JSON response (HTTP ${res.status}): ${rawText.replace(/\s+/g, ' ').trim().slice(0, 160)}`
+                };
+            }
+        } catch (proxyErr) {
+            console.error(`[Worker] Proxy relay error:`, proxyErr.message);
+        }
+    }
+
+    return lastHtmlError || {
+        ok: false,
+        isHtml: false,
+        httpStatus: 0,
+        error: 'Failed to obtain JSON response from provider'
+    };
 }
 
 /**
@@ -134,30 +221,48 @@ async function processPendingOrders() {
     const providers = new Map();
     providersSnap.forEach(d => providers.set(d.id, d.data()));
 
+    const now = Date.now();
+
     for (const doc of ordersQuery.docs) {
         const order = doc.data();
-        const provider = providers.get(order.providerId);
 
-        if (!provider || provider.status !== 'Active') continue;
+        // Skip orders in backoff
+        if (order.nextAttemptAt && typeof order.nextAttemptAt.toMillis === 'function') {
+            if (order.nextAttemptAt.toMillis() > now) continue;
+        }
+
+        const provider = providers.get(order.providerId) || { url: DEFAULT_PROVIDER_URL, apiKey: DEFAULT_PROVIDER_KEY, status: 'Active', proxyUrl: '' };
+        if (provider.status !== 'Active') continue;
+
+        const serviceId = order.upstreamServiceId || order.serviceId || order.service;
+        if (!serviceId || !order.link || !order.quantity) continue;
 
         try {
-            const result = await safeFetchJson(normalizeProviderUrl(provider.url), {
+            const bodyParams = {
                 key: provider.apiKey,
                 action: 'add',
-                service: order.upstreamServiceId || order.serviceId,
+                service: String(serviceId),
                 link: order.link,
-                quantity: order.quantity
-            });
+                quantity: String(order.quantity)
+            };
+            if (order.comments) bodyParams.comments = order.comments;
+            if (order.runs) bodyParams.runs = String(order.runs);
+            if (order.interval) bodyParams.interval = String(order.interval);
+
+            const result = await safeFetchJson(provider.url, bodyParams, { proxyUrl: provider.proxyUrl });
 
             if (result.data && result.data.order) {
                 // Success: Move to In progress / Processing and save external Order ID
                 await doc.ref.update({
                     status: 'In progress',
                     externalOrderId: String(result.data.order),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    forwardedAt: admin.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                    lastForwardError: null,
+                    nextAttemptAt: null
                 });
             } else if (result.data && result.data.error) {
-                console.error(`Upstream Provider Error for Order ${doc.id}:`, result.data.error);
+                console.warn(`Upstream Provider Error for Order ${doc.id}:`, result.data.error);
             } else if (result.isHtml) {
                 console.warn(`Upstream Provider returned HTML for Order ${doc.id}`);
             }
@@ -182,16 +287,16 @@ async function syncActiveStatuses() {
 
     for (const doc of activeQuery.docs) {
         const order = doc.data();
-        const provider = providers.get(order.providerId);
+        const provider = providers.get(order.providerId) || { url: DEFAULT_PROVIDER_URL, apiKey: DEFAULT_PROVIDER_KEY, proxyUrl: '' };
 
-        if (!provider || !order.externalOrderId) continue;
+        if (!order.externalOrderId) continue;
 
         try {
-            const result = await safeFetchJson(normalizeProviderUrl(provider.url), {
+            const result = await safeFetchJson(provider.url, {
                 key: provider.apiKey,
                 action: 'status',
                 order: String(order.externalOrderId)
-            });
+            }, { proxyUrl: provider.proxyUrl });
 
             if (result.data && result.data.status) {
                 let internalStatus = result.data.status;
@@ -200,11 +305,12 @@ async function syncActiveStatuses() {
                 if (internalStatus === 'Processing') internalStatus = 'In progress';
 
                 const pathSegments = doc.ref.path.split('/');
+                const dynamicAppId = pathSegments[1] || APP_ID;
                 const userId = pathSegments[3];
 
                 if (doc.data().status !== internalStatus && userId) {
                     try {
-                        const notifRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('notifications').doc();
+                        const notifRef = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('notifications').doc();
                         await notifRef.set({
                             title: `Order ${internalStatus}`,
                             message: `Your order for ${doc.data().serviceName || 'service'} is now ${internalStatus}.`,
@@ -214,23 +320,26 @@ async function syncActiveStatuses() {
                     } catch (nErr) {}
                 }
 
-                await doc.ref.update({
+                const updatePayload = {
                     status: internalStatus,
-                    remains: result.data.remains || 0,
-                    startCount: result.data.start_count || 0,
+                    remains: result.data.remains !== undefined ? parseInt(result.data.remains) : (order.remains || 0),
+                    startCount: result.data.start_count !== undefined ? result.data.start_count : (order.startCount || 0),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                });
-                
+                };
+
                 // --- Refund Logic if Canceled ---
-                if (internalStatus === 'Canceled' && doc.data().status !== 'Canceled' && userId && order.charge > 0) {
+                if (internalStatus === 'Canceled' && doc.data().status !== 'Canceled' && userId && order.charge > 0 && !order.canceledRefunded) {
                     try {
-                        const statsRef = db.collection('artifacts').doc(APP_ID).collection('users').doc(userId).collection('account').doc('stats');
+                        const statsRef = db.collection('artifacts').doc(dynamicAppId).collection('users').doc(userId).collection('account').doc('stats');
                         await statsRef.update({
                             balance: admin.firestore.FieldValue.increment(parseFloat(order.charge)),
                             totalSpent: admin.firestore.FieldValue.increment(-parseFloat(order.charge))
                         });
+                        updatePayload.canceledRefunded = true;
                     } catch (rErr) {}
                 }
+
+                await doc.ref.update(updatePayload);
             }
         } catch (e) {
             console.error(`Sync Status Error:`, e);
@@ -261,7 +370,7 @@ async function autoSyncCatalogIfNeeded() {
         const provider = pDoc.data();
         
         try {
-            const result = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'services' });
+            const result = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'services' }, { proxyUrl: provider.proxyUrl });
             const upstreamServices = result.data;
             
             if (!Array.isArray(upstreamServices) || upstreamServices.error) continue;
@@ -269,7 +378,7 @@ async function autoSyncCatalogIfNeeded() {
             let providerCurrency = 'USD';
             let exchangeRateToPKR = 1;
             try {
-                const balResult = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'balance' });
+                const balResult = await safeFetchJson(provider.url, { key: provider.apiKey, action: 'balance' }, { proxyUrl: provider.proxyUrl });
                 const balData = balResult.data;
                 if (balData && balData.currency) providerCurrency = balData.currency.toUpperCase();
                 

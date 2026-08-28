@@ -130,6 +130,12 @@ function renderApiUI() {
                         </select>
                     </div>
 
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Proxy / Cloudflare Relay URL <span class="text-gray-400 font-normal text-xs">(Optional - for Cloudflare bypass)</span></label>
+                        <input type="url" id="provider-proxyurl" placeholder="e.g., https://smm-relay.myworkers.dev" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500 outline-none transition-all text-sm">
+                        <p class="text-[11px] text-gray-500 mt-1">If the provider blocks Netlify IPs, enter your free Cloudflare Worker URL.</p>
+                    </div>
+
                     <div id="provider-modal-notification" class="hidden text-sm px-3 py-2 rounded-lg text-center font-semibold mt-2"></div>
 
                     <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
@@ -255,9 +261,11 @@ function renderApiUI() {
             document.getElementById('provider-url').value = provider.url || '';
             document.getElementById('provider-apikey').value = provider.apiKey || '';
             document.getElementById('provider-status').value = provider.status || 'Active';
+            document.getElementById('provider-proxyurl').value = provider.proxyUrl || '';
         } else {
             currentManagingProviderId = null;
             document.getElementById('modal-provider-title').innerText = 'Add New Provider';
+            document.getElementById('provider-proxyurl').value = '';
         }
 
         modal.classList.remove('hidden');
@@ -626,11 +634,18 @@ async function handleSaveProvider(e) {
     e.preventDefault();
     const btn = document.getElementById('save-provider-btn');
 
+    let cleanUrl = document.getElementById('provider-url').value.trim();
+    if (cleanUrl.startsWith('http://')) cleanUrl = 'https://' + cleanUrl.slice(7);
+    else if (!cleanUrl.startsWith('https://')) cleanUrl = 'https://' + cleanUrl;
+    cleanUrl = cleanUrl.replace(/paksmmpanels\.com/g, 'paksmmpanals.com').replace(/\/+$/, '');
+    if (!cleanUrl.includes('/api/')) cleanUrl = cleanUrl + '/api/v2';
+
     const providerData = {
         name: document.getElementById('provider-name').value.trim(),
-        url: document.getElementById('provider-url').value.trim(),
+        url: cleanUrl,
         apiKey: document.getElementById('provider-apikey').value.trim(),
         status: document.getElementById('provider-status').value,
+        proxyUrl: document.getElementById('provider-proxyurl').value.trim(),
         updatedAt: serverTimestamp()
     };
 

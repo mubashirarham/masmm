@@ -11,7 +11,68 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const APP_ID = process.env.APP_ID || 'masmmpanel-default';
+const GLOBAL_PROXY_RELAY = process.env.PROXY_RELAY_URL || 'https://pak-proxy.mubashirarham12.workers.dev/';
+
+function buildStealthHeaders(origin) {
+    return {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Origin': origin,
+        'Referer': origin + '/',
+        'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin'
+    };
+}
+
+async function safeFetchWithRelay(apiUrl, params, proxyRelayUrl) {
+    const body = new URLSearchParams(params);
+    let origin = 'https://paksmmpanals.com';
+    try {
+        origin = new URL(apiUrl).origin;
+    } catch(e) {}
+
+    const headers = buildStealthHeaders(origin);
+    const relay = (proxyRelayUrl || GLOBAL_PROXY_RELAY || '').trim();
+
+    // 1. Try Direct Stealth Request
+    try {
+        const res = await fetch(apiUrl, { method: 'POST', body: body, headers: headers });
+        const text = await res.text();
+        try {
+            const data = JSON.parse(text);
+            return { ok: res.ok, status: res.status, data };
+        } catch(jsonErr) {
+            // Non-JSON / HTML returned - try relay if configured
+            if (relay) {
+                console.log(`[SyncProvider] Direct fetch returned HTML (Status ${res.status}). Retrying via Proxy Relay...`);
+                const separator = relay.includes('?') ? '&' : '?';
+                const relayEndpoint = `${relay}${separator}target=${encodeURIComponent(apiUrl)}`;
+                const proxyRes = await fetch(relayEndpoint, { method: 'POST', body: body, headers: headers });
+                const proxyText = await proxyRes.text();
+                const proxyData = JSON.parse(proxyText);
+                return { ok: proxyRes.ok, status: proxyRes.status, data: proxyData, viaProxy: true };
+            }
+            throw new Error(`Provider did not return JSON (Status: ${res.status}). Response snippet: ${text.substring(0, 150)}...`);
+        }
+    } catch(err) {
+        if (relay && !err.message.includes('viaProxy')) {
+            console.log(`[SyncProvider] Network error on direct fetch: ${err.message}. Retrying via Proxy Relay...`);
+            const separator = relay.includes('?') ? '&' : '?';
+            const relayEndpoint = `${relay}${separator}target=${encodeURIComponent(apiUrl)}`;
+            const proxyRes = await fetch(relayEndpoint, { method: 'POST', body: body, headers: headers });
+            const proxyText = await proxyRes.text();
+            const proxyData = JSON.parse(proxyText);
+            return { ok: proxyRes.ok, status: proxyRes.status, data: proxyData, viaProxy: true };
+        }
+        throw err;
+    }
+}
 
 exports.handler = async (event) => {
     // Only allow POST requests
@@ -32,22 +93,17 @@ exports.handler = async (event) => {
         if (!providerDoc.exists) throw new Error("Provider not found.");
         
         const providerData = providerDoc.data();
-        const apiUrl = providerData.url;
-        const apiKey = providerData.apiKey;
-
-        // Extract origin for stealth headers
-        const urlObj = new URL(apiUrl);
-        const origin = urlObj.origin;
-
-        // Comprehensive headers to bypass Cloudflare Bot Protection
-        const stealthHeaders = { 
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-            'Accept': 'application/json, text/javascript, */*; q=0.01',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Origin': origin,
-            'Referer': origin + '/'
-        };
+        
+        // Normalize URL to enforce HTTPS and fix typos/missing endpoints
+        let rawUrl = (providerData.url || '').trim();
+        if (rawUrl.startsWith('http://')) rawUrl = 'https://' + rawUrl.slice(7);
+        else if (!rawUrl.startsWith('https://')) rawUrl = 'https://' + rawUrl;
+        rawUrl = rawUrl.replace(/paksmmpanels\.com/g, 'paksmmpanals.com').replace(/\/+$/, '');
+        if (!rawUrl.includes('/api/')) rawUrl = rawUrl + '/api/v2';
+        
+        const apiUrl = rawUrl;
+        const apiKey = (providerData.apiKey || '').trim();
+        const proxyUrl = (providerData.proxyUrl || '').trim();
 
         // ==========================================
         // ACTION 1: Fetch Remote Services & Convert (Preview / Auto Import)
@@ -57,12 +113,8 @@ exports.handler = async (event) => {
             // --- STEP 1: Detect Provider's Base Currency ---
             let providerCurrency = 'USD'; // Default fallback
             try {
-                const balParams = new URLSearchParams();
-                balParams.append('key', apiKey);
-                balParams.append('action', 'balance');
-                
-                const balRes = await fetch(apiUrl, { method: 'POST', body: balParams, headers: stealthHeaders });
-                const balData = JSON.parse(await balRes.text());
+                const balResult = await safeFetchWithRelay(apiUrl, { key: apiKey, action: 'balance' }, proxyUrl);
+                const balData = balResult.data;
                 if (balData && balData.currency) {
                     providerCurrency = balData.currency.toUpperCase();
                 }
@@ -82,11 +134,9 @@ exports.handler = async (event) => {
                         const pairKey = `${providerCurrency}PKR`; // e.g., USDPKR
                         
                         if (xrData && xrData[pairKey] && xrData[pairKey].bid) {
-                            // Use the "bid" (selling price) for accurate real-time market rate
                             exchangeRateToPKR = parseFloat(xrData[pairKey].bid);
                         }
                     } else {
-                        // Fallback: If real-time API is rate-limited, fall back to the 24h updated API
                         const fallbackRes = await fetch(`https://open.er-api.com/v6/latest/${providerCurrency}`);
                         if (fallbackRes.ok) {
                             const fallbackData = await fallbackRes.json();
@@ -104,42 +154,20 @@ exports.handler = async (event) => {
             }
 
             // --- STEP 3: Fetch the actual services list ---
-            const params = new URLSearchParams();
-            params.append('key', apiKey);
-            params.append('action', 'services');
+            const servicesResult = await safeFetchWithRelay(apiUrl, { key: apiKey, action: 'services' }, proxyUrl);
+            const upstreamServices = servicesResult.data;
 
-            let apiResponse;
-            try {
-                apiResponse = await fetch(apiUrl, { method: 'POST', body: params, headers: stealthHeaders });
-            } catch (fetchErr) {
-                throw new Error(`Failed to reach provider server. Check the API URL. Details: ${fetchErr.message}`);
-            }
-
-            const rawText = await apiResponse.text();
-            let upstreamServices;
-
-            try {
-                upstreamServices = JSON.parse(rawText);
-            } catch (err) {
-                console.error("Non-JSON API Response:", rawText);
-                throw new Error(`Provider did not return JSON (Status: ${apiResponse.status}). It may be blocking the request via Cloudflare. Response snippet: ${rawText.substring(0, 150)}...`);
-            }
-
-            if (upstreamServices.error) {
-                throw new Error(`Upstream API Error: ${upstreamServices.error}`);
+            if (!upstreamServices || upstreamServices.error) {
+                throw new Error(`Upstream API Error: ${upstreamServices ? upstreamServices.error : 'Invalid response'}`);
             }
 
             // --- STEP 4: Convert all rates to PKR for the frontend preview ---
             const convertedServices = upstreamServices.map(service => {
                 const originalRate = parseFloat(service.rate) || 0;
-                // Override the rate with the converted PKR value
                 service.rate = (originalRate * exchangeRateToPKR).toFixed(4);
-                
-                // Add tracking metadata (optional, just in case frontend wants it)
                 service._original_currency = providerCurrency;
                 service._original_rate = originalRate;
                 service._pkr_exchange_rate = exchangeRateToPKR;
-                
                 return service;
             });
 
@@ -310,10 +338,7 @@ exports.handler = async (event) => {
             const markupMultiplier = (parseFloat(markupPercentage) || 100) / 100;
 
             for (const service of selectedServices) {
-                // Use the upstream service ID as the document ID to prevent duplicates
                 const docRef = servicesRef.doc(`imported_${providerId}_${service.service}`); 
-                
-                // Note: service.rate is ALREADY IN PKR here because we converted it during fetch_remote!
                 const basePkrRate = parseFloat(service.rate);
                 const finalSellingRate = (basePkrRate * markupMultiplier).toFixed(4);
 
@@ -321,27 +346,25 @@ exports.handler = async (event) => {
                     serviceId: service.service,
                     name: service.name,
                     categoryId: targetCategoryId,
-                    rate: finalSellingRate, // Saved securely in PKR
+                    rate: finalSellingRate,
                     min: service.min,
                     max: service.max,
                     description: service.desc || 'Imported Service',
                     providerId: providerId,
                     status: 'Active',
-                    metadata_markup: markupMultiplier, // Saved for auto-price sync
-                    refill: !!service.refill || service.refill === '1' || service.refill === true, // Added refill flag
-                    cancel: !!service.cancel || service.cancel === '1' || service.cancel === true, // Added cancel flag
+                    metadata_markup: markupMultiplier,
+                    refill: !!service.refill || service.refill === '1' || service.refill === true,
+                    cancel: !!service.cancel || service.cancel === '1' || service.cancel === true,
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
 
                 importedCount++;
                 
-                // Commit batches of 400 to respect Firestore transaction limits
                 if (importedCount % 400 === 0) {
                     await batch.commit();
                 }
             }
 
-            // Commit any remaining items
             await batch.commit();
 
             return {
